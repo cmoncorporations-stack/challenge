@@ -267,7 +267,10 @@ section{padding:84px 0;position:relative}
 @media(max-width:480px){.pillars{grid-template-columns:1fr}}
 
 /* ── Solutions C'mon Sports ── */
-.svc-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.svc-tabs{display:flex;gap:14px 22px;flex-wrap:wrap;margin-bottom:16px}
+.svc-fam > span{display:block;font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:var(--ink-3);margin:0 0 7px 4px}
+.svc-fam > div{display:flex;gap:8px;flex-wrap:wrap}
+.svc-panel .fam{font-size:12px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px}
 .svc-tab{font:inherit;font-size:14px;font-weight:800;color:var(--ink-2);background:var(--card);border:1px solid var(--edge-lit);border-radius:999px;padding:9px 16px;cursor:pointer;transition:all .2s}
 .svc-tab[aria-selected="true"]{color:#04121F;background:var(--brand);border-color:var(--brand)}
 .svc-panel{padding:30px;display:grid;grid-template-columns:1fr 1fr;gap:26px}
@@ -349,7 +352,7 @@ footer a{color:var(--ink-2);font-weight:700}
         <div>
           <span class="eyebrow"><span class="dot"></span><span data-i18n="hero.eyebrow">Jeu gratuit · navigateur · sans installation</span></span>
           <h1 data-i18n="hero.title">Vous voilà responsable marketing du club. <em>Le comité vous attend.</em></h1>
-          <p class="lead" data-i18n="hero.lead">Club Catalist est le simulateur de gestion marketing d'un club de sport suisse, conçu par C'mon Sports. Contenu, campagnes, données fans, sponsors, RGPD : 26 semaines pour faire grandir votre club — ou être licencié.</p>
+          <p class="lead" data-i18n="hero.lead">Club Catalist est le simulateur de gestion marketing d'un club de sport, conçu par C'mon Sports. Contenu, campagnes, données des fans, sponsors, RGPD : 26 semaines pour faire grandir votre club ou être licencié.</p>
           <div class="ctas">
             <a class="btn btn-primary btn-lg play-link" href="jouer/" id="cta-hero">
               <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 3.8v12.4a.8.8 0 0 0 1.2.7l9.9-6.2a.8.8 0 0 0 0-1.4L7.2 3.1a.8.8 0 0 0-1.2.7Z"/></svg>
@@ -361,7 +364,7 @@ footer a{color:var(--ink-2);font-weight:700}
           <div class="reassure">
             <span data-i18n="hero.r1">Partie en 20 minutes</span>
             <span data-i18n="hero.r2">FR · DE · EN</span>
-            <span data-i18n="hero.r3">Aucune donnée ne quitte votre navigateur</span>
+            <span data-i18n="hero.r3">Votre progression reste dans votre navigateur</span>
           </div>
         </div>
 
@@ -375,7 +378,7 @@ footer a{color:var(--ink-2);font-weight:700}
             <div class="kpi"><div class="l" data-i18n="k.fans">Fans</div><div class="v num" id="pv-fans">14 000</div><div class="d up num" id="pv-fans-d">+0</div></div>
             <div class="kpi"><div class="l" data-i18n="k.contacts">Contacts CRM</div><div class="v num" id="pv-contacts">1 800</div><div class="d up num" id="pv-contacts-d">+0</div></div>
             <div class="kpi"><div class="l" data-i18n="k.budget">Budget</div><div class="v num" id="pv-budget">60 000</div><div class="d num" style="color:var(--ink-3)">CHF</div></div>
-            <div class="kpi"><div class="l" data-i18n="k.dmos">Score DMOS</div><div class="v num" id="pv-dmos">8–16</div><div class="d num" style="color:var(--ink-3)">/60</div></div>
+            <div class="kpi"><div class="l" data-i18n="k.dmos">Maturité data</div><div class="v num" id="pv-dmos">8–16</div><div class="d num" style="color:var(--ink-3)">/60</div></div>
           </div>
           <div class="pv-bar">
             <div class="row"><span data-i18n="k.conf">Confiance du comité</span><span class="num" id="pv-conf-v">60</span></div>
@@ -388,7 +391,7 @@ footer a{color:var(--ink-2);font-weight:700}
       <div class="facts reveal">
         <div><b class="num" data-count="4">4</b><span data-i18n="f.clubs">clubs jouables</span></div>
         <div><b class="num" data-count="26">26</b><span data-i18n="f.weeks">semaines par saison</span></div>
-        <div><b class="num" data-count="6">6</b><span data-i18n="f.pillars">piliers DMOS</span></div>
+        <div><b class="num" data-count="6">6</b><span data-i18n="f.solutions">solutions C'mon Sports en jeu</span></div>
         <div><b class="num" data-count="3">3</b><span data-i18n="f.boards">comités directeurs</span></div>
       </div>
     </div>
@@ -477,7 +480,7 @@ footer a{color:var(--ink-2);font-weight:700}
             <div class="kicker" data-i18n="fog.k">Le brouillard des données</div>
             <h2 data-i18n="fog.t">Tant qu'on ne mesure pas, on pilote à l'aveugle.</h2>
           </div>
-          <p data-i18n="fog.p1">Au début du jeu, comme dans la plupart des clubs, vous ne connaissez ni la qualité de votre base, ni la valeur de votre fanbase. Votre score DMOS n'est qu'une fourchette.</p>
+          <p data-i18n="fog.p1">Au début du jeu, comme dans la plupart des clubs, vous ne connaissez ni la qualité de votre base, ni la valeur de votre fanbase. Votre niveau de maturité data n'est qu'une fourchette.</p>
           <p data-i18n="fog.p2">Les solutions C'mon Sports lèvent ce brouillard — dans le jeu comme dans la réalité. Faites l'essai :</p>
           <button class="switch" id="fog-switch" role="switch" aria-checked="false">
             <span class="track"></span><span data-i18n="fog.switch">Activer l'accompagnement C'mon Sports</span>
@@ -487,8 +490,8 @@ footer a{color:var(--ink-2);font-weight:700}
           <span class="who" id="fog-who">Sans mesure</span>
           <h3 id="fog-title">Tableau de bord · HC Montagnards</h3>
           <div class="fog-grid">
-            <div class="kpi"><div class="l" data-i18n="fog.dmos">Score DMOS</div><div class="v num keep" id="fog-dmos">8–16 /60</div><small id="fog-dmos-s">Fourchette estimée</small></div>
-            <div class="kpi"><div class="l" data-i18n="fog.value">Valeur Fan Lab</div><div class="v num" id="fog-value">? CHF</div><small id="fog-value-s">Inconnue</small></div>
+            <div class="kpi"><div class="l" data-i18n="fog.dmos">Maturité data</div><div class="v num keep" id="fog-dmos">8–16 /60</div><small id="fog-dmos-s">Fourchette estimée</small></div>
+            <div class="kpi"><div class="l" data-i18n="fog.value">Valeur de la fanbase</div><div class="v num" id="fog-value">? CHF</div><small id="fog-value-s">Inconnue</small></div>
             <div class="kpi"><div class="l" data-i18n="fog.quality">Qualité des données</div><div class="v num" id="fog-quality">? /10</div><small id="fog-quality-s">Invisible</small></div>
             <div class="kpi"><div class="l" data-i18n="fog.pen">Pénétration du bassin</div><div class="v num" id="fog-pen">? %</div><small id="fog-pen-s">Non mesurée</small></div>
           </div>
@@ -501,9 +504,9 @@ footer a{color:var(--ink-2);font-weight:700}
   <section id="dmos">
     <div class="wrap">
       <div class="sec-head reveal">
-        <div class="kicker" data-i18n="dmos.k">Data Marketing Operating System</div>
-        <h2 data-i18n="dmos.t">Le score DMOS : six piliers, 60 points, une certification.</h2>
-        <p data-i18n="dmos.p">La méthodologie qu'utilise C'mon Sports pour mesurer l'orchestration de la donnée d'un club. Dans le jeu, chaque pilier a un effet concret. Réglez-les pour voir votre score évoluer.</p>
+        <div class="kicker" data-i18n="dmos.k">La maturité data, expliquée simplement</div>
+        <h2 data-i18n="dmos.t">Votre club sait-il tirer parti de ses fans ? Une note sur 60 le dit.</h2>
+        <p data-i18n="dmos.p">C'mon Sports mesure la maturité data d'un club avec sa grille DMOS (pour <i>Data Marketing Operating System</i>, le « système d'exploitation » du marketing par la donnée). En clair : six questions simples, chacune notée sur 10. Le total donne une note sur 60 ; à partir de 30, le club est certifié Silver, à partir de 45, Gold. Cliquez sur une question, puis montez ou baissez sa note.</p>
       </div>
       <div class="dmos reveal">
         <div class="pillars" id="pillars"></div>
@@ -518,7 +521,7 @@ footer a{color:var(--ink-2);font-weight:700}
               </div>
             </div>
           </div>
-          <div class="ctrl"><button type="button" id="p-minus" aria-label="−">−</button><span id="p-name" style="flex:1;color:var(--ink);font-size:15px">Stratégie digitale</span><button type="button" id="p-plus" aria-label="+">+</button></div>
+          <div class="ctrl"><button type="button" id="p-minus" aria-label="−">−</button><span id="p-name" style="flex:1;color:var(--ink);font-size:15px">Un cap clair</span><button type="button" id="p-plus" aria-label="+">+</button></div>
           <div class="pinfo" id="p-info"></div>
         </div>
       </div>
@@ -547,7 +550,7 @@ footer a{color:var(--ink-2);font-weight:700}
         <div class="card about-main reveal">
           <svg class="cmon-logo" viewBox="210 200 1600 480" fill="#ffffff" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="C’mon Sports"><polygon class="cls-1" points="397.1 586.91 371.5 543.31 311.66 441.39 324.56 419.15 278.89 341.37 220.93 442.04 352.01 665.28 469.15 665.41 423.07 586.93 397.1 586.91"/><polygon class="cls-1" points="537.9 295.62 563.77 295.63 648.63 440.05 635.72 462.4 681.35 540.11 739.25 439.74 608.59 217.18 466.77 217.28 421.28 296.14 577.81 562.8 563.95 586.83 539.86 586.87 382.42 318.72 440.9 217.33 350.43 217.35 291.76 319.07 495 665.23 609.34 665.27 668.48 562.52 525 318.04 537.9 295.62"/><polygon class="cls-1" points="957.24 414.4 942.26 388.86 883.17 388.89 853.69 439.98 883.73 491.14 942.24 491.11 956.98 465.56 1015.99 465.54 971.82 542.23 854.38 542.23 794.56 440.35 853.65 337.81 971.47 337.73 1016.47 414.38 957.24 414.4"/><polygon class="cls-1" points="959.89 217.33 1004.89 293.97 945.66 294 900.63 217.33 959.89 217.33"/><path class="cls-1" d="m1512.33,337.79l-117.78.08-59.08,102.51,59.8,101.85h117.4s59.27-102.9,59.27-102.9l-59.61-101.54Zm-29.22,153.34l-58.5.02-30.02-51.14,29.46-51.08,59.08-.02,29.72,50.65-29.75,51.57Z"/><polygon class="cls-1" points="1232.85 338 1180.05 429.32 1126.3 337.73 1061.66 337.73 1062.64 541.88 1121.88 541.86 1119.65 437.3 1151.11 490.85 1209.29 490.81 1240.46 437.58 1238.23 542.13 1297.47 542.16 1298.44 338.01 1232.85 338"/><polygon class="cls-1" points="1788.36 542.19 1787.89 541.34 1787.89 337.73 1730.08 337.73 1730.08 430.98 1675.32 337.73 1610.57 337.73 1611.55 542.23 1670.88 542.21 1668.65 437.47 1730.08 542.23 1787.89 542.23 1787.89 542.19 1788.36 542.19"/><path class="cls-1" d="m828.13,666.72c-6.04,0-11.82-.99-17.35-2.96-5.53-1.97-9.81-4.51-12.82-7.6l3.37-6.62c2.86,2.78,6.71,5.13,11.55,7.02,4.83,1.9,9.92,2.84,15.26,2.84s9.26-.64,12.48-1.91c3.21-1.28,5.57-3,7.08-5.17,1.51-2.17,2.26-4.56,2.26-7.2,0-3.17-.91-5.73-2.73-7.66-1.82-1.93-4.2-3.46-7.14-4.59-2.94-1.12-6.19-2.11-9.75-2.96-3.56-.85-7.12-1.76-10.68-2.73-3.56-.97-6.83-2.26-9.81-3.89-2.98-1.63-5.38-3.77-7.2-6.44-1.82-2.67-2.73-6.17-2.73-10.5,0-4.02,1.06-7.72,3.19-11.08,2.13-3.37,5.4-6.07,9.81-8.13,4.41-2.05,10.06-3.07,16.95-3.07,4.56,0,9.09.64,13.58,1.91,4.49,1.28,8.36,3.04,11.61,5.28l-2.9,6.85c-3.48-2.32-7.18-4.02-11.08-5.11-3.91-1.08-7.68-1.63-11.32-1.63-4.87,0-8.9.66-12.07,1.97-3.17,1.32-5.51,3.07-7.02,5.28s-2.26,4.7-2.26,7.49c0,3.17.91,5.73,2.73,7.66,1.82,1.94,4.22,3.44,7.2,4.53,2.98,1.08,6.25,2.05,9.81,2.9,3.56.85,7.1,1.78,10.62,2.79,3.52,1.01,6.77,2.3,9.75,3.89,2.98,1.59,5.38,3.7,7.2,6.32,1.82,2.63,2.73,6.08,2.73,10.33,0,3.95-1.08,7.6-3.25,10.97-2.17,3.37-5.48,6.08-9.92,8.13-4.45,2.05-10.16,3.07-17.12,3.07Z"/><path class="cls-1" d="m982.27,666.03v-81.24h30.41c6.89,0,12.81,1.1,17.76,3.31,4.95,2.2,8.76,5.38,11.43,9.52,2.67,4.14,4,9.15,4,15.03s-1.33,10.66-4,14.8c-2.67,4.14-6.48,7.33-11.43,9.57-4.95,2.25-10.87,3.37-17.76,3.37h-25.65l3.83-4.06v29.71h-8.59Zm8.59-29.02l-3.83-4.18h25.42c8.12,0,14.29-1.76,18.51-5.28,4.22-3.52,6.33-8.49,6.33-14.92s-2.11-11.53-6.33-15.09c-4.22-3.56-10.39-5.34-18.51-5.34h-25.42l3.83-4.06v48.86Z"/><path class="cls-1" d="m1206.27,666.72c-6.11,0-11.78-1.02-17-3.07-5.22-2.05-9.75-4.95-13.58-8.7-3.83-3.75-6.81-8.13-8.94-13.12-2.13-4.99-3.19-10.46-3.19-16.42s1.06-11.43,3.19-16.42c2.13-4.99,5.11-9.36,8.94-13.12,3.83-3.75,8.34-6.65,13.52-8.7,5.18-2.05,10.87-3.07,17.06-3.07s11.76,1.03,16.95,3.07c5.18,2.05,9.69,4.93,13.52,8.65,3.83,3.71,6.81,8.09,8.94,13.11,2.13,5.03,3.19,10.52,3.19,16.48s-1.07,11.45-3.19,16.48c-2.13,5.03-5.11,9.4-8.94,13.11-3.83,3.72-8.34,6.6-13.52,8.65-5.18,2.05-10.83,3.07-16.95,3.07Zm0-7.66c4.88,0,9.38-.83,13.52-2.5,4.14-1.66,7.74-4.02,10.79-7.08,3.06-3.06,5.44-6.62,7.14-10.68,1.7-4.06,2.55-8.53,2.55-13.41s-.85-9.34-2.55-13.4c-1.7-4.06-4.08-7.62-7.14-10.68-3.06-3.06-6.66-5.41-10.79-7.08-4.14-1.66-8.65-2.5-13.52-2.5s-9.4.83-13.58,2.5c-4.18,1.66-7.82,4.02-10.91,7.08-3.1,3.06-5.49,6.62-7.2,10.68-1.7,4.06-2.55,8.53-2.55,13.4s.85,9.25,2.55,13.35c1.7,4.1,4.1,7.68,7.2,10.74,3.09,3.06,6.73,5.42,10.91,7.08,4.18,1.67,8.7,2.5,13.58,2.5Z"/><path class="cls-1" d="m1373.28,666.03v-81.24h30.41c6.88,0,12.8,1.1,17.76,3.31,4.95,2.2,8.76,5.38,11.43,9.52,2.67,4.14,4,9.15,4,15.03s-1.33,10.66-4,14.8c-2.67,4.14-6.48,7.31-11.43,9.52-4.95,2.21-10.87,3.31-17.76,3.31h-25.65l3.83-3.95v29.71h-8.59Zm8.59-29.02l-3.83-4.06h25.42c8.13,0,14.29-1.78,18.51-5.34,4.22-3.56,6.33-8.55,6.33-14.97s-2.11-11.53-6.33-15.09c-4.22-3.56-10.39-5.34-18.51-5.34h-25.42l3.83-4.06v48.86Zm46.89,29.02l-20.89-29.48h9.28l21.01,29.48h-9.4Z"/><path class="cls-1" d="m1576.98,666.03v-73.82h-28.55v-7.43h65.69v7.43h-28.55v73.82h-8.59Z"/><path class="cls-1" d="m1754.09,666.72c-6.04,0-11.82-.99-17.35-2.96-5.53-1.97-9.81-4.51-12.83-7.6l3.37-6.62c2.86,2.78,6.71,5.13,11.55,7.02,4.83,1.9,9.92,2.84,15.26,2.84s9.26-.64,12.48-1.91c3.21-1.28,5.57-3,7.08-5.17,1.51-2.17,2.26-4.56,2.26-7.2,0-3.17-.91-5.73-2.73-7.66-1.82-1.93-4.2-3.46-7.14-4.59-2.94-1.12-6.19-2.11-9.75-2.96-3.56-.85-7.12-1.76-10.68-2.73-3.56-.97-6.83-2.26-9.81-3.89-2.98-1.63-5.38-3.77-7.2-6.44-1.82-2.67-2.73-6.17-2.73-10.5,0-4.02,1.06-7.72,3.19-11.08,2.13-3.37,5.4-6.07,9.81-8.13,4.41-2.05,10.06-3.07,16.94-3.07,4.57,0,9.09.64,13.58,1.91,4.49,1.28,8.36,3.04,11.61,5.28l-2.9,6.85c-3.48-2.32-7.18-4.02-11.08-5.11-3.91-1.08-7.68-1.63-11.32-1.63-4.87,0-8.9.66-12.07,1.97-3.17,1.32-5.51,3.07-7.02,5.28-1.51,2.21-2.26,4.7-2.26,7.49,0,3.17.91,5.73,2.73,7.66,1.82,1.94,4.22,3.44,7.2,4.53,2.98,1.08,6.25,2.05,9.81,2.9,3.56.85,7.1,1.78,10.62,2.79,3.52,1.01,6.77,2.3,9.75,3.89,2.98,1.59,5.38,3.7,7.2,6.32,1.82,2.63,2.73,6.08,2.73,10.33,0,3.95-1.08,7.6-3.25,10.97-2.17,3.37-5.48,6.08-9.92,8.13-4.45,2.05-10.16,3.07-17.12,3.07Z"/></svg>
           <h2 style="font-size:clamp(28px,3.2vw,38px)" data-i18n="cmon.t">L'agence data &amp; marketing des clubs de sport.</h2>
-          <p data-i18n="cmon.p1">Basée à La Chaux-de-Fonds, C'mon Sports accompagne les clubs et ligues suisses pour transformer leurs fans en données, leurs données en revenus, et leurs revenus en arguments face aux sponsors.</p>
+          <p data-i18n="cmon.p1">Basée à Lausanne, C'mon Sports accompagne les clubs et ligues suisses pour transformer leurs fans en un actif tangible, leurs données en revenus, et leurs revenus en arguments face aux sponsors.</p>
           <p data-i18n="cmon.p2">Club Catalist est né d'un constat : la plupart des clubs pilotent leur marketing sans instruments. Le jeu rend visible, en 20 minutes, ce qu'un audit révèle en quelques semaines.</p>
           <div class="ctas">
             <a class="btn btn-primary" href="https://calendly.com/meeting-douglas-finazzi/c-mon-sports-huddle-clone?utm_source=clubcatalist&amp;utm_medium=landing" target="_blank" rel="noopener" data-i18n="cmon.cta1">Parler 30 minutes avec nous</a>
@@ -555,8 +558,8 @@ footer a{color:var(--ink-2);font-weight:700}
           </div>
         </div>
         <div class="about-list">
-          <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><div><b data-i18n="cmon.a1t">Mesurer</b><p data-i18n="cmon.a1p">Audit DMOS et Fan Lab : la note de votre orchestration data et la valeur économique de votre audience.</p></div></div>
-          <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6M4 11.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></div><div><b data-i18n="cmon.a2t">Structurer</b><p data-i18n="cmon.a2p">Data Factory : une base de contacts propre, conforme au RGPD et à la nLPD, entretenue dans la durée.</p></div></div>
+          <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><div><b data-i18n="cmon.a1t">Mesurer · Audit &amp; Fan Intelligence</b><p data-i18n="cmon.a1p">Fan Equity Audit, Fan Lab Insight et Fan Lab Pro : la maturité data de votre club et la valeur économique de votre audience.</p></div></div>
+          <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6M4 11.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></div><div><b data-i18n="cmon.a2t">Structurer · Fan Management</b><p data-i18n="cmon.a2p">Fan Data Factory : une base de contacts propre, conforme au RGPD et à la nLPD, entretenue dans la durée.</p></div></div>
           <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg></div><div><b data-i18n="cmon.a3t">Engager</b><p data-i18n="cmon.a3p">Blue Penguin et Griddy Picks : fidélité tokenisée et pronostics qui collectent des données à chaque journée.</p></div></div>
           <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><b data-i18n="cmon.a4t">Monétiser</b><p data-i18n="cmon.a4p">Des chiffres à poser sur la table en rendez-vous sponsor, pour justifier un montant plutôt que le négocier.</p></div></div>
         </div>
@@ -613,13 +616,13 @@ de: {
   "nav.by":"by C'mon Sports","nav.game":"Das Spiel","nav.clubs":"Die Clubs","nav.try":"Ausprobieren","nav.solutions":"Lösungen","nav.cmon":"C'mon Sports","nav.play":"Spielen",
   "hero.eyebrow":"Gratis · im Browser · ohne Installation",
   "hero.title":"Sie übernehmen das Marketing des Clubs. <em>Der Vorstand wartet.</em>",
-  "hero.lead":"Club Catalist ist der Marketing-Management-Simulator eines Schweizer Sportclubs, entwickelt von C'mon Sports. Content, Kampagnen, Fandaten, Sponsoren, Datenschutz: 26 Wochen, um Ihren Club wachsen zu lassen — oder entlassen zu werden.",
+  "hero.lead":"Club Catalist ist der Marketing-Management-Simulator eines Sportclubs, entwickelt von C'mon Sports. Content, Kampagnen, Daten der Fans, Sponsoren, DSGVO: 26 Wochen, um Ihren Club wachsen zu lassen oder entlassen zu werden.",
   "hero.cta":"Jetzt spielen","hero.cta2":"Hier eine Woche testen","hero.resume":"Auf diesem Gerät wartet eine Partie: Machen Sie dort weiter, wo Sie aufgehört haben.",
   "hero.resumecta":"Partie fortsetzen",
-  "hero.r1":"Eine Partie in 20 Minuten","hero.r2":"FR · DE · EN","hero.r3":"Keine Daten verlassen Ihren Browser",
-  "k.fans":"Fans","k.contacts":"CRM-Kontakte","k.budget":"Budget","k.dmos":"DMOS-Score","k.conf":"Vertrauen des Vorstands","k.sponsor":"Sponsorenzufriedenheit",
+  "hero.r1":"Eine Partie in 20 Minuten","hero.r2":"FR · DE · EN","hero.r3":"Ihr Spielstand bleibt in Ihrem Browser",
+  "k.fans":"Fans","k.contacts":"CRM-Kontakte","k.budget":"Budget","k.dmos":"Datenreife","k.conf":"Vertrauen des Vorstands","k.sponsor":"Sponsorenzufriedenheit",
   "pv.toastk":"Woche 1",
-  "f.clubs":"spielbare Clubs","f.weeks":"Wochen pro Saison","f.pillars":"DMOS-Säulen","f.boards":"Vorstandstypen",
+  "f.clubs":"spielbare Clubs","f.weeks":"Wochen pro Saison","f.solutions":"C'mon-Sports-Lösungen im Spiel","f.boards":"Vorstandstypen",
   "how.k":"Das Prinzip","how.t":"Eine Saison, drei Aktionspunkte pro Woche, kein Raum für Fehler.",
   "how.p":"Das Spiel bildet die echte Einschränkung einer Club-Marketingabteilung ab: wenig Zeit, knappes Budget, Sponsoren, die zufrieden sein wollen, und ein Vorstand, der nach dem urteilt, was er sieht.",
   "how.s1t":"Wählen Sie Ihren Club","how.s1p":"Eishockey, Fussball, Basketball oder Volleyball, in der 1. oder 2. Liga — und ein geduldiger, anspruchsvoller oder gnadenloser Vorstand.",
@@ -630,19 +633,19 @@ de: {
   "sim.k":"Jetzt ausprobieren","sim.t":"Spielen Sie Ihre ersten Wochen gleich hier.","sim.p":"Eine Miniaturversion des Spiels: Wählen Sie Ihre Aktionen innerhalb von 3 Punkten und starten Sie die Woche. Das echte Spiel hat 26 davon, mit Spiel, Ereignissen und Vorstand.",
   "sim.ap":"Aktionspunkte","sim.play":"Woche spielen","sim.hint":"Wählen Sie bis zu 3 Aktionspunkte.","sim.endcta":"Im echten Spiel weitermachen","sim.reset":"Neu beginnen",
   "fog.k":"Der Datennebel","fog.t":"Solange man nicht misst, steuert man blind.",
-  "fog.p1":"Zu Beginn des Spiels kennen Sie — wie die meisten Clubs — weder die Qualität Ihrer Datenbasis noch den Wert Ihrer Fanbase. Ihr DMOS-Score ist nur eine Spanne.",
+  "fog.p1":"Zu Beginn des Spiels kennen Sie — wie die meisten Clubs — weder die Qualität Ihrer Datenbasis noch den Wert Ihrer Fanbase. Ihre Datenreife ist nur eine Spanne.",
   "fog.p2":"Die Lösungen von C'mon Sports lichten diesen Nebel — im Spiel wie in der Realität. Probieren Sie es aus:",
-  "fog.switch":"Begleitung durch C'mon Sports aktivieren","fog.dmos":"DMOS-Score","fog.value":"Fan-Lab-Wert","fog.quality":"Datenqualität","fog.pen":"Marktdurchdringung",
-  "dmos.k":"Data Marketing Operating System","dmos.t":"Der DMOS-Score: sechs Säulen, 60 Punkte, eine Zertifizierung.",
-  "dmos.p":"Die Methodik, mit der C'mon Sports die Datenorchestrierung eines Clubs misst. Im Spiel hat jede Säule eine konkrete Wirkung. Stellen Sie sie ein und beobachten Sie Ihren Score.",
+  "fog.switch":"Begleitung durch C'mon Sports aktivieren","fog.dmos":"Datenreife","fog.value":"Wert der Fanbase","fog.quality":"Datenqualität","fog.pen":"Marktdurchdringung",
+  "dmos.k":"Datenreife, einfach erklärt","dmos.t":"Weiss Ihr Club, was er an seinen Fans hat? Eine Note von 60 sagt es.",
+  "dmos.p":"C'mon Sports misst die Datenreife eines Clubs mit seinem DMOS-Raster (für <i>Data Marketing Operating System</i>, das «Betriebssystem» des datengestützten Marketings). Einfach gesagt: sechs einfache Fragen, jede mit bis zu 10 Punkten bewertet. Zusammen ergibt das eine Note von 60; ab 30 ist der Club Silver-zertifiziert, ab 45 Gold. Klicken Sie auf eine Frage und erhöhen oder senken Sie ihre Note.",
   "dmos.silver":"≥ 30 · Silver","dmos.gold":"≥ 45 · Gold",
   "svc.k":"Das C'mon-Sports-Ökosystem im Spiel","svc.t":"Echte Lösungen mit echter Wirkung.","svc.p":"Im Reiter C'mon Sports des Spiels aktivieren Sie die Dienste, die die Agentur tatsächlich bei Clubs einsetzt. Das Spiel ist ein getreues Modell, keine Metapher.",
   "cmon.t":"Die Daten- &amp; Marketingagentur der Sportclubs.",
-  "cmon.p1":"C'mon Sports mit Sitz in La Chaux-de-Fonds begleitet Schweizer Clubs und Ligen dabei, Fans in Daten, Daten in Einnahmen und Einnahmen in Argumente gegenüber Sponsoren zu verwandeln.",
+  "cmon.p1":"C'mon Sports mit Sitz in Lausanne begleitet Schweizer Clubs und Ligen dabei, ihre Fans in einen greifbaren Vermögenswert, ihre Daten in Einnahmen und ihre Einnahmen in Argumente gegenüber Sponsoren zu verwandeln.",
   "cmon.p2":"Club Catalist entstand aus einer Feststellung: Die meisten Clubs steuern ihr Marketing ohne Instrumente. Das Spiel macht in 20 Minuten sichtbar, was ein Audit in wenigen Wochen aufdeckt.",
   "cmon.cta1":"30 Minuten mit uns sprechen","cmon.cta2":"Den Wert meiner Fanbase schätzen",
-  "cmon.a1t":"Messen","cmon.a1p":"DMOS-Audit und Fan Lab: die Note Ihrer Datenorchestrierung und der wirtschaftliche Wert Ihres Publikums.",
-  "cmon.a2t":"Strukturieren","cmon.a2p":"Data Factory: eine saubere Kontaktbasis, DSGVO- und nDSG-konform, dauerhaft gepflegt.",
+  "cmon.a1t":"Messen · Audit &amp; Fan Intelligence","cmon.a1p":"Fan Equity Audit, Fan Lab Insight und Fan Lab Pro: die Datenreife Ihres Clubs und der wirtschaftliche Wert Ihres Publikums.",
+  "cmon.a2t":"Strukturieren · Fan Management","cmon.a2p":"Fan Data Factory: eine saubere Kontaktbasis, DSGVO- und nDSG-konform, dauerhaft gepflegt.",
   "cmon.a3t":"Begeistern","cmon.a3p":"Blue Penguin und Griddy Picks: tokenisierte Treue und Tippspiele, die an jedem Spieltag Daten sammeln.",
   "cmon.a4t":"Monetarisieren","cmon.a4p":"Zahlen für den Tisch beim Sponsorentermin — um einen Betrag zu begründen, statt ihn zu verhandeln.",
   "final.t":"Halten Sie eine ganze Saison durch?","final.p":"Gratis, ohne Installation, auf Französisch, Deutsch oder Englisch. Ihre Partie wird Woche für Woche auf Ihrem Gerät gespeichert.",
@@ -653,13 +656,13 @@ en: {
   "nav.by":"by C'mon Sports","nav.game":"The game","nav.clubs":"The clubs","nav.try":"Try it","nav.solutions":"Solutions","nav.cmon":"C'mon Sports","nav.play":"Play",
   "hero.eyebrow":"Free game · in your browser · no install",
   "hero.title":"You now run the club's marketing. <em>The board is waiting.</em>",
-  "hero.lead":"Club Catalist is the marketing management simulator of a Swiss sports club, built by C'mon Sports. Content, campaigns, fan data, sponsors, GDPR: 26 weeks to grow your club — or get fired.",
+  "hero.lead":"Club Catalist is the marketing management simulator of a sports club, built by C'mon Sports. Content, campaigns, fan data, sponsors, GDPR: 26 weeks to grow your club or get fired.",
   "hero.cta":"Play now","hero.cta2":"Try a week right here","hero.resume":"A game is waiting on this device: pick up where you left off.",
   "hero.resumecta":"Resume my game",
-  "hero.r1":"A game in 20 minutes","hero.r2":"FR · DE · EN","hero.r3":"No data ever leaves your browser",
-  "k.fans":"Fans","k.contacts":"CRM contacts","k.budget":"Budget","k.dmos":"DMOS score","k.conf":"Board confidence","k.sponsor":"Sponsor satisfaction",
+  "hero.r1":"A game in 20 minutes","hero.r2":"FR · DE · EN","hero.r3":"Your progress stays in your browser",
+  "k.fans":"Fans","k.contacts":"CRM contacts","k.budget":"Budget","k.dmos":"Data maturity","k.conf":"Board confidence","k.sponsor":"Sponsor satisfaction",
   "pv.toastk":"Week 1",
-  "f.clubs":"playable clubs","f.weeks":"weeks per season","f.pillars":"DMOS pillars","f.boards":"kinds of board",
+  "f.clubs":"playable clubs","f.weeks":"weeks per season","f.solutions":"C'mon Sports solutions in play","f.boards":"kinds of board",
   "how.k":"How it works","how.t":"One season, three action points a week, no room for error.",
   "how.p":"The game reproduces the real constraint of a club's marketing team: little time, a tight budget, sponsors to keep happy and a board that judges on what it can see.",
   "how.s1t":"Pick your club","how.s1p":"Ice hockey, football, basketball or volleyball, in the first or second division — and a lenient, demanding or ruthless board.",
@@ -670,19 +673,19 @@ en: {
   "sim.k":"Try it now","sim.t":"Play your first weeks, right here.","sim.p":"A miniature version of the game: choose your actions within 3 points, then play the week. The real game has 26, with matches, events and a board.",
   "sim.ap":"Action points","sim.play":"Play the week","sim.hint":"Select up to 3 action points.","sim.endcta":"Carry on in the real game","sim.reset":"Start over",
   "fog.k":"The data fog","fog.t":"If you don't measure, you're flying blind.",
-  "fog.p1":"At the start of the game, like most clubs, you know neither the quality of your database nor the value of your fanbase. Your DMOS score is only a range.",
+  "fog.p1":"At the start of the game, like most clubs, you know neither the quality of your database nor the value of your fanbase. Your data maturity is only a range.",
   "fog.p2":"C'mon Sports' solutions lift that fog — in the game as in real life. Try it:",
-  "fog.switch":"Switch on C'mon Sports support","fog.dmos":"DMOS score","fog.value":"Fan Lab value","fog.quality":"Data quality","fog.pen":"Catchment penetration",
-  "dmos.k":"Data Marketing Operating System","dmos.t":"The DMOS score: six pillars, 60 points, one certification.",
-  "dmos.p":"The method C'mon Sports uses to measure how well a club orchestrates its data. In the game, each pillar has a concrete effect. Adjust them and watch your score move.",
+  "fog.switch":"Switch on C'mon Sports support","fog.dmos":"Data maturity","fog.value":"Fanbase value","fog.quality":"Data quality","fog.pen":"Catchment penetration",
+  "dmos.k":"Data maturity, explained simply","dmos.t":"Does your club know how to make the most of its fans? A score out of 60 tells you.",
+  "dmos.p":"C'mon Sports measures a club's data maturity with its DMOS grid (short for <i>Data Marketing Operating System</i>, the operating system of data-driven marketing). Put simply: six plain questions, each scored out of 10. Together they make a score out of 60; from 30 the club is certified Silver, from 45 Gold. Click a question, then raise or lower its score.",
   "dmos.silver":"≥ 30 · Silver","dmos.gold":"≥ 45 · Gold",
   "svc.k":"The C'mon Sports ecosystem, in play","svc.t":"Real solutions, with their real effects.","svc.p":"In the game's C'mon Sports tab, you can switch on the services the agency actually deploys for clubs. The game is a faithful model, not a metaphor.",
   "cmon.t":"The data &amp; marketing agency for sports clubs.",
-  "cmon.p1":"Based in La Chaux-de-Fonds, C'mon Sports helps Swiss clubs and leagues turn fans into data, data into revenue, and revenue into arguments in front of sponsors.",
+  "cmon.p1":"Based in Lausanne, C'mon Sports helps Swiss clubs and leagues turn their fans into a tangible asset, their data into revenue, and their revenue into arguments in front of sponsors.",
   "cmon.p2":"Club Catalist grew out of one observation: most clubs run their marketing with no instruments. In 20 minutes, the game makes visible what an audit reveals in a few weeks.",
   "cmon.cta1":"Talk to us for 30 minutes","cmon.cta2":"Estimate my fanbase's value",
-  "cmon.a1t":"Measure","cmon.a1p":"DMOS Audit and Fan Lab: a score for your data orchestration and the economic value of your audience.",
-  "cmon.a2t":"Structure","cmon.a2p":"Data Factory: a clean contact base, GDPR and Swiss FADP compliant, maintained over time.",
+  "cmon.a1t":"Measure · Audit &amp; Fan Intelligence","cmon.a1p":"Fan Equity Audit, Fan Lab Insight and Fan Lab Pro: your club's data maturity and the economic value of your audience.",
+  "cmon.a2t":"Structure · Fan Management","cmon.a2p":"Fan Data Factory: a clean contact base, GDPR and Swiss FADP compliant, maintained over time.",
   "cmon.a3t":"Engage","cmon.a3p":"Blue Penguin and Griddy Picks: tokenised loyalty and prediction games that collect data every matchday.",
   "cmon.a4t":"Monetise","cmon.a4p":"Figures to put on the table in a sponsor meeting, to justify a price rather than haggle over it.",
   "final.t":"Can you last a whole season?","final.p":"Free, no install, in French, German or English. Your game is saved on your device, week after week.",
@@ -761,32 +764,57 @@ function crest(c) {
 }
 
 const PILLARS = [
-  { key:"strategie", label:{fr:"Stratégie digitale",de:"Digitale Strategie",en:"Digital strategy"},
-    hint:{fr:"Vision, KPIs, gouvernance — stabilise la confiance du comité.",de:"Vision, KPIs, Governance — stabilisiert das Vertrauen des Vorstands.",en:"Vision, KPIs, governance — steadies the board's confidence."} },
-  { key:"contenu", label:{fr:"Contenu & social",de:"Content & Social",en:"Content & social"},
-    hint:{fr:"Amplifie l'effet des publications sur l'engagement.",de:"Verstärkt die Wirkung der Beiträge auf das Engagement.",en:"Amplifies the effect of posts on engagement."} },
-  { key:"donnees", label:{fr:"Données fans",de:"Fandaten",en:"Fan data"},
-    hint:{fr:"Booste la collecte de contacts et l'efficacité des campagnes.",de:"Steigert die Kontaktsammlung und die Wirksamkeit der Kampagnen.",en:"Boosts contact collection and campaign effectiveness."} },
-  { key:"outils", label:{fr:"Outils & CRM",de:"Tools & CRM",en:"Tools & CRM"},
-    hint:{fr:"Réduit le coût des actions marketing.",de:"Senkt die Kosten der Marketingaktionen.",en:"Lowers the cost of marketing actions."} },
-  { key:"acquisition", label:{fr:"Acquisition",de:"Akquisition",en:"Acquisition"},
-    hint:{fr:"Accélère la croissance de la fanbase.",de:"Beschleunigt das Wachstum der Fanbase.",en:"Speeds up fanbase growth."} },
-  { key:"conformite", label:{fr:"Conformité RGPD",de:"Datenschutz-Konformität",en:"GDPR compliance"},
-    hint:{fr:"Réduit le risque de contrôle et d'amende.",de:"Verringert das Risiko von Kontrollen und Bussen.",en:"Reduces the risk of inspections and fines."} },
+  { key:"strategie", short:{fr:"Cap",de:"Kurs",en:"Direction"},
+    label:{fr:"Un cap clair",de:"Ein klarer Kurs",en:"A clear direction"},
+    q:{fr:"Savez-vous où vous allez ?",de:"Wissen Sie, wohin Sie wollen?",en:"Do you know where you're heading?"},
+    hint:{fr:"Des objectifs chiffrés et quelqu'un qui pilote le marketing digital.",de:"Bezifferte Ziele und jemand, der das digitale Marketing steuert.",en:"Measurable goals and someone actually steering digital marketing."},
+    game:{fr:"le comité vous fait davantage confiance.",de:"Der Vorstand vertraut Ihnen mehr.",en:"the board trusts you more."} },
+  { key:"contenu", short:{fr:"Contenus",de:"Inhalte",en:"Content"},
+    label:{fr:"Contenus & réseaux sociaux",de:"Inhalte & soziale Medien",en:"Content & social media"},
+    q:{fr:"Vos publications font-elles réagir ?",de:"Lösen Ihre Beiträge Reaktionen aus?",en:"Do your posts get a reaction?"},
+    hint:{fr:"Publier régulièrement ce qui intéresse vraiment les fans : coulisses, matchs, joueurs.",de:"Regelmässig veröffentlichen, was die Fans wirklich interessiert: Hintergründe, Spiele, Spieler.",en:"Regularly posting what fans actually care about: behind the scenes, matches, players."},
+    game:{fr:"chaque publication engage davantage.",de:"Jeder Beitrag erzeugt mehr Engagement.",en:"every post drives more engagement."} },
+  { key:"donnees", short:{fr:"Fans",de:"Fans",en:"Fans"},
+    label:{fr:"Connaissance des fans",de:"Kenntnis der Fans",en:"Knowing your fans"},
+    q:{fr:"Savez-vous qui sont vos fans ?",de:"Wissen Sie, wer Ihre Fans sind?",en:"Do you know who your fans are?"},
+    hint:{fr:"Un nom, une adresse e-mail, des habitudes : passer du spectateur anonyme au fan identifié.",de:"Ein Name, eine E-Mail-Adresse, Gewohnheiten: vom anonymen Zuschauer zum bekannten Fan.",en:"A name, an email address, habits: turning an anonymous spectator into a known fan."},
+    game:{fr:"vous collectez plus de contacts et vos campagnes rapportent plus.",de:"Sie sammeln mehr Kontakte und Ihre Kampagnen bringen mehr ein.",en:"you collect more contacts and your campaigns earn more."} },
+  { key:"outils", short:{fr:"Outils",de:"Tools",en:"Tools"},
+    label:{fr:"Les bons outils",de:"Die richtigen Tools",en:"The right tools"},
+    q:{fr:"Vos outils vous font-ils gagner du temps ?",de:"Sparen Ihnen Ihre Tools Zeit?",en:"Do your tools save you time?"},
+    hint:{fr:"Un fichier fans centralisé (un « CRM ») et des outils d'envoi bien réglés, plutôt que dix tableurs.",de:"Eine zentrale Fan-Datei (ein «CRM») und gut eingestellte Versandtools statt zehn Tabellen.",en:"One central fan file (a “CRM”) and well-tuned sending tools, rather than ten spreadsheets."},
+    game:{fr:"toutes vos actions coûtent moins cher.",de:"Alle Ihre Aktionen werden günstiger.",en:"all your actions cost less."} },
+  { key:"acquisition", short:{fr:"Recrutement",de:"Gewinnung",en:"Growth"},
+    label:{fr:"Recrutement de nouveaux fans",de:"Gewinnung neuer Fans",en:"Winning new fans"},
+    q:{fr:"Attirez-vous de nouveaux publics ?",de:"Gewinnen Sie neues Publikum?",en:"Are you reaching new audiences?"},
+    hint:{fr:"Aller chercher les familles, les jeunes, les entreprises de la région au-delà des fidèles.",de:"Über die Treuen hinaus Familien, Junge und Unternehmen der Region ansprechen.",en:"Going beyond the regulars to reach families, young people and local businesses."},
+    game:{fr:"votre fanbase grandit plus vite.",de:"Ihre Fanbase wächst schneller.",en:"your fanbase grows faster."} },
+  { key:"conformite", short:{fr:"Vie privée",de:"Datenschutz",en:"Privacy"},
+    label:{fr:"Respect de la vie privée",de:"Schutz der Privatsphäre",en:"Respecting privacy"},
+    q:{fr:"Vos fans ont-ils dit oui ?",de:"Haben Ihre Fans zugestimmt?",en:"Did your fans say yes?"},
+    hint:{fr:"Des consentements en règle (RGPD en Europe, nLPD en Suisse) : une base qu'on a le droit d'utiliser.",de:"Einwilligungen in Ordnung (DSGVO in Europa, nDSG in der Schweiz): eine Basis, die man nutzen darf.",en:"Consents in order (GDPR in Europe, FADP in Switzerland): a database you are allowed to use."},
+    game:{fr:"moins de risque de contrôle et d'amende.",de:"Weniger Risiko für Kontrollen und Bussen.",en:"less risk of inspections and fines."} },
 ];
 
+/* Familles de produits C'mon Sports */
+const FAMILIES = {
+  audit:{fr:"Audit",de:"Audit",en:"Audit"},
+  intel:{fr:"Fan Intelligence",de:"Fan Intelligence",en:"Fan Intelligence"},
+  mgmt:{fr:"Fan Management",de:"Fan Management",en:"Fan Management"},
+  engage:{fr:"Engagement",de:"Engagement",en:"Engagement"},
+};
 const SERVICES = [
-  { id:"audit", name:"Audit DMOS", price:{fr:"5 000 CHF · one-shot",de:"CHF 5 000 · einmalig",en:"CHF 5,000 · one-off"},
-    pitch:{fr:"Diagnostic complet de l'orchestration de vos données : kick-off, analyse des 6 piliers, workshop avec le comité, rapport et roadmap.",
-           de:"Vollständige Diagnose Ihrer Datenorchestrierung: Kick-off, Analyse der 6 Säulen, Workshop mit dem Vorstand, Bericht und Roadmap.",
-           en:"A full diagnosis of your data orchestration: kick-off, analysis of the 6 pillars, a workshop with the board, report and roadmap."},
-    game:{fr:"Révèle vos scores DMOS exacts (fini les fourchettes), débloque la certification Silver/Gold, formations guidées −20 %. Confiance du comité +8.",
-          de:"Deckt Ihre exakten DMOS-Scores auf (Schluss mit Spannen), schaltet die Silver-/Gold-Zertifizierung frei, geführte Schulungen −20 %. Vertrauen des Vorstands +8.",
-          en:"Reveals your exact DMOS scores (no more ranges), unlocks Silver/Gold certification, guided training −20%. Board confidence +8."},
+  { id:"audit", fam:"audit", name:"Fan Equity Audit", price:{fr:"5 000 CHF · one-shot",de:"CHF 5 000 · einmalig",en:"CHF 5,000 · one-off"},
+    pitch:{fr:"Le bilan complet de ce que vaut votre relation aux fans et de la manière dont le club collecte et utilise ses données : lancement, analyse, atelier avec le comité, rapport et feuille de route.",
+           de:"Die vollständige Bilanz, was Ihre Beziehung zu den Fans wert ist und wie der Club seine Daten sammelt und nutzt: Kick-off, Analyse, Workshop mit dem Vorstand, Bericht und Roadmap.",
+           en:"The full picture of what your relationship with fans is worth and how the club collects and uses its data: kick-off, analysis, a workshop with the board, report and roadmap."},
+    game:{fr:"Révèle votre note de maturité data exacte (fini les fourchettes), débloque la certification Silver/Gold, formations guidées −20 %. Confiance du comité +8.",
+          de:"Deckt Ihre exakte Datenreife-Note auf (Schluss mit Spannen), schaltet die Silver-/Gold-Zertifizierung frei, geführte Schulungen −20 %. Vertrauen des Vorstands +8.",
+          en:"Reveals your exact data maturity score (no more ranges), unlocks Silver/Gold certification, guided training −20%. Board confidence +8."},
     real:{fr:"Il transforme une intuition sur vos données en note comparable d'une année sur l'autre, avec une feuille de route chiffrée.",
           de:"Es verwandelt ein Bauchgefühl über Ihre Daten in eine Note, die von Jahr zu Jahr vergleichbar ist — mit einer bezifferten Roadmap.",
           en:"It turns a hunch about your data into a score you can compare year on year, with a costed roadmap."} },
-  { id:"insight", name:"Fan Lab Insight", price:{fr:"6 000 CHF · analyse",de:"CHF 6 000 · Analyse",en:"CHF 6,000 · analysis"},
+  { id:"insight", fam:"intel", name:"Fan Lab Insight", price:{fr:"6 000 CHF · analyse",de:"CHF 6 000 · Analyse",en:"CHF 6,000 · analysis"},
     pitch:{fr:"L'analyse fondamentale de votre base CRM : qualité des données et indice de pénétration de votre bassin de fans.",
            de:"Die Grundanalyse Ihrer CRM-Basis: Datenqualität und Durchdringungsindex Ihres Fan-Einzugsgebiets.",
            en:"The fundamental analysis of your CRM base: data quality and the penetration index of your fan catchment."},
@@ -796,7 +824,7 @@ const SERVICES = [
     real:{fr:"La première mesure sérieuse d'une base : combien de personnes le club pourrait réellement atteindre, et ce que valent les adresses qu'il possède déjà.",
           de:"Die erste ernsthafte Messung einer Basis: Wie viele Personen der Club tatsächlich erreichen könnte und was die vorhandenen Adressen wert sind.",
           en:"The first serious measurement of a base: how many people the club could actually reach, and what the addresses it already holds are worth."} },
-  { id:"pro", name:"Fan Lab Pro", price:{fr:"18 000 CHF · inclut Insight",de:"CHF 18 000 · inkl. Insight",en:"CHF 18,000 · includes Insight"},
+  { id:"pro", fam:"intel", name:"Fan Lab Pro", price:{fr:"18 000 CHF · inclut Insight",de:"CHF 18 000 · inkl. Insight",en:"CHF 18,000 · includes Insight"},
     pitch:{fr:"L'analyse complète de la valeur de votre audience : ROI ticketing, ROI merchandising et valorisation économique de la fanbase.",
            de:"Die vollständige Analyse des Werts Ihres Publikums: Ticketing-ROI, Merchandising-ROI und wirtschaftliche Bewertung der Fanbase.",
            en:"The complete analysis of your audience's value: ticketing ROI, merchandising ROI and an economic valuation of the fanbase."},
@@ -806,7 +834,7 @@ const SERVICES = [
     real:{fr:"Le document qu'on pose sur la table en rendez-vous sponsor, quand il faut justifier un montant plutôt que le négocier.",
           de:"Das Dokument, das man beim Sponsorentermin auf den Tisch legt, wenn ein Betrag begründet statt verhandelt werden muss.",
           en:"The document you put on the table in a sponsor meeting, when a price has to be justified rather than haggled over."} },
-  { id:"df", name:"Data Factory", price:{fr:"2 000 CHF / mois",de:"CHF 2 000 / Monat",en:"CHF 2,000 / month"},
+  { id:"df", fam:"mgmt", name:"Fan Data Factory", price:{fr:"2 000 CHF / mois",de:"CHF 2 000 / Monat",en:"CHF 2,000 / month"},
     pitch:{fr:"Le service opérationnel qui structure et entretient vos données fans : nettoyage, déduplication, procédures de collecte et de maintenance.",
            de:"Der operative Dienst, der Ihre Fandaten strukturiert und pflegt: Bereinigung, Deduplizierung, Erfassungs- und Wartungsprozesse.",
            en:"The operational service that structures and maintains your fan data: cleaning, de-duplication, collection and maintenance procedures."},
@@ -816,7 +844,7 @@ const SERVICES = [
     real:{fr:"Sans lui, une base perd environ un cinquième de sa valeur par an.",
           de:"Ohne ihn verliert eine Datenbasis rund ein Fünftel ihres Werts pro Jahr.",
           en:"Without it, a database loses about a fifth of its value every year."} },
-  { id:"bp", name:"Blue Penguin", price:{fr:"12 000 CHF + 1 500 CHF / mois",de:"CHF 12 000 + CHF 1 500 / Monat",en:"CHF 12,000 + CHF 1,500 / month"},
+  { id:"bp", fam:"engage", name:"Blue Penguin", price:{fr:"12 000 CHF + 1 500 CHF / mois",de:"CHF 12 000 + CHF 1 500 / Monat",en:"CHF 12,000 + CHF 1,500 / month"},
     pitch:{fr:"Programme de fidélité tokenisé : les fans gagnent des récompenses à chaque interaction avec le club.",
            de:"Tokenisiertes Treueprogramm: Fans erhalten bei jeder Interaktion mit dem Club Belohnungen.",
            en:"A tokenised loyalty programme: fans earn rewards with every interaction with the club."},
@@ -826,7 +854,7 @@ const SERVICES = [
     real:{fr:"Chaque interaction du fan avec le club lui rapporte quelque chose — et rapporte au club une donnée de plus.",
           de:"Jede Interaktion des Fans mit dem Club bringt ihm etwas — und dem Club ein weiteres Datum.",
           en:"Every interaction a fan has with the club earns them something — and earns the club one more data point."} },
-  { id:"gp", name:"Griddy Picks", price:{fr:"2 500 CHF + 500 CHF / jour de match",de:"CHF 2 500 + CHF 500 / Spieltag",en:"CHF 2,500 + CHF 500 / matchday"},
+  { id:"gp", fam:"engage", name:"Griddy Picks", price:{fr:"2 500 CHF + 500 CHF / jour de match",de:"CHF 2 500 + CHF 500 / Spieltag",en:"CHF 2,500 + CHF 500 / matchday"},
     pitch:{fr:"Jeu de pronostics aux couleurs du club : les fans jouent chaque journée de championnat et laissent leurs données.",
            de:"Tippspiel in den Clubfarben: Die Fans spielen an jedem Meisterschaftsspieltag mit und hinterlassen ihre Daten.",
            en:"A prediction game in the club's colours: fans play every matchday and leave their data."},
@@ -843,12 +871,12 @@ const S = {
   div1:{fr:"1re division",de:"1. Liga",en:"1st division"}, div2:{fr:"2e division",de:"2. Liga",en:"2nd division"},
   capacity:{fr:"Capacité",de:"Kapazität",en:"Capacity"}, engagement:{fr:"Engagement",de:"Engagement",en:"Engagement"},
   playWith:{fr:"Jouer avec ce club",de:"Mit diesem Club spielen",en:"Play this club"},
-  dmosStart:{fr:"DMOS de départ",de:"DMOS zu Beginn",en:"Starting DMOS"},
+  dmosStart:{fr:"Maturité data de départ",de:"Datenreife zu Beginn",en:"Starting data maturity"},
   week:{fr:"Semaine",de:"Woche",en:"Week"}, wk:{fr:"S",de:"W",en:"W"},
   inGame:{fr:"Dans le jeu",de:"Im Spiel",en:"In the game"}, inReal:{fr:"Dans la réalité",de:"In der Realität",en:"In real life"},
   noMeasure:{fr:"Sans mesure",de:"Ohne Messung",en:"Unmeasured"}, measured:{fr:"Avec C'mon Sports",de:"Mit C'mon Sports",en:"With C'mon Sports"},
   board:{fr:"Tableau de bord",de:"Dashboard",en:"Dashboard"},
-  fogDmos0:{fr:"Fourchette estimée",de:"Geschätzte Spanne",en:"Estimated range"}, fogDmos1:{fr:"Score exact · Audit DMOS",de:"Exakter Score · DMOS-Audit",en:"Exact score · DMOS Audit"},
+  fogDmos0:{fr:"Fourchette estimée",de:"Geschätzte Spanne",en:"Estimated range"}, fogDmos1:{fr:"Note exacte · Fan Equity Audit",de:"Exakte Note · Fan Equity Audit",en:"Exact score · Fan Equity Audit"},
   fogVal0:{fr:"Inconnue",de:"Unbekannt",en:"Unknown"}, fogVal1:{fr:"Valorisation · Fan Lab Pro",de:"Bewertung · Fan Lab Pro",en:"Valuation · Fan Lab Pro"},
   fogQ0:{fr:"Invisible",de:"Unsichtbar",en:"Invisible"}, fogQ1:{fr:"Mesurée · Fan Lab Insight",de:"Gemessen · Fan Lab Insight",en:"Measured · Fan Lab Insight"},
   fogP0:{fr:"Non mesurée",de:"Nicht gemessen",en:"Not measured"}, fogP1:{fr:"Bassin atteignable identifié",de:"Erreichbares Einzugsgebiet erkannt",en:"Reachable catchment identified"},
@@ -889,7 +917,7 @@ const ACTS = [
     run(s){ s.sponsor += 9; s.budget += 600;
       return [ "good", {fr:"Activation sponsor : satisfaction +9",de:"Sponsor-Aktivierung: Zufriedenheit +9",en:"Sponsor activation: satisfaction +9"} ]; } },
   { id:"prospect", ap:2, cost:2000, name:{fr:"Prospection sponsor",de:"Sponsorenakquise",en:"Sponsor prospecting"},
-    desc:{fr:"Succès selon DMOS et données",de:"Erfolg je nach DMOS und Daten",en:"Success depends on DMOS and data"},
+    desc:{fr:"Succès selon vos données fans",de:"Erfolg je nach Ihren Fandaten",en:"Success depends on your fan data"},
     run(s){ const p = 0.25 + s.contacts / (s.fans * 1.2); if (s.rnd() < p) { const v = 6000 + Math.round(s.rnd()*6) * 1000; s.budget += v; s.conf += 6;
         return [ "good", {fr:`Nouveau sponsor signé : +${fmt(v)} CHF !`,de:`Neuer Sponsor unterschrieben: +${fmt(v)} CHF!`,en:`New sponsor signed: +CHF ${fmt(v)}!`} ]; }
       return [ "bad", {fr:"Le prospect décline : « Vous avez des chiffres sur votre audience ? »",de:"Der Interessent lehnt ab: «Haben Sie Zahlen zu Ihrem Publikum?»",en:"The prospect declines: “Do you have figures on your audience?”"} ]; } },
@@ -930,9 +958,9 @@ function radar(values, color, sel) {
   const poly = values.map((v, i) => pt(i, R * Math.max(v, .3)/10).join(",")).join(" ");
   g += `<polygon points="${poly}" fill="${color}" fill-opacity=".22" stroke="${color}" stroke-width="2.2" stroke-linejoin="round" style="transition:all .5s"/>`;
   values.forEach((v, i) => { const [x, y] = pt(i, R * Math.max(v, .3)/10); g += `<circle cx="${x}" cy="${y}" r="${i === sel ? 5 : 3.2}" fill="${color}"/>`; });
-  PILLARS.forEach((p, i) => { const [x, y] = pt(i, R + 18); const lab = L(p.label).split(" ")[0];
+  PILLARS.forEach((p, i) => { const [x, y] = pt(i, R + 18); const lab = L(p.short);
     g += `<text x="${x}" y="${y}" fill="${i === sel ? "#F4F8FC" : "#94A6B8"}" font-size="10.5" font-weight="700" text-anchor="${Math.abs(x-cx) < 5 ? "middle" : x > cx ? "start" : "end"}" dominant-baseline="middle" font-family="Raleway,sans-serif">${esc(lab)}</text>`; });
-  return `<svg viewBox="-30 -10 280 240" role="img" aria-label="Radar DMOS">${g}</svg>`;
+  return `<svg viewBox="-30 -10 280 240" role="img" aria-label="Maturité data">${g}</svg>`;
 }
 
 /* ── Clubs ── */
@@ -977,7 +1005,7 @@ function selectClub(id) {
 document.addEventListener("keydown", e => {
   const b = e.target.closest && e.target.closest(".club-btn, .svc-tab");
   if (!b || !["ArrowDown","ArrowUp","ArrowLeft","ArrowRight"].includes(e.key)) return;
-  const all = [...b.parentElement.children], i = all.indexOf(b);
+  const all = [...b.closest(".svc-tabs, .club-list").querySelectorAll(".club-btn, .svc-tab")], i = all.indexOf(b);
   const n = all[(i + (e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : all.length - 1)) % all.length];
   e.preventDefault(); n.click(); n.focus();
 });
@@ -987,7 +1015,7 @@ const TOASTS = [
   {fr:"Une vidéo des coulisses devient virale !",de:"Ein Video hinter den Kulissen geht viral!",en:"A behind-the-scenes video goes viral!"},
   {fr:"Le président veut une campagne à son effigie…",de:"Der Präsident will eine Kampagne mit seinem Gesicht…",en:"The chairman wants a campaign starring himself…"},
   {fr:"Nouveau sponsor signé : +8 000 CHF",de:"Neuer Sponsor unterschrieben: +8 000 CHF",en:"New sponsor signed: +CHF 8,000"},
-  {fr:"Audit DMOS livré : scores exacts révélés",de:"DMOS-Audit geliefert: exakte Scores aufgedeckt",en:"DMOS Audit delivered: exact scores revealed"},
+  {fr:"Fan Equity Audit livré : maturité data révélée",de:"Fan Equity Audit geliefert: Datenreife aufgedeckt",en:"Fan Equity Audit delivered: data maturity revealed"},
   {fr:"Victoire 3–1 à domicile, salle comble",de:"3:1-Heimsieg vor vollem Haus",en:"3–1 home win in front of a full house"},
   {fr:"Contrôle RGPD annoncé la semaine prochaine",de:"Datenschutzkontrolle für nächste Woche angekündigt",en:"GDPR inspection announced for next week"},
 ];
@@ -1121,7 +1149,7 @@ const dm = { vals:[4, 3, 2, 3, 2, 1], sel:0 };
 function renderDmos() {
   $("#pillars").innerHTML = PILLARS.map((p, i) => `
     <button class="pillar" type="button" aria-pressed="${i === dm.sel}" data-p="${i}">
-      <b>${esc(L(p.label))}</b><span class="num">${dm.vals[i]}/10</span>
+      <b>${esc(L(p.label))}</b><span>${esc(L(p.q))} · <span class="num">${dm.vals[i]}/10</span></span>
       <div class="lv">${Array.from({ length:10 }, (_, k) => `<i class="${k < dm.vals[i] ? "on" : ""}"></i>`).join("")}</div>
     </button>`).join("");
   document.querySelectorAll(".pillar").forEach(b => b.onclick = () => { dm.sel = +b.dataset.p; renderDmos(); });
@@ -1132,7 +1160,7 @@ function renderDmos() {
   $("#dmos-radar").innerHTML = radar(dm.vals, "#62BEF5", dm.sel);
   const p = PILLARS[dm.sel];
   $("#p-name").textContent = `${L(p.label)} · ${dm.vals[dm.sel]}/10`;
-  $("#p-info").innerHTML = `<b>${esc(L(p.label))}</b> — ${esc(L(p.hint))}`;
+  $("#p-info").innerHTML = `<b>${esc(L(p.q))}</b> ${esc(L(p.hint))}<br><span style="color:var(--ink-3)">${esc(L(S.inGame))} : ${esc(L(p.game))}</span>`;
 }
 $("#p-minus").onclick = () => { dm.vals[dm.sel] = Math.max(0, dm.vals[dm.sel] - 1); renderDmos(); };
 $("#p-plus").onclick = () => { dm.vals[dm.sel] = Math.min(10, dm.vals[dm.sel] + 1); renderDmos(); };
@@ -1140,11 +1168,13 @@ $("#p-plus").onclick = () => { dm.vals[dm.sel] = Math.min(10, dm.vals[dm.sel] + 
 /* ── Solutions ── */
 let svcSel = 0;
 function renderSvc() {
-  $("#svc-tabs").innerHTML = SERVICES.map((s, i) => `<button class="svc-tab" role="tab" aria-selected="${i === svcSel}" data-s="${i}">${esc(s.name)}</button>`).join("");
+  $("#svc-tabs").innerHTML = Object.keys(FAMILIES).map(f => `<div class="svc-fam"><span>${esc(L(FAMILIES[f]))}</span><div>` +
+    SERVICES.map((s, i) => s.fam !== f ? "" : `<button class="svc-tab" role="tab" aria-selected="${i === svcSel}" data-s="${i}">${esc(s.name)}</button>`).join("") +
+    `</div></div>`).join("");
   document.querySelectorAll(".svc-tab").forEach(b => b.onclick = () => { svcSel = +b.dataset.s; renderSvc(); });
   const s = SERVICES[svcSel];
   $("#svc-panel").innerHTML = `
-    <div class="fade-swap"><h3>${esc(s.name)}</h3><div class="price">${esc(L(s.price))}</div><p class="pitch">${esc(L(s.pitch))}</p></div>
+    <div class="fade-swap"><div class="fam">${esc(L(FAMILIES[s.fam]))}</div><h3>${esc(s.name)}</h3><div class="price">${esc(L(s.price))}</div><p class="pitch">${esc(L(s.pitch))}</p></div>
     <div class="fade-swap">
       <div class="svc-col game"><h4>${esc(L(S.inGame))}</h4><p>${esc(L(s.game))}</p></div>
       <div class="svc-col real"><h4>${esc(L(S.inReal))}</h4><p>${esc(L(s.real))}</p></div>
