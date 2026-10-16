@@ -732,7 +732,7 @@ input[type="text"]:focus,input[type="password"]:focus{border-color:var(--brand-l
           <label style="display:flex; gap:8px; align-items:flex-start; font-size:12px; color:var(--muted); line-height:1.5; cursor:pointer">
             <input type="checkbox" id="new-optin" style="margin-top:2px; accent-color:#62BEF5">
             <span data-i18n="ui.login.optin">J'accepte de recevoir les actualités C'mon Sports par e-mail. <b style="color:var(--text)">Optionnel</b> —
-            sans cette case, aucune campagne ne me sera envoyée.<br>
+            sans cette case, Club Catalist ne m'inscrit à aucun envoi.<br>
             <span style="font-size:11px">Dans tous les cas, la création du compte enregistre mon adresse dans le CRM
             de C'mon Corporations (Brevo, hébergement UE) pour la gestion des comptes Club Catalist.
             <a id="optin-privacy" style="color:var(--accent);cursor:pointer;text-decoration:underline">En savoir plus</a></span></span>
@@ -2854,34 +2854,35 @@ async function createProfile() {
   // migration : une sauvegarde d'avant les profils est rattachée au premier profil créé
   const legacy = localStorage.getItem(LEGACY_SAVE_KEY);
   if (legacy) { localStorage.setItem("mktclubgm1_p" + u.id, legacy); localStorage.removeItem(LEGACY_SAVE_KEY); }
-  if (optIn) brevoSyncContact(u); // asynchrone, ne bloque pas la création
+  // Tout compte rejoint le CRM (le marketing, lui, dépend de la case) —
+  // asynchrone, ne bloque pas la création.
+  brevoSyncContact(u);
   finishLogin(u);
 }
 
-/* ================= Synchronisation Brevo =================
-   Uniquement pour les comptes ayant coché l'opt-in marketing.
-   Le contact est créé/mis à jour chez Brevo avec le marqueur
-   CMON_SOLUTION_CLUBCATALIST (créé automatiquement au besoin).
-   Sans clé API configurée (<i class=ic-sliders></i> Admin) ou hors ligne, les contacts
-   sont mis en file d'attente locale et synchronisés plus tard. */
+/* ================= Synchronisation CRM =================
+   Tout compte créé rejoint la liste Club Catalist chez Brevo (intérêt
+   légitime) ; les envois marketing restent soumis à la case d'opt-in.
+   Le jeu ne détient aucune clé : il écrit au relais CRM (relay/worker.js),
+   qui garde la clé Brevo côté serveur et applique les garde-fous du CRM —
+   en particulier, il ne touche jamais au statut d'envoi d'un contact déjà
+   connu. Hors ligne, ou tant que le relais n'est pas configuré, le compte
+   reste en file locale et part à la visite suivante. */
 /* Sorties de conversion — liens tracés pour mesurer ce que le jeu apporte */
 const BOOKING_URL = "https://calendly.com/meeting-douglas-finazzi/c-mon-sports-huddle-clone?utm_source=clubcatalist&utm_medium=game";
 const FANLAB_CALC_URL = "https://fanlab.cmon-sports.com/?utm_source=clubcatalist&utm_medium=game";
 
-const BREVO_KEY = "mktclubgm_brevo_key";
-const BREVO_LIST_KEY = "mktclubgm_brevo_list";
-// Suffixe de version : à incrémenter dès que la liste des attributs change,
-// sinon les navigateurs ayant déjà synchronisé sauteraient la création des
-// nouveaux attributs et Brevo rejetterait le contact (HTTP 400).
-const BREVO_ATTR_OK = "mktclubgm_brevo_attr_ok_v5";
-const BREVO_ATTR = "CMON_SOLUTION_CLUBCATALIST";
-const BREVO_ATTR_PSEUDO = "PSEUDO";
-const BREVO_LIST_DEFAULT = 63; // liste « Club Catalist » côté Brevo
+// Adresse du relais déployé (README, « Relais CRM »). Vide : rien ne part.
+const RELAY_URL = "";
+const BREVO_LIST_ID = 63;   // liste « CMON_SOLUTION_CLUBCATALIST », fixée côté relais
+const CRM_EVENTS_MAX = 20;  // file d'événements par compte
 
-function brevoListId() { return parseInt(localStorage.getItem(BREVO_LIST_KEY) || BREVO_LIST_DEFAULT, 10); }
-function brevoHeaders(key) {
-  return { "api-key": key, "content-type": "application/json", accept: "application/json" };
-}
+// Héritage : la clé API vivait dans le navigateur de l'administrateur. Le
+// relais la rend inutile ; une clé qui ouvre tout le CRM ne doit pas traîner.
+try {
+  Object.keys(localStorage).filter(k => k.startsWith("mktclubgm_brevo_"))
+        .forEach(k => localStorage.removeItem(k));
+} catch (e) {}
 
 /* ================= Statut de synchronisation ==========================
    Le statut était stocké en français dans le profil, et le code filtrait
@@ -2893,12 +2894,12 @@ function brevoHeaders(key) {
    chaîne : les accesseurs ci-dessous les acceptent toujours. */
 const BREVO_STATUS = {
   pending: () => tr("adm.st.pending", null, "en attente"),
-  nokey:   () => tr("adm.st.nokey", null, "en attente (clé API non configurée)"),
+  nokey:   () => tr("adm.st.nokey", null, "en attente (relais non configuré)"),
   profile: () => tr("adm.st.profile", null, "en attente (mise à jour du profil)"),
   offline: () => tr("adm.st.offline", null, "en attente (hors ligne)"),
   synced:  s => tr("adm.st.synced", {v0: s.listId, v1: s.optIn
                      ? tr("adm.st.optin", null, "avec opt-in")
-                     : tr("adm.st.nooptin", null, "sans opt-in — exclu des envois"),
+                     : tr("adm.st.nooptin", null, "sans opt-in"),
                    v2: dateLocale(s.date)}, `synchronisé (liste {v0}, {v1}) le {v2}`),
   known:   s => tr("adm.st.known", {v0: s.listId}, `déjà connu — rattaché à la liste {v0}`),
   failed:  s => tr("adm.st.failed", {v0: s.http, v1: s.detail || ""}, `échec (HTTP {v0}{v1})`),
@@ -2926,98 +2927,68 @@ function brevoFailed(u) {
   return !!s && s.code === "failed";
 }
 
-function brevoUpdateUser(uid, status) {
+/* sentEvents : nombre d'événements de tête que le relais a reçus — eux
+   seuls quittent la file, ceux ajoutés pendant l'envoi y restent. */
+function brevoUpdateUser(uid, status, sentEvents = 0) {
   const users = loadUsers();
   const u = users.find(x => x.id === uid);
-  if (u) { u.brevo = status; saveUsers(users); }
-  if (currentUser && currentUser.id === uid) currentUser.brevo = status;
+  if (u) {
+    u.brevo = status;
+    if (sentEvents && u.events) u.events = u.events.slice(sentEvents);
+    saveUsers(users);
+  }
+  if (currentUser && currentUser.id === uid) {
+    currentUser.brevo = status;
+    if (u) currentUser.events = u.events;
+  }
 }
 
-/* Crée au besoin les attributs propres à Club Catalist.
-   PSEUDO est un attribut texte dédié : on n'écrase pas PRENOM, qui sert
-   au vrai prénom des contacts dans le reste du CRM C'mon Sports. */
-async function brevoEnsureAttributes(key) {
-  if (localStorage.getItem(BREVO_ATTR_OK)) return;
-  const defs = [
-    [BREVO_ATTR, "boolean"], [BREVO_ATTR_PSEUDO, "text"],
-    // Signaux d'usage (P4) — préfixe CC_ pour ne jamais heurter les
-    // attributs métier existants du CRM C'mon Sports.
-    ["CC_SEASONS", "float"], ["CC_SERVICES", "text"],
-    ["CC_CERT", "text"], ["CC_LAST_PLAYED", "date"],
-    // Langue d'usage : le champ de segmentation le plus utile d'un tunnel
-    // trilingue. Attribut dédié plutôt que le LANGUE natif de Brevo, dont
-    // les valeurs sont figées — un texte libre y provoquerait un HTTP 400.
-    ["CC_LANG", "text"],
-    // Questionnaire de positionnement (facultatif) + avancement pédagogique
-    ["CC_MATURITY", "text"], ["CC_PRIORITY", "text"], ["CC_TIMING", "text"],
-    ["CC_TUTO", "text"],
-  ];
-  let allOk = true;
-  for (const [name, type] of defs) {
-    try {
-      const r = await fetch(`https://api.brevo.com/v3/contacts/attributes/normal/${name}`, {
-        method: "POST", headers: brevoHeaders(key), body: JSON.stringify({ type }),
-      });
-      // 201 = créé ; 400 = existe déjà — les deux conviennent
-      if (!(r.status === 201 || r.status === 400)) allOk = false;
-    } catch (e) { allOk = false; /* non bloquant : la création du contact reste tentée */ }
-  }
-  if (allOk) localStorage.setItem(BREVO_ATTR_OK, "1");
-}
+/* Un envoi à la fois par compte : deux envois simultanés porteraient les
+   mêmes événements, qui arriveraient en double chez Brevo. Une demande
+   reçue pendant un envoi est rejouée à la fin, avec l'état le plus récent. */
+const crmInFlight = {};
 
 async function brevoSyncContact(u) {
   if (!u.email) return;                       // profils hérités sans adresse
   if (demoMode) return;                       // démo commerciale : aucune écriture CRM
-  const key = localStorage.getItem(BREVO_KEY);
-  if (!key) { brevoUpdateUser(u.id, { code: "nokey" }); return; }
-  const listId = brevoListId();
+  if (!RELAY_URL) { brevoUpdateUser(u.id, { code: "nokey" }); return; }
+  if (crmInFlight[u.id]) { crmInFlight[u.id].again = true; return; }
+  crmInFlight[u.id] = { again: false };
   try {
-    await brevoEnsureAttributes(key);
-    const payload = {
-      email: u.email,
-      updateEnabled: true,           // met à jour le contact s'il existe déjà
-      listIds: [listId],             // ← l'inscription à la liste (indispensable pour l'y voir)
-      // Garde-fou déterminant : sans consentement marketing, le contact est
-      // blacklisté côté Brevo — il figure au CRM mais ne peut PAS recevoir de
-      // campagne, même par erreur de ciblage.
-      emailBlacklisted: !u.optIn,
-      // NB : ne pas envoyer SOURCE_ACQUISITION — c'est un attribut « catégorie »
-      // à valeurs figées côté Brevo, un texte libre y provoquerait un HTTP 400.
-      attributes: Object.assign(
-        { [BREVO_ATTR]: true, OPT_IN: !!u.optIn, [BREVO_ATTR_PSEUDO]: u.pseudo || "" },
-        u.org ? { COMPANY: u.org } : {},
-        u.role ? { JOB_TITLE: u.role } : {},
-        u.sportBrevo ? { SPORT: u.sportBrevo } : {},  // catégorie Brevo : valeur numérique
-        { CC_LANG: u.lang || lang },
-        u.tuto ? { CC_TUTO: u.tuto } : {},
-        u.q || {},
-        u.cc ? {
-          CC_SEASONS: u.cc.seasons,
-          CC_SERVICES: u.cc.services,
-          CC_CERT: u.cc.cert,
-          CC_LAST_PLAYED: u.cc.lastPlayed,
-        } : {}
-      ),
-    };
-    const r = await fetch("https://api.brevo.com/v3/contacts", {
-      method: "POST", headers: brevoHeaders(key), body: JSON.stringify(payload),
+    await crmSend(u);
+  } finally {
+    const again = crmInFlight[u.id].again;
+    delete crmInFlight[u.id];
+    if (again) brevoSyncContact(u);
+  }
+}
+
+async function crmSend(u) {
+  // Relu en stockage : profil, signaux et file ont pu changer depuis l'appel.
+  const cur = loadUsers().find(x => x.id === u.id) || u;
+  const events = (cur.events || []).slice(0, CRM_EVENTS_MAX);
+  // Les valeurs restent les valeurs canoniques françaises (JOB_TITLE,
+  // CC_SERVICES, questionnaire) : le relais n'accepte que celles-là.
+  const payload = {
+    email: cur.email, pseudo: cur.pseudo || "", optIn: !!cur.optIn,
+    org: cur.org || "", role: cur.role || "", sport: cur.sportBrevo || null,
+    lang: cur.lang || lang, tuto: cur.tuto || null,
+    q: cur.q || null, cc: cur.cc || null, events,
+  };
+  try {
+    const r = await fetch(RELAY_URL.replace(/\/$/, "") + "/sync", {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload),
     });
-    if (r.ok || r.status === 204) {
-      brevoUpdateUser(u.id, { code: "synced", listId, optIn: !!u.optIn, date: new Date().toISOString() });
+    if (r.ok) {
+      brevoUpdateUser(u.id, { code: "synced", listId: BREVO_LIST_ID, optIn: !!cur.optIn,
+                              date: new Date().toISOString() }, events.length);
       return;
     }
-    // Brevo renvoie parfois « contact déjà existant » : on le rattache alors explicitement à la liste
-    if (r.status === 400) {
-      const add = await fetch(`https://api.brevo.com/v3/contacts/lists/${listId}/contacts/add`, {
-        method: "POST", headers: brevoHeaders(key), body: JSON.stringify({ emails: [u.email] }),
-      });
-      if (add.ok || add.status === 204) {
-        brevoUpdateUser(u.id, { code: "known", listId });
-        return;
-      }
-    }
     let detail = "";
-    try { const j = await r.json(); detail = j.message ? " — " + j.message : ""; } catch (e) {}
+    try {
+      const j = await r.json();
+      detail = j.field ? " — " + j.field : j.status ? " — Brevo " + j.status : j.error ? " — " + j.error : "";
+    } catch (e) {}
     brevoUpdateUser(u.id, { code: "failed", http: r.status, detail });
   } catch (e) {
     brevoUpdateUser(u.id, { code: "offline" });
@@ -3037,7 +3008,8 @@ async function brevoSyncContact(u) {
    libellés traduits : un segment Brevo « CC_SERVICES contient Fan Equity Audit »
    doit retrouver le joueur quelle que soit la langue dans laquelle il a
    joué, sans quoi chaque segment se scinderait en trois. Même principe que
-   le rôle déclaré à l'inscription, envoyé en français dans JOB_TITLE. */
+   le rôle déclaré à l'inscription, envoyé en français dans JOB_TITLE.
+   relay/worker.js en tient le miroir, vérifié par relay/worker.test.js. */
 const CRM_SERVICES = {
   audit: "Fan Equity Audit", fanlabInsight: "Fan Lab Insight", fanlabPro: "Fan Lab Pro",
   datafactory: "Fan Data Factory", bluepenguin: "Blue Penguin", griddy: "Griddy Picks",
@@ -3057,128 +3029,91 @@ function ccSignals(s) {
   };
 }
 
+/* Événements d'usage : chacun date un geste — service essayé, saison
+   terminée, questionnaire rempli — là où les attributs CC_* ne gardent que
+   le dernier état. Ils attendent dans la file du compte et partent avec la
+   synchronisation suivante ; c'est sur eux que se branchent les workflows
+   Brevo (« a essayé Fan Data Factory » → séquence Fan Data Factory). */
+function crmEvent(u, name, props) {
+  u.events = (u.events || []).concat({ name, props, at: new Date().toISOString() })
+                             .slice(-CRM_EVENTS_MAX);
+}
+
+// Le statut repasse « en attente » : si l'onglet se ferme avant l'envoi
+// temporisé, la file de la visite suivante s'en chargera.
+function crmPending(u) {
+  if (brevoIsSynced(u)) u.brevo = { code: "profile" };
+}
+
+// Les achats s'enchaînent : on temporise pour n'envoyer qu'une mise à jour.
 let ccTimer = null;
+function crmSchedule() {
+  if (!RELAY_URL || demoMode) return;
+  clearTimeout(ccTimer);
+  ccTimer = setTimeout(() => { if (currentUser && !demoMode) brevoSyncContact(currentUser); }, 15000);
+}
+
 function ccTrack() {
   if (demoMode || !currentUser || !state) return;
   const sig = ccSignals(state);
   const users = loadUsers();
   const u = users.find(x => x.id === currentUser.id);
   if (!u) return;
-  const changed = JSON.stringify(u.cc || null) !== JSON.stringify(sig);
-  u.cc = sig; currentUser.cc = sig;
-  saveUsers(users);
-  // Les achats s'enchaînent : on temporise pour n'envoyer qu'une mise à jour
-  if (changed && localStorage.getItem(BREVO_KEY)) {
-    clearTimeout(ccTimer);
-    ccTimer = setTimeout(() => { if (currentUser && !demoMode) brevoSyncContact(currentUser); }, 15000);
+  const prev = u.cc || null;
+  if (JSON.stringify(prev) === JSON.stringify(sig)) return;
+  // Ce qui est nouveau depuis la dernière mesure devient un événement
+  const before = new Set(prev && prev.services ? prev.services.split(", ") : []);
+  sig.services.split(", ").filter(sv => sv && !before.has(sv))
+     .forEach(service => crmEvent(u, "club_catalist_service_tried", { service }));
+  if (prev && sig.seasons > prev.seasons) {
+    crmEvent(u, "club_catalist_season_completed", { seasons: sig.seasons, cert: sig.cert });
   }
+  u.cc = sig;
+  crmPending(u);
+  saveUsers(users);
+  currentUser.cc = sig; currentUser.events = u.events; currentUser.brevo = u.brevo;
+  crmSchedule();
 }
 
 function brevoFlushQueue() {
-  if (!localStorage.getItem(BREVO_KEY)) return;
-  loadUsers().filter(u => u.email && !brevoIsSynced(u))
+  if (!RELAY_URL) return;
+  loadUsers().filter(u => u.email && (!brevoIsSynced(u) || (u.events && u.events.length)))
              .forEach(u => brevoSyncContact(u));
 }
 
-/* Envoi d'un contact de test — vérifie la chaîne complète jusqu'à la liste. */
-async function brevoSendTest(key, listId, email) {
+/* Diagnostic du relais : joignable ? clé Brevo acceptée ? liste et
+   attributs présents ? Un segment Brevo ne peut être bâti que sur un
+   attribut qui existe déjà dans le compte : le relais les crée au premier
+   passage, ce contrôle dit s'il reste un manque. */
+async function relayHealth() {
+  if (!RELAY_URL) return [tr("adm.relay.none", null,
+    `<i class=ic-cross></i> Relais non configuré : renseignez RELAY_URL dans jouer/index.html (voir README, « Relais CRM »).`)];
   try {
-    await brevoEnsureAttributes(key);
-    const r = await fetch("https://api.brevo.com/v3/contacts", {
-      method: "POST", headers: brevoHeaders(key),
-      body: JSON.stringify({
-        email, updateEnabled: true, listIds: [listId],
-        attributes: { [BREVO_ATTR]: true, [BREVO_ATTR_PSEUDO]: "Test Club Catalist" },
-      }),
-    });
-    if (r.ok || r.status === 204) return tr("adm.1a2173", {v0: esc(email), v1: listId}, `<i class=ic-check></i> Contact de test « {v0} » envoyé dans la liste #{v1}`);
-    let detail = "";
-    try { const j = await r.json(); detail = j.message ? " — " + j.message : ""; } catch (e) {}
-    if (r.status === 400) {
-      const add = await fetch(`https://api.brevo.com/v3/contacts/lists/${listId}/contacts/add`, {
-        method: "POST", headers: brevoHeaders(key), body: JSON.stringify({ emails: [email] }),
-      });
-      if (add.ok || add.status === 204) return tr("adm.072a6d", {v0: listId}, `<i class=ic-check></i> Contact déjà connu — rattaché à la liste #{v0}`);
-    }
-    return tr("adm.2207c0", {v0: r.status, v1: esc(detail)}, `<i class=ic-cross></i> Échec HTTP {v0}{v1}`);
-  } catch (e) { return tr("adm.56e2bf", null, "<i class=ic-cross></i> Réseau : ") + esc(e.message); }
-}
-
-/* Diagnostic complet : clé valide ? liste accessible ? combien de contacts ? */
-/* ================= Contrôle avant segmentation ========================
-   Un segment Brevo ne peut être bâti que sur un attribut qui existe déjà
-   dans le compte. Les attributs sont créés à la première synchronisation ;
-   si aucun contact n'a encore été transmis depuis l'ajout de CC_LANG, la
-   liste déroulante du constructeur de segments sera incomplète et rien ne
-   l'expliquera. Ce contrôle répond à la question avant qu'elle ne se pose. */
-const CRM_ATTRIBUTS = [
-  "CMON_SOLUTION_CLUBCATALIST", "OPT_IN", "PSEUDO", "COMPANY", "JOB_TITLE", "SPORT",
-  "CC_SEASONS", "CC_SERVICES", "CC_CERT", "CC_LAST_PLAYED", "CC_LANG",
-  "CC_MATURITY", "CC_PRIORITY", "CC_TIMING", "CC_TUTO",
-];
-
-async function brevoAudit(key) {
-  const out = [];
-  try {
-    const r = await fetch("https://api.brevo.com/v3/contacts/attributes", { headers: brevoHeaders(key) });
-    if (!r.ok) {
-      out.push(tr("adm.audit.ko", {v0: r.status},
-        `<i class=ic-cross></i> Attributs illisibles (HTTP {v0})`));
-      return out;
-    }
-    const j = await r.json();
-    const connus = new Set((j.attributes || []).map(a => a.name));
-    const manquants = CRM_ATTRIBUTS.filter(n => !connus.has(n));
-    if (!manquants.length) {
-      out.push(tr("adm.audit.ok", {v0: CRM_ATTRIBUTS.length},
-        `<i class=ic-check></i> Les {v0} attributs existent — le constructeur de segments les proposera.`));
-    } else {
-      out.push(tr("adm.audit.manque", {v0: manquants.length, v1: esc(manquants.join(", "))},
+    const r = await fetch(RELAY_URL.replace(/\/$/, "") + "/health");
+    if (!r.ok) return [tr("adm.relay.http", {v0: r.status}, `<i class=ic-cross></i> Le relais répond HTTP {v0}`)];
+    const h = await r.json();
+    const out = [h.brevo === "ok"
+      ? tr("adm.relay.ok", null, `<i class=ic-check></i> Relais joignable — clé Brevo acceptée`)
+      : tr("adm.relay.key", {v0: esc(h.brevo)}, `<i class=ic-cross></i> Brevo refuse la clé du relais ({v0})`)];
+    out.push(h.list
+      ? tr("adm.relay.list", {v0: h.listId}, `<i class=ic-check></i> Liste #{v0} accessible`)
+      : tr("adm.relay.nolist", {v0: h.listId}, `<i class=ic-cross></i> Liste #{v0} introuvable — vérifiez BREVO_LIST_ID du relais`));
+    if (h.missing && h.missing.length) {
+      out.push(tr("adm.audit.manque", {v0: h.missing.length, v1: esc(h.missing.join(", "))},
         `<i class=ic-alert></i> {v0} attribut(s) absent(s) du compte : {v1}`));
       out.push(tr("adm.audit.remede", null,
-        `<i class=ic-arrow></i> Lancez « Enregistrer & synchroniser maintenant » : la synchronisation les crée.`));
+        `<i class=ic-arrow></i> Lancez « Synchroniser maintenant » : la synchronisation les crée.`));
+    } else if (h.missing) {
+      out.push(tr("adm.audit.ok", {v0: h.expected},
+        `<i class=ic-check></i> Les {v0} attributs existent — le constructeur de segments les proposera.`));
     }
+    out.push(h.notify
+      ? tr("adm.relay.notify", null, `<i class=ic-check></i> Alerte « appel chaud » active`)
+      : tr("adm.relay.nonotify", null, `<i class=ic-alert></i> Alerte « appel chaud » désactivée (NOTIFY_TO vide)`));
+    return out;
   } catch (e) {
-    out.push(tr("adm.audit.reseau", null, `<i class=ic-cross></i> Attributs : erreur réseau`));
+    return [tr("adm.relay.offline", null, `<i class=ic-cross></i> Relais injoignable (réseau / hors ligne)`)];
   }
-  try {
-    const r = await fetch("https://api.brevo.com/v3/contacts/segments?limit=50", { headers: brevoHeaders(key) });
-    if (r.ok) {
-      const j = await r.json();
-      const noms = (j.segments || []).map(s => s.segmentName || s.name).filter(Boolean);
-      out.push(noms.length
-        ? tr("adm.audit.segments", {v0: noms.length, v1: esc(noms.join(" · "))},
-            `<i class=ic-layers></i> {v0} segment(s) déjà défini(s) : {v1}`)
-        : tr("adm.audit.aucunsegment", null,
-            `<i class=ic-layers></i> Aucun segment défini pour l'instant.`));
-    }
-  } catch (e) { /* la lecture des segments n'est pas indispensable */ }
-  return out;
-}
-
-async function brevoDiagnose(key, listId) {
-  const out = [];
-  try {
-    const acc = await fetch("https://api.brevo.com/v3/account", { headers: brevoHeaders(key) });
-    if (acc.ok) {
-      const j = await acc.json();
-      out.push(tr("adm.31bb71", {v0: esc(j.companyName || j.email || "Brevo")}, `<i class=ic-check></i> Clé API valide — compte {v0}`));
-    } else {
-      out.push(tr("adm.5c7594", {v0: acc.status}, `<i class=ic-cross></i> Clé API refusée (HTTP {v0})`));
-      return out;
-    }
-  } catch (e) { return [tr("adm.8c4665", null, "<i class=ic-cross></i> Impossible de joindre Brevo (réseau / hors ligne)")]; }
-  try {
-    const l = await fetch(`https://api.brevo.com/v3/contacts/lists/${listId}`, { headers: brevoHeaders(key) });
-    if (l.ok) {
-      const j = await l.json();
-      out.push(tr("adm.c06700", {v0: listId, v1: esc(j.name), v2: j.uniqueSubscribers ?? j.totalSubscribers ?? 0},
-        `<i class=ic-check></i> Liste #{v0} « {v1} » — {v2} contact(s)`));
-    } else {
-      out.push(tr("adm.3dce22", {v0: listId, v1: l.status}, `<i class=ic-cross></i> Liste #{v0} introuvable (HTTP {v1}) — vérifiez le numéro`));
-    }
-  } catch (e) { out.push(tr("adm.7a02c8", null, "<i class=ic-cross></i> Liste : erreur réseau")); }
-  return out;
 }
 
 function showAdmin() {
@@ -3190,92 +3125,47 @@ function showAdmin() {
     $("#na-close").onclick = closeModal;
     return;
   }
-  const key = localStorage.getItem(BREVO_KEY) || "";
   const users = loadUsers();
   const optIns = users.filter(u => u.optIn);
-  const synced = optIns.filter(brevoIsSynced);
-  // On liste TOUS les comptes : voir « pas d'opt-in » explique à lui seul une liste vide.
+  const synced = users.filter(brevoIsSynced);
   const rows = users.length
     ? users.map(u => {
-        const st = u.optIn ? brevoStatusText(u) : tr("adm.st.noconsent", null, "pas d'opt-in — non transmis");
-        const col = !u.optIn ? "var(--muted)"
-          : brevoIsSynced(u) ? "var(--good)"
-          : brevoFailed(u) ? "var(--bad)" : "var(--warn)";
+        const st = u.email ? brevoStatusText(u) : "—";
+        const col = brevoIsSynced(u) ? "var(--good)" : brevoFailed(u) ? "var(--bad)" : "var(--warn)";
         return `<div style="display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)">
           <span>${esc(u.email || u.pseudo)}</span><span style="color:${col};font-weight:700;text-align:right">${esc(st)}</span></div>`;
       }).join("")
     : tr("adm.380ff8", null, `<div style="color:var(--muted)">Aucun compte sur cet appareil.</div>`);
-  showModal(tr("adm.c95505", {v0: esc(key), v1: brevoListId(), v2: users.length, v3: optIns.length, v4: synced.length, v5: rows, v6: optIns.length === 0 && users.length > 0 ? `<p style="font-size:12px;color:var(--warn);line-height:1.5;margin-top:8px">
-      <i class=ic-alert></i> Aucun compte n'a coché l'opt-in : c'est pourquoi la liste Brevo reste vide.
-      Seuls les comptes ayant consenti sont transmis.</p>` : ""}, `
-    <h2><i class=ic-sliders></i> Administration — connexion Brevo</h2>
-    <p style="font-size:13px">Clé API Brevo (v3) et liste de destination. Stockées uniquement dans ce navigateur.
-    <b style="color:var(--warn)">Ne saisissez pas la clé sur un poste public.</b></p>
-    <input type="password" id="admin-key" placeholder="xkeysib-…" value="{v0}" autocomplete="off">
-    <div style="display:flex; align-items:center; gap:10px; margin-top:8px">
-      <span style="font-size:13px; color:var(--muted); white-space:nowrap">Liste n°</span>
-      <input type="text" id="admin-list" inputmode="numeric" value="{v1}" style="max-width:110px">
-    </div>
+  showModal(tr("adm.panel", {v0: RELAY_URL ? esc(RELAY_URL) : tr("adm.relay.unset", null, "non configuré"),
+                             v1: BREVO_LIST_ID, v2: users.length, v3: optIns.length, v4: synced.length, v5: rows}, `
+    <h2><i class=ic-sliders></i> Administration — synchronisation CRM</h2>
+    <p style="font-size:13px">Les comptes passent par le relais CRM, qui garde la clé Brevo côté serveur :
+    aucune clé n'est saisie ni conservée dans ce navigateur.</p>
+    <p style="font-size:12px; color:var(--muted); word-break:break-all">Relais : {v0} · liste #{v1}</p>
     <div id="admin-diag" style="font-size:12px; line-height:1.7; margin-top:12px; color:var(--muted)"></div>
     <p style="font-size:12px; margin:12px 0 4px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700">
       {v2} compte(s) · {v3} avec opt-in · {v4} synchronisé(s)</p>
     <div style="font-size:12px; max-height:150px; overflow-y:auto">{v5}</div>
-    {v6}
     <div class="choices">
       <button id="admin-demo"><i class=ic-play></i> Lancer une démo commerciale</button>
-      <button id="admin-test"><i class=ic-target></i> Tester la connexion & la liste</button>
-      <button id="admin-audit"><i class=ic-clipboard></i> Contrôler les attributs & segments</button>
-      <button id="admin-testcontact"><i class=ic-mail></i> Envoyer un contact de test</button>
-      <button class="primary" id="admin-save">Enregistrer & synchroniser maintenant</button>
-      <button id="admin-clear">Effacer la clé</button>
+      <button id="admin-test"><i class=ic-target></i> Tester le relais</button>
+      <button class="primary" id="admin-save">Synchroniser maintenant</button>
       <button id="admin-close">Fermer</button>
     </div>`));
-  const readInputs = () => {
-    const k = $("#admin-key").value.trim();
-    const l = parseInt($("#admin-list").value.trim(), 10) || BREVO_LIST_DEFAULT;
-    if (k) localStorage.setItem(BREVO_KEY, k);
-    localStorage.setItem(BREVO_LIST_KEY, String(l));
-    return { k, l };
-  };
   $("#admin-demo").onclick = () => { closeModal(); showDemoSetup(); };
-  $("#admin-audit").onclick = async () => {
-    const { k } = readInputs();
-    if (!k) { $("#admin-diag").innerHTML = tr("adm.446233", null, "<i class=ic-cross></i> Saisissez d'abord une clé API."); return; }
-    $("#admin-diag").innerHTML = tr("adm.audit.encours", null, "<i class=ic-hourglass></i> Contrôle en cours…");
-    const res = await brevoAudit(k);
-    $("#admin-diag").innerHTML = res.join("<br>");
-  };
   $("#admin-test").onclick = async () => {
-    const { k, l } = readInputs();
-    if (!k) { $("#admin-diag").innerHTML = tr("adm.446233", null, "<i class=ic-cross></i> Saisissez d'abord une clé API."); return; }
     $("#admin-diag").innerHTML = tr("adm.bdcba7", null, "<i class=ic-hourglass></i> Test en cours…");
-    const res = await brevoDiagnose(k, l);
-    $("#admin-diag").innerHTML = res.join("<br>");
-  };
-  $("#admin-testcontact").onclick = async () => {
-    const { k, l } = readInputs();
-    if (!k) { $("#admin-diag").innerHTML = tr("adm.446233", null, "<i class=ic-cross></i> Saisissez d'abord une clé API."); return; }
-    const mail = prompt(tr("adm.58f9cd", null, "Adresse e-mail du contact de test :"), ADMIN_EMAIL);
-    if (!mail) return;
-    $("#admin-diag").innerHTML = tr("adm.934aba", null, "<i class=ic-hourglass></i> Envoi du contact de test…");
-    const res = await brevoSendTest(k, l, mail.trim().toLowerCase());
-    const diag = await brevoDiagnose(k, l);
-    $("#admin-diag").innerHTML = res + "<br>" + diag.join("<br>");
+    $("#admin-diag").innerHTML = (await relayHealth()).join("<br>");
   };
   $("#admin-save").onclick = async () => {
-    const { k, l } = readInputs();
-    if (!k) { $("#admin-diag").innerHTML = tr("adm.446233", null, "<i class=ic-cross></i> Saisissez d'abord une clé API."); return; }
-    $("#admin-diag").innerHTML = "<i class=ic-hourglass></i> Synchronisation…";
-    localStorage.removeItem(BREVO_ATTR_OK); // re-vérifie l'attribut au cas où
+    if (!RELAY_URL) { $("#admin-diag").innerHTML = (await relayHealth()).join("<br>"); return; }
+    $("#admin-diag").innerHTML = tr("adm.sync.encours", null, "<i class=ic-hourglass></i> Synchronisation…");
     const targets = loadUsers().filter(u => u.email);
     for (const u of targets) await brevoSyncContact(u);
-    const diag = await brevoDiagnose(k, l);
+    const diag = await relayHealth();
     showAdmin();
-    $("#admin-diag").innerHTML = diag.join("<br>") + tr("adm.e6b539", {v0: targets.length}, tr("adm.e6b539", null, `<br><i class=ic-arrow></i> {v0} compte(s) traité(s).`));
-  };
-  $("#admin-clear").onclick = () => {
-    localStorage.removeItem(BREVO_KEY); localStorage.removeItem(BREVO_ATTR_OK);
-    $("#admin-key").value = ""; $("#admin-diag").innerHTML = tr("adm.2b99dc", null, "Clé effacée.");
+    $("#admin-diag").innerHTML = diag.join("<br>")
+      + tr("adm.e6b539", {v0: targets.length}, `<br><i class=ic-arrow></i> {v0} compte(s) traité(s).`);
   };
   $("#admin-close").onclick = closeModal;
 }
@@ -3463,13 +3353,14 @@ function logout() {
 function showConsent() {
   showModal(tr("ui.ce6636", null, `
     <h2><i class=ic-lock></i> Comment vos données sont traitées</h2>
-    <p><b style="color:var(--text)">Votre progression reste sur cet appareil.</b> Club Catalist fonctionne sans serveur,
+    <p><b style="color:var(--text)">Votre progression reste sur cet appareil.</b> Club Catalist fonctionne sans serveur de jeu,
     sans cookie, sans traceur (polices embarquées) : sauvegardes et code PIN (haché) ne quittent jamais ce navigateur.</p>
     <p><b style="color:var(--text)">Si vous créez un compte</b>, votre adresse e-mail est enregistrée dans le CRM de
     C'mon Corporations (Brevo, hébergement UE) afin de gérer les comptes Club Catalist et d'en suivre l'usage —
     base légale : intérêt légitime, auquel vous pouvez vous opposer à tout moment.</p>
     <p><b style="color:var(--text)">Les e-mails d'actualités</b>, eux, ne vous seront envoyés que si vous cochez la case
-    prévue à cet effet (consentement). Sans elle, votre adresse est marquée comme exclue de tout envoi marketing.</p>
+    prévue à cet effet (consentement). Sans elle, Club Catalist ne vous inscrit à aucun envoi : une adresse nouvelle pour notre CRM
+    y est marquée comme exclue de tout envoi marketing, et si vous y figuriez déjà, vos préférences restent inchangées.</p>
     <p>Vous pouvez à tout moment exporter ou effacer l'ensemble de vos données depuis le pied de page
     (« Confidentialité & données »).</p>
     <div class="choices">
@@ -3498,6 +3389,7 @@ function showPrivacy(fromConsent = false) {
       du questionnaire de positionnement</b> (maturité déclarée de votre organisation, priorité des douze prochains
       mois, échéance d'un éventuel projet) et l'état d'avancement du guide de prise en main. Le questionnaire est
       facultatif : ne pas y répondre, ou y répondre plus tard, ne change rien à votre partie.
+      Chaque service essayé, chaque saison terminée et le questionnaire rempli sont transmis avec leur date.
       Pas d'adresse IP collectée, pas de cookie, pas de traceur, pas d'outil d'analyse d'audience :
       aucune page vue ni aucun clic n'est enregistré.
       <h4>Où et comment ?</h4>
@@ -3507,12 +3399,16 @@ function showPrivacy(fromConsent = false) {
       e-mail, votre pseudo, le marqueur de solution Club Catalist, les informations facultatives que vous avez
       renseignées, vos éventuelles réponses au questionnaire de positionnement et les quatre indicateurs d'usage
       ci-dessus y sont enregistrés, afin de gérer les comptes de la
-      plateforme, d'en mesurer l'usage et d'adapter nos échanges commerciaux à votre intérêt pour nos services.
+      plateforme, d'en mesurer l'usage et d'adapter nos échanges commerciaux à votre intérêt pour nos services
+      (notre équipe est par exemple prévenue lorsque vous annoncez un projet dans le questionnaire).
       Base légale : <b style="color:var(--text)">intérêt légitime</b> (art. 6 §1 f RGPD), avec droit d'opposition —
       il suffit d'un e-mail pour que ces indicateurs cessent d'être transmis et soient effacés.<br>
+      <b style="color:var(--text)">En transit</b> — ces données passent par un relais technique hébergé par Cloudflare (Cloudflare, Inc.),
+      qui les transmet à Brevo sans les conserver ; votre adresse IP n'y sert qu'à limiter les abus et n'est pas enregistrée.<br>
       <b style="color:var(--text)">Envois marketing</b> — uniquement si vous avez coché l'inscription aux actualités
-      (consentement, art. 6 §1 a RGPD). À défaut, votre contact est techniquement marqué comme exclu des campagnes chez Brevo :
-      aucune newsletter ne peut vous être adressée, même par erreur de ciblage.
+      (consentement, art. 6 §1 a RGPD). À défaut, Club Catalist ne vous inscrit à aucun envoi : une adresse nouvelle pour notre CRM
+      y est techniquement marquée comme exclue des campagnes — aucune newsletter ne peut lui être adressée, même par erreur
+      de ciblage — et si vous y figuriez déjà, vos préférences d'envoi restent celles que vous aviez choisies.
       <h4>Durée de conservation</h4>
       En local : jusqu'à suppression par vos soins (bouton ci-dessous, ou effacement des données de navigation).
       Chez Brevo : tant que le compte reste actif, ou jusqu'à votre demande d'effacement.
@@ -3543,7 +3439,7 @@ function exportMyData() {
     consentement_information: localStorage.getItem(CONSENT_KEY),
     optin_actualites: !!currentUser.optIn,
     langue_plateforme: currentUser.lang || lang,
-    statut_brevo: currentUser.brevo ? brevoStatusText(currentUser) : tr("adm.st.none", null, "non (pas d'opt-in)"),
+    statut_brevo: currentUser.brevo ? brevoStatusText(currentUser) : tr("adm.st.none", null, "non transmis"),
     signaux_usage_transmis: currentUser.cc
       ? { saisons_terminees: currentUser.cc.seasons, services_essayes: currentUser.cc.services,
           certification: currentUser.cc.cert, derniere_partie: currentUser.cc.lastPlayed }
@@ -3554,6 +3450,7 @@ function exportMyData() {
           echeance_declaree: currentUser.q.CC_TIMING || null }
       : tr("lbl.qz.none", null, "non renseigné"),
     guide_de_prise_en_main: currentUser.tuto || tr("lbl.qz.encours", null, "en cours"),
+    evenements_en_attente_d_envoi: (loadUsers().find(x => x.id === currentUser.id) || currentUser).events || [],
     sauvegarde_de_jeu: saveData,
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -3982,7 +3879,7 @@ function tutoFinish(kind) {
     const users = loadUsers();
     const u = users.find(x => x.id === currentUser.id);
     if (u) { u.tuto = kind; saveUsers(users); }
-    if (!demoMode && localStorage.getItem(BREVO_KEY)) brevoSyncContact(currentUser);
+    if (!demoMode) brevoSyncContact(currentUser);
   }
   renderTuto();
 }
@@ -4360,7 +4257,17 @@ function qualifySave(answers, fromTuto) {
     currentUser.q = answers;
     const users = loadUsers();
     const u = users.find(x => x.id === currentUser.id);
-    if (u) { u.q = answers; saveUsers(users); }
+    if (u) {
+      u.q = answers;
+      // L'événement porte la date de la réponse : c'est lui qui déclenche
+      // l'alerte « appel chaud » et les workflows de qualification.
+      if (!demoMode && Object.keys(answers).length) {
+        crmEvent(u, "club_catalist_questionnaire",
+                 { maturity: answers.CC_MATURITY, priority: answers.CC_PRIORITY, timing: answers.CC_TIMING });
+        currentUser.events = u.events;
+      }
+      saveUsers(users);
+    }
   }
   if (fromTuto && state && state.tuto) tutoFinish("Terminé");
   if (currentUser && !demoMode) brevoSyncContact(currentUser);
@@ -4428,42 +4335,33 @@ const TX = {
     "action.training.name": "<i class=ic-clipboard></i> Schulung & Tools",
     "action.training.real": "Kompetenzaufbau kostet und zeigt sich nicht im Quartal. Er ist aber das, was die Kosten aller folgenden Aktionen dauerhaft senkt.",
     "actmodal": "<h2>{v0}</h2>\n    <p><b>{v1} Aktionspunkt(e)</b> · aktuelle Kosten <b>{v2}</b></p>\n    <p>{v3}</p>\n    <div class=\"tuto-why\"><b>In einem echten Club</b><br>{v4}</div>\n    <div class=\"choices\"><button class=\"primary\" id=\"act-close\">Schliessen</button></div>",
-    "adm.072a6d": "<i class=ic-check></i> Kontakt bereits bekannt — der Liste #{v0} zugeordnet",
-    "adm.1a2173": "<i class=ic-check></i> Testkontakt «{v0}» in die Liste #{v1} gesendet",
-    "adm.2207c0": "<i class=ic-cross></i> HTTP-Fehler {v0}{v1}",
-    "adm.2b99dc": "Schlüssel gelöscht.",
-    "adm.31bb71": "<i class=ic-check></i> API-Schlüssel gültig — Konto {v0}",
     "adm.380ff8": "<div style=\"color:var(--muted)\">Kein Konto auf diesem Gerät.</div>",
-    "adm.3dce22": "<i class=ic-cross></i> Liste #{v0} nicht gefunden (HTTP {v1}) — prüfen Sie die Nummer",
-    "adm.446233": "<i class=ic-cross></i> Geben Sie zuerst einen API-Schlüssel ein.",
-    "adm.56e2bf": "<i class=ic-cross></i> Netzwerk: ",
-    "adm.58f9cd": "E-Mail-Adresse des Testkontakts:",
-    "adm.5c7594": "<i class=ic-cross></i> API-Schlüssel abgelehnt (HTTP {v0})",
     "adm.62547c": "CRM-Kontakte (z. B. {v0})",
-    "adm.7a02c8": "<i class=ic-cross></i> Liste: Netzwerkfehler",
-    "adm.8c4665": "<i class=ic-cross></i> Brevo nicht erreichbar (Netzwerk / offline)",
     "adm.8f657d": "Fans (z. B. {v0})",
-    "adm.934aba": "<i class=ic-hourglass></i> Testkontakt wird gesendet…",
     "adm.97b4f3": "<h2><i class=ic-lock></i> Zugriff beschränkt</h2>\n      <p>Das Brevo-Administrationspanel ist dem Konto\n      <b style=\"color:var(--text)\">{v0}</b> vorbehalten. Melden Sie sich mit diesem Konto an, um darauf zuzugreifen.</p>\n      <div class=\"choices\"><button class=\"primary\" id=\"na-close\">Schliessen</button></div>",
-    "adm.audit.aucunsegment": "<i class=ic-layers></i> Noch kein Segment definiert.",
-    "adm.audit.encours": "<i class=ic-hourglass></i> Prüfung läuft…",
-    "adm.audit.ko": "<i class=ic-cross></i> Attribute nicht lesbar (HTTP {v0})",
+    "adm.panel": "\n    <h2><i class=ic-sliders></i> Administration — CRM-Synchronisation</h2>\n    <p style=\"font-size:13px\">Die Konten laufen über das CRM-Relais, das den Brevo-Schlüssel serverseitig verwahrt:\n    in diesem Browser wird kein Schlüssel eingegeben oder gespeichert.</p>\n    <p style=\"font-size:12px; color:var(--muted); word-break:break-all\">Relais: {v0} · Liste #{v1}</p>\n    <div id=\"admin-diag\" style=\"font-size:12px; line-height:1.7; margin-top:12px; color:var(--muted)\"></div>\n    <p style=\"font-size:12px; margin:12px 0 4px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700\">\n      {v2} Konto/Konten · {v3} mit Opt-in · {v4} synchronisiert</p>\n    <div style=\"font-size:12px; max-height:150px; overflow-y:auto\">{v5}</div>\n    <div class=\"choices\">\n      <button id=\"admin-demo\"><i class=ic-play></i> Vertriebsdemo starten</button>\n      <button id=\"admin-test\"><i class=ic-target></i> Relais testen</button>\n      <button class=\"primary\" id=\"admin-save\">Jetzt synchronisieren</button>\n      <button id=\"admin-close\">Schliessen</button>\n    </div>",
+    "adm.relay.http": "<i class=ic-cross></i> Das Relais antwortet mit HTTP {v0}",
+    "adm.relay.key": "<i class=ic-cross></i> Brevo lehnt den Schlüssel des Relais ab ({v0})",
+    "adm.relay.list": "<i class=ic-check></i> Liste #{v0} erreichbar",
+    "adm.relay.nolist": "<i class=ic-cross></i> Liste #{v0} nicht gefunden — BREVO_LIST_ID des Relais prüfen",
+    "adm.relay.none": "<i class=ic-cross></i> Relais nicht konfiguriert: RELAY_URL in jouer/index.html eintragen (siehe README, «Relais CRM»).",
+    "adm.relay.nonotify": "<i class=ic-alert></i> Alarm «heisser Lead» deaktiviert (NOTIFY_TO leer)",
+    "adm.relay.notify": "<i class=ic-check></i> Alarm «heisser Lead» aktiv",
+    "adm.relay.offline": "<i class=ic-cross></i> Relais nicht erreichbar (Netzwerk / offline)",
+    "adm.relay.ok": "<i class=ic-check></i> Relais erreichbar — Brevo-Schlüssel akzeptiert",
+    "adm.relay.unset": "nicht konfiguriert",
+    "adm.sync.encours": "<i class=ic-hourglass></i> Synchronisierung läuft…",
     "adm.audit.manque": "<i class=ic-alert></i> {v0} Attribut(e) fehlen im Konto: {v1}",
     "adm.audit.ok": "<i class=ic-check></i> Alle {v0} Attribute sind vorhanden — der Segment-Editor wird sie anbieten.",
-    "adm.audit.remede": "<i class=ic-arrow></i> Starten Sie «Speichern & jetzt synchronisieren»: die Synchronisation legt sie an.",
-    "adm.audit.reseau": "<i class=ic-cross></i> Attribute: Netzwerkfehler",
-    "adm.audit.segments": "<i class=ic-layers></i> {v0} Segment(e) bereits definiert: {v1}",
+    "adm.audit.remede": "<i class=ic-arrow></i> Starten Sie «Jetzt synchronisieren»: die Synchronisation legt sie an.",
     "adm.bdcba7": "<i class=ic-hourglass></i> Test läuft…",
-    "adm.c06700": "<i class=ic-check></i> Liste #{v0} «{v1}» — {v2} Kontakt(e)",
-    "adm.c95505": "\n    <h2><i class=ic-sliders></i> Administration — Brevo-Verbindung</h2>\n    <p style=\"font-size:13px\">Brevo-API-Schlüssel (v3) und Zielliste. Werden ausschliesslich in diesem Browser gespeichert.\n    <b style=\"color:var(--warn)\">Geben Sie den Schlüssel nicht an einem öffentlichen Gerät ein.</b></p>\n    <input type=\"password\" id=\"admin-key\" placeholder=\"xkeysib-…\" value=\"{v0}\" autocomplete=\"off\">\n    <div style=\"display:flex; align-items:center; gap:10px; margin-top:8px\">\n      <span style=\"font-size:13px; color:var(--muted); white-space:nowrap\">Liste Nr.</span>\n      <input type=\"text\" id=\"admin-list\" inputmode=\"numeric\" value=\"{v1}\" style=\"max-width:110px\">\n    </div>\n    <div id=\"admin-diag\" style=\"font-size:12px; line-height:1.7; margin-top:12px; color:var(--muted)\"></div>\n    <p style=\"font-size:12px; margin:12px 0 4px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700\">\n      {v2} Konto/Konten · {v3} mit Opt-in · {v4} synchronisiert</p>\n    <div style=\"font-size:12px; max-height:150px; overflow-y:auto\">{v5}</div>\n    {v6}\n    <div class=\"choices\">\n      <button id=\"admin-demo\"><i class=ic-play></i> Vertriebsdemo starten</button>\n      <button id=\"admin-test\"><i class=ic-target></i> Verbindung & Liste testen</button>\n      <button id=\"admin-audit\"><i class=ic-clipboard></i> Attribute &amp; Segmente prüfen</button>\n      <button id=\"admin-testcontact\"><i class=ic-mail></i> Testkontakt senden</button>\n      <button class=\"primary\" id=\"admin-save\">Speichern & jetzt synchronisieren</button>\n      <button id=\"admin-clear\">Schlüssel löschen</button>\n      <button id=\"admin-close\">Schliessen</button>\n    </div>",
     "adm.e6b539": "<br><i class=ic-arrow></i> {v0} Konto/Konten verarbeitet.",
     "adm.f3f027": "\n    <h2><i class=ic-target></i> Vertriebsdemo-Modus</h2>\n    <p style=\"font-size:13px\">Startet eine Partie im Namen des Clubs, der Ihnen gegenübersitzt, bereits laufend in\n    Woche 12 — DMOS-Score im Ungefähren, Wert der Fanbase unbekannt, ein zweifelnder Vorstand.\n    <b style=\"color:var(--text)\">Es werden keine Daten an Brevo gesendet</b>, und Ihre persönliche Partie\n    bleibt unberührt.</p>\n    <input type=\"text\" id=\"demo-name\" maxlength=\"46\" placeholder=\"Name des Interessenten-Clubs\" autocomplete=\"off\">\n    <input type=\"text\" id=\"demo-city\" maxlength=\"34\" placeholder=\"Stadt (optional)\" autocomplete=\"off\">\n    <div style=\"display:flex;gap:9px;flex-wrap:wrap\">\n      <select id=\"demo-sport\" style=\"flex:1 1 150px\">{v0}</select>\n      <select id=\"demo-div\" style=\"flex:1 1 150px\">\n        <option value=\"1\">Höchste Liga / 1. Liga</option>\n        <option value=\"2\">2. Liga</option>\n      </select>\n    </div>\n    <div style=\"display:flex;gap:9px;flex-wrap:wrap\">\n      <input type=\"text\" id=\"demo-fans\" inputmode=\"numeric\" style=\"flex:1 1 150px\" placeholder=\"Fans (Schätzung)\">\n      <input type=\"text\" id=\"demo-contacts\" inputmode=\"numeric\" style=\"flex:1 1 150px\" placeholder=\"CRM-Kontakte\">\n    </div>\n    <p style=\"font-size:12px;color:var(--muted);margin-top:2px\">\n      Fans und Kontakte sind freiwillig — ohne Angabe gelten die Grössenordnungen der gewählten Sportart.</p>\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"demo-go\"><i class=ic-play></i> Demo starten</button>\n      <button id=\"demo-cancel\">Abbrechen</button>\n    </div>",
     "adm.st.failed": "fehlgeschlagen (HTTP {v0}{v1})",
     "adm.st.known": "bereits bekannt — der Liste {v0} zugeordnet",
-    "adm.st.noconsent": "kein Opt-in — nicht übermittelt",
-    "adm.st.nokey": "ausstehend (API-Schlüssel nicht konfiguriert)",
-    "adm.st.none": "nein (kein Opt-in)",
-    "adm.st.nooptin": "ohne Opt-in — vom Versand ausgeschlossen",
+    "adm.st.nokey": "ausstehend (Relais nicht konfiguriert)",
+    "adm.st.none": "nicht übermittelt",
+    "adm.st.nooptin": "ohne Opt-in",
     "adm.st.offline": "ausstehend (offline)",
     "adm.st.optin": "mit Opt-in",
     "adm.st.pending": "ausstehend",
@@ -4860,7 +4758,7 @@ const TX = {
     "ui.5b768e": "<div style=\"font-size:13px;color:var(--muted)\">Kein Profil auf diesem Gerät. Erstellen Sie unten Ihr eigenes.</div>",
     "ui.60b213": "<div style=\"font-size:12px; color:var(--accent); margin-top:10px; line-height:1.5\">\n      <i class=ic-lock></i> Grobe interne Schätzungen. Bestellen Sie ein <b>Fan Equity Audit</b> (Tab <i class=ic-launch></i> C'mon Sports),\n      um Ihre exakten Scores aufzudecken und die Zertifizierung freizuschalten.</div>",
     "ui.63e48b": "<span style=\"color:var(--bad)\"><i class=ic-cross></i>\n        Code nicht erkannt. Erwartetes Format: zwei Clubbuchstaben, die Stufe, dann der Seed — zum Beispiel HC-1-A7K9F2.</span>",
-    "ui.650506": "\n    <h2><i class=ic-lock></i> Datenschutz & Daten</h2>\n    <div class=\"privacy-note\">\n      <h4>Verantwortlicher</h4>\n      C'mon Corporations SàRL (C'mon Sports), La Chaux-de-Fonds, Schweiz — douglas@cmon-sports.com\n      <h4>Welche Daten?</h4>\n      E-Mail-Adresse (Kontokennung), angezeigter Nutzername und — nur wenn Sie diese angeben —\n      Ihre Organisation, Ihre Funktion und die Sportart Ihres ersten gespielten Clubs. Gehashter PIN-Code (SHA-256 mit Salt, nie im Klartext gespeichert),\n      Spielstände, Zeitstempel der Einwilligung, Marketing-Opt-in-Auswahl.\n      Hinzu kommen vier <b style=\"color:var(--text)\">aggregierte Nutzungsindikatoren</b>: Anzahl abgeschlossener Saisons,\n      im Spiel ausprobierte Services von C'mon Sports, erreichtes Zertifizierungsniveau und Datum der letzten Partie.\n      Es wird keine IP-Adresse erhoben, es gibt keine Cookies, keine Tracker, kein Webanalyse-Tool:\n      Weder Seitenaufrufe noch Klicks werden aufgezeichnet.\n      <h4>Wo und wie?</h4>\n      <b style=\"color:var(--text)\">Auf Ihrem Gerät</b> — Spielstände, gehashter PIN-Code und Zeitstempel der Einwilligung\n      verbleiben im lokalen Speicher (localStorage) dieses Browsers.<br>\n      <b style=\"color:var(--text)\">Bei unserem Auftragsverarbeiter Brevo</b> (Sendinblue SAS, Frankreich — Hosting in der EU) — dort werden Ihre\n      E-Mail-Adresse, Ihr Nutzername, der Lösungsmarker Club Catalist, die von Ihnen freiwillig angegebenen Informationen\n      und die vier oben genannten Nutzungsindikatoren gespeichert, um die Konten der Plattform zu verwalten,\n      deren Nutzung zu messen und unsere geschäftlichen Kontakte auf Ihr Interesse an unseren Services abzustimmen.\n      Rechtsgrundlage: <b style=\"color:var(--text)\">berechtigtes Interesse</b> (Art. 6 Abs. 1 lit. f DSGVO), mit Widerspruchsrecht —\n      eine E-Mail genügt, damit diese Indikatoren nicht mehr übermittelt und gelöscht werden.<br>\n      <b style=\"color:var(--text)\">Marketingversand</b> — nur wenn Sie die Anmeldung zu den News angekreuzt haben\n      (Einwilligung, Art. 6 Abs. 1 lit. a DSGVO). Andernfalls wird Ihr Kontakt bei Brevo technisch als von Kampagnen ausgeschlossen markiert:\n      Es kann Ihnen kein Newsletter zugestellt werden, auch nicht durch einen Fehler bei der Zielgruppenauswahl.\n      <h4>Aufbewahrungsdauer</h4>\n      Lokal: bis zur Löschung durch Sie (Schaltfläche unten oder Löschen der Browserdaten).\n      Bei Brevo: solange das Konto aktiv bleibt oder bis zu Ihrem Löschbegehren.\n      <h4>Ihre Rechte (DSGVO Art. 15-21 · revDSG)</h4>\n      Auskunft und Datenübertragbarkeit: «Meine Daten exportieren» (lesbare JSON-Datei). Lokale Löschung: «Mein Profil löschen».\n      Widerspruch gegen die Verarbeitung, Löschung bei Brevo, Widerruf der Marketingeinwilligung (oder Abmeldelink,\n      der in jeder E-Mail enthalten ist): schreiben Sie an douglas@cmon-sports.com — die Bearbeitung erfolgt unverzüglich.\n    </div>\n    <div class=\"choices\">\n      {v0}\n      <button class=\"primary\" id=\"pv-close\">Schliessen</button>\n    </div>",
+    "ui.650506": "\n    <h2><i class=ic-lock></i> Datenschutz & Daten</h2>\n    <div class=\"privacy-note\">\n      <h4>Verantwortlicher</h4>\n      C'mon Corporations SàRL (C'mon Sports), La Chaux-de-Fonds, Schweiz — douglas@cmon-sports.com\n      <h4>Welche Daten?</h4>\n      E-Mail-Adresse (Kontokennung), angezeigter Nutzername und — nur wenn Sie diese angeben —\n      Ihre Organisation, Ihre Funktion und die Sportart Ihres ersten gespielten Clubs. Gehashter PIN-Code (SHA-256 mit Salt, nie im Klartext gespeichert),\n      Spielstände, Zeitstempel der Einwilligung, Marketing-Opt-in-Auswahl.\n      Hinzu kommen vier <b style=\"color:var(--text)\">aggregierte Nutzungsindikatoren</b>: Anzahl abgeschlossener Saisons,\n      im Spiel ausprobierte Services von C'mon Sports, erreichtes Zertifizierungsniveau und Datum der letzten Partie,\n      sowie die Sprache, in der Sie die Plattform nutzen.\n      Schliesslich — wenn und nur wenn Sie sie beantworten — die <b style=\"color:var(--text)\">drei Antworten\n      des Positionierungsfragebogens</b> (angegebener Reifegrad Ihrer Organisation, Priorität der nächsten zwölf\n      Monate, Zeithorizont eines allfälligen Projekts) sowie der Fortschritt im Leitfaden für den Einstieg. Der Fragebogen\n      ist freiwillig: Ihn nicht oder später zu beantworten, ändert nichts an Ihrer Partie.\n      Jeder ausprobierte Service, jede abgeschlossene Saison und der ausgefüllte Fragebogen werden mit Datum übermittelt.\n      Es wird keine IP-Adresse erhoben, es gibt keine Cookies, keine Tracker, kein Webanalyse-Tool:\n      Weder Seitenaufrufe noch Klicks werden aufgezeichnet.\n      <h4>Wo und wie?</h4>\n      <b style=\"color:var(--text)\">Auf Ihrem Gerät</b> — Spielstände, gehashter PIN-Code und Zeitstempel der Einwilligung\n      verbleiben im lokalen Speicher (localStorage) dieses Browsers.<br>\n      <b style=\"color:var(--text)\">Bei unserem Auftragsverarbeiter Brevo</b> (Sendinblue SAS, Frankreich — Hosting in der EU) — dort werden Ihre\n      E-Mail-Adresse, Ihr Nutzername, der Lösungsmarker Club Catalist, die von Ihnen freiwillig angegebenen Informationen,\n      Ihre allfälligen Antworten auf den Positionierungsfragebogen und die vier oben genannten Nutzungsindikatoren gespeichert, um die Konten der Plattform zu verwalten,\n      deren Nutzung zu messen und unsere geschäftlichen Kontakte auf Ihr Interesse an unseren Services abzustimmen\n      (unser Team wird zum Beispiel benachrichtigt, wenn Sie im Fragebogen ein Projekt ankündigen).\n      Rechtsgrundlage: <b style=\"color:var(--text)\">berechtigtes Interesse</b> (Art. 6 Abs. 1 lit. f DSGVO), mit Widerspruchsrecht —\n      eine E-Mail genügt, damit diese Indikatoren nicht mehr übermittelt und gelöscht werden.<br>\n      <b style=\"color:var(--text)\">Bei der Übermittlung</b> — diese Daten laufen über ein technisches Relais bei Cloudflare (Cloudflare, Inc.),\n      das sie an Brevo weiterleitet, ohne sie zu speichern; Ihre IP-Adresse dient dort nur der Missbrauchsabwehr und wird nicht gespeichert.<br>\n      <b style=\"color:var(--text)\">Marketingversand</b> — nur wenn Sie die Anmeldung zu den News angekreuzt haben\n      (Einwilligung, Art. 6 Abs. 1 lit. a DSGVO). Andernfalls meldet Club Catalist Sie für keinen Versand an: Eine für unser CRM neue Adresse wird bei Brevo\n      technisch als von Kampagnen ausgeschlossen markiert — ihr kann kein Newsletter zugestellt werden, auch nicht durch\n      einen Fehler bei der Zielgruppenauswahl —, und waren Sie bereits erfasst, bleiben Ihre Versandeinstellungen unverändert.\n      <h4>Aufbewahrungsdauer</h4>\n      Lokal: bis zur Löschung durch Sie (Schaltfläche unten oder Löschen der Browserdaten).\n      Bei Brevo: solange das Konto aktiv bleibt oder bis zu Ihrem Löschbegehren.\n      <h4>Ihre Rechte (DSGVO Art. 15-21 · revDSG)</h4>\n      Auskunft und Datenübertragbarkeit: «Meine Daten exportieren» (lesbare JSON-Datei). Lokale Löschung: «Mein Profil löschen».\n      Widerspruch gegen die Verarbeitung, Löschung bei Brevo, Widerruf der Marketingeinwilligung (oder Abmeldelink,\n      der in jeder E-Mail enthalten ist): schreiben Sie an douglas@cmon-sports.com — die Bearbeitung erfolgt unverzüglich.\n    </div>\n    <div class=\"choices\">\n      {v0}\n      <button class=\"primary\" id=\"pv-close\">Schliessen</button>\n    </div>",
     "ui.66345c": "\n    <h2><i class=ic-flag></i> Bilanz der Saison {v0}</h2>\n    {v1}\n    <p><b style=\"color:var(--text)\">{v2}/{v3} Ziele erreicht</b> — Vertrauen des Vorstands {v4}{v5} Pkt.</p>\n    <ul style=\"margin:0 0 12px 18px; font-size:13px; line-height:1.7\">{v6}</ul>\n    <p><b style=\"color:var(--text)\">Sponsoren:</b></p>\n    <ul style=\"margin:0 0 12px 18px; font-size:13px; line-height:1.7\">{v7}</ul>\n    <p style=\"font-size:13px\">Erwirtschaftete Einnahmen: <b style=\"color:var(--accent)\">{v8}</b> · Sportliche Bilanz: {v9}S-{v10}N · {v11}</p>\n    <div class=\"choices\">\n      <button id=\"sm-share\"><i class=ic-layers></i> Meine Saison teilen</button>\n      <button class=\"primary\" id=\"sm-next\"><i class=ic-arrow></i> Saison {v12} angehen</button>\n    </div>",
     "ui.6ac85b": "<i class=ic-clipboard></i> Bericht zum Fan Equity Audit von C'mon Sports geliefert: Ihre exakten Scores sind aufgedeckt ({v0}/60), die Roadmap steht. Der Vorstand schätzt es, endlich klar zu sehen (+8 Vertrauen). Geführte Schulungen: −20 %.",
     "ui.6ec2bf": "Content publiziert: +{v0} Fans",
@@ -4902,7 +4800,7 @@ const TX = {
     "ui.c78646": "auswärts",
     "ui.cc2671": "Die Saison mit positivem Budget abschliessen",
     "ui.cc6e4f": "<i class=ic-globe></i> Niederlage im Europacup. TV-Rechte +{v0}, Auswärtsreise −3 000 CHF. Die Fans hatten mehr erwartet.",
-    "ui.ce6636": "\n    <h2><i class=ic-lock></i> Wie Ihre Daten verarbeitet werden</h2>\n    <p><b style=\"color:var(--text)\">Ihr Spielstand bleibt auf diesem Gerät.</b> Club Catalist funktioniert ohne Server,\n    ohne Cookies, ohne Tracker (Schriften sind eingebettet): Spielstände und PIN-Code (gehasht) verlassen diesen Browser nie.</p>\n    <p><b style=\"color:var(--text)\">Wenn Sie ein Konto erstellen</b>, wird Ihre E-Mail-Adresse im CRM von\n    C'mon Corporations (Brevo, Hosting in der EU) gespeichert, um die Club-Catalist-Konten zu verwalten und deren Nutzung\n    nachzuvollziehen — Rechtsgrundlage: berechtigtes Interesse, dem Sie jederzeit widersprechen können.</p>\n    <p><b style=\"color:var(--text)\">News-E-Mails</b> erhalten Sie dagegen nur, wenn Sie das dafür vorgesehene Kästchen\n    ankreuzen (Einwilligung). Ohne dieses wird Ihre Adresse als von jedem Marketingversand ausgeschlossen markiert.</p>\n    <p>Sie können Ihre sämtlichen Daten jederzeit über die Fusszeile exportieren oder löschen\n    («Datenschutz & Daten»).</p>\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"consent-ok\">Verstanden — weiter</button>\n      <button id=\"consent-privacy\">Datenschutzerklärung lesen</button>\n    </div>",
+    "ui.ce6636": "\n    <h2><i class=ic-lock></i> Wie Ihre Daten verarbeitet werden</h2>\n    <p><b style=\"color:var(--text)\">Ihr Spielstand bleibt auf diesem Gerät.</b> Club Catalist funktioniert ohne Spielserver,\n    ohne Cookies, ohne Tracker (Schriften sind eingebettet): Spielstände und PIN-Code (gehasht) verlassen diesen Browser nie.</p>\n    <p><b style=\"color:var(--text)\">Wenn Sie ein Konto erstellen</b>, wird Ihre E-Mail-Adresse im CRM von\n    C'mon Corporations (Brevo, Hosting in der EU) gespeichert, um die Club-Catalist-Konten zu verwalten und deren Nutzung\n    nachzuvollziehen — Rechtsgrundlage: berechtigtes Interesse, dem Sie jederzeit widersprechen können.</p>\n    <p><b style=\"color:var(--text)\">News-E-Mails</b> erhalten Sie dagegen nur, wenn Sie das dafür vorgesehene Kästchen\n    ankreuzen (Einwilligung). Ohne dieses meldet Club Catalist Sie für keinen Versand an: Eine für unser CRM neue Adresse\n    wird dort als von jedem Marketingversand ausgeschlossen markiert; waren Sie bereits erfasst, bleiben Ihre Einstellungen unverändert.</p>\n    <p>Sie können Ihre sämtlichen Daten jederzeit über die Fusszeile exportieren oder löschen\n    («Datenschutz & Daten»).</p>\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"consent-ok\">Verstanden — weiter</button>\n      <button id=\"consent-privacy\">Datenschutzerklärung lesen</button>\n    </div>",
     "ui.cmon.intro": "\n          Ein Club kann alles selbst machen — nur eben im Blindflug. C'mon Sports deckt auf, was Sie nicht\n          sehen (exakte DMOS-Scores, wirtschaftlicher Wert der Fanbase, Zustand Ihrer Daten), und\n          strukturiert Ihr Wachstum. Jeder aktivierte Service verändert Ihr Dashboard nachhaltig.\n        ",
     "ui.cmon.qz": "<div class=\"cta-out\">\n    <b><i class=ic-target></i> Und in Ihrer Organisation, wo stehen Sie?</b>\n    Drei freiwillige Fragen — Reife, Priorität, Zeithorizont — und wir wissen, welche dieser sechs\n    Leistungen Sie wirklich betrifft. An Ihrer Partie ändert sich nichts.\n    <div class=\"intro-cta\" style=\"margin-top:11px\">\n      <button id=\"svc-qz\">{v0}</button>\n      <a class=\"btn-like out-link\" href=\"{v1}\" target=\"_blank\" rel=\"noopener\">30 Minuten mit C'mon Sports vereinbaren →</a>\n    </div>\n  </div>",
     "ui.cmon.qz.done": "Meine Antworten ansehen",
@@ -4943,7 +4841,7 @@ const TX = {
     "ui.login.back": "<i class=ic-bulb></i> Was ist Club Catalist?",
     "ui.login.create": "Neues Konto",
     "ui.login.note": "\n      <i class=ic-lock></i> Ihre Spielstände und Ihr PIN-Code (gehasht) bleiben <b style=\"color:var(--text)\">in diesem Browser</b>.\n      Ihre E-Mail-Adresse wird bei der Kontoerstellung im CRM von C'mon Corporations (Brevo, EU) gespeichert;\n      News-E-Mails gehen nur raus, wenn Sie das Kästchen ankreuzen.\n    ",
-    "ui.login.optin": "Ich bin einverstanden, die News von C'mon Sports per E-Mail zu erhalten. <b style=\"color:var(--text)\">Optional</b> —\n            ohne dieses Kästchen wird mir keine Kampagne zugestellt.<br>\n            <span style=\"font-size:11px\">In jedem Fall wird bei der Kontoerstellung meine Adresse im CRM\n            von C'mon Corporations (Brevo, Hosting in der EU) für die Verwaltung der Club-Catalist-Konten gespeichert.\n            <a id=\"optin-privacy\" style=\"color:var(--accent);cursor:pointer;text-decoration:underline\">Mehr erfahren</a></span>",
+    "ui.login.optin": "Ich bin einverstanden, die News von C'mon Sports per E-Mail zu erhalten. <b style=\"color:var(--text)\">Optional</b> —\n            ohne dieses Kästchen meldet mich Club Catalist für keinen Versand an.<br>\n            <span style=\"font-size:11px\">In jedem Fall wird bei der Kontoerstellung meine Adresse im CRM\n            von C'mon Corporations (Brevo, Hosting in der EU) für die Verwaltung der Club-Catalist-Konten gespeichert.\n            <a id=\"optin-privacy\" style=\"color:var(--accent);cursor:pointer;text-decoration:underline\">Mehr erfahren</a></span>",
     "ui.login.ph.email": "E-Mail-Adresse",
     "ui.login.ph.org": "Ihre Organisation — Club, Liga … (optional)",
     "ui.login.ph.pin": "PIN-Code, 4-8 Ziffern (optional)",
@@ -4997,42 +4895,33 @@ const TX = {
     "action.training.name": "<i class=ic-clipboard></i> Training & tools",
     "action.training.real": "Building skills is expensive and invisible within the quarter. It is nonetheless what permanently lowers the cost of every action that follows.",
     "actmodal": "<h2>{v0}</h2>\n    <p><b>{v1} action point(s)</b> · current cost <b>{v2}</b></p>\n    <p>{v3}</p>\n    <div class=\"tuto-why\"><b>In a real club</b><br>{v4}</div>\n    <div class=\"choices\"><button class=\"primary\" id=\"act-close\">Close</button></div>",
-    "adm.072a6d": "<i class=ic-check></i> Contact already known — attached to list #{v0}",
-    "adm.1a2173": "<i class=ic-check></i> Test contact “{v0}” sent to list #{v1}",
-    "adm.2207c0": "<i class=ic-cross></i> HTTP failure {v0}{v1}",
-    "adm.2b99dc": "Key cleared.",
-    "adm.31bb71": "<i class=ic-check></i> API key valid — account {v0}",
     "adm.380ff8": "<div style=\"color:var(--muted)\">No account on this device.</div>",
-    "adm.3dce22": "<i class=ic-cross></i> List #{v0} not found (HTTP {v1}) — check the number",
-    "adm.446233": "<i class=ic-cross></i> Enter an API key first.",
-    "adm.56e2bf": "<i class=ic-cross></i> Network: ",
-    "adm.58f9cd": "Email address of the test contact:",
-    "adm.5c7594": "<i class=ic-cross></i> API key rejected (HTTP {v0})",
     "adm.62547c": "CRM contacts (e.g. {v0})",
-    "adm.7a02c8": "<i class=ic-cross></i> List: network error",
-    "adm.8c4665": "<i class=ic-cross></i> Cannot reach Brevo (network / offline)",
     "adm.8f657d": "Fans (e.g. {v0})",
-    "adm.934aba": "<i class=ic-hourglass></i> Sending the test contact…",
     "adm.97b4f3": "<h2><i class=ic-lock></i> Restricted access</h2>\n      <p>The Brevo administration panel is reserved for the account\n      <b style=\"color:var(--text)\">{v0}</b>. Log in with that account to access it.</p>\n      <div class=\"choices\"><button class=\"primary\" id=\"na-close\">Close</button></div>",
-    "adm.audit.aucunsegment": "<i class=ic-layers></i> No segment defined yet.",
-    "adm.audit.encours": "<i class=ic-hourglass></i> Running the check…",
-    "adm.audit.ko": "<i class=ic-cross></i> Attributes unreadable (HTTP {v0})",
+    "adm.panel": "\n    <h2><i class=ic-sliders></i> Administration — CRM sync</h2>\n    <p style=\"font-size:13px\">Accounts go through the CRM relay, which keeps the Brevo key on the server side:\n    no key is entered or kept in this browser.</p>\n    <p style=\"font-size:12px; color:var(--muted); word-break:break-all\">Relay: {v0} · list #{v1}</p>\n    <div id=\"admin-diag\" style=\"font-size:12px; line-height:1.7; margin-top:12px; color:var(--muted)\"></div>\n    <p style=\"font-size:12px; margin:12px 0 4px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700\">\n      {v2} account(s) · {v3} with opt-in · {v4} synced</p>\n    <div style=\"font-size:12px; max-height:150px; overflow-y:auto\">{v5}</div>\n    <div class=\"choices\">\n      <button id=\"admin-demo\"><i class=ic-play></i> Launch a sales demo</button>\n      <button id=\"admin-test\"><i class=ic-target></i> Test the relay</button>\n      <button class=\"primary\" id=\"admin-save\">Sync now</button>\n      <button id=\"admin-close\">Close</button>\n    </div>",
+    "adm.relay.http": "<i class=ic-cross></i> The relay answers HTTP {v0}",
+    "adm.relay.key": "<i class=ic-cross></i> Brevo rejects the relay's key ({v0})",
+    "adm.relay.list": "<i class=ic-check></i> List #{v0} reachable",
+    "adm.relay.nolist": "<i class=ic-cross></i> List #{v0} not found — check the relay's BREVO_LIST_ID",
+    "adm.relay.none": "<i class=ic-cross></i> Relay not configured: set RELAY_URL in jouer/index.html (see README, “Relais CRM”).",
+    "adm.relay.nonotify": "<i class=ic-alert></i> “Hot lead” alert disabled (NOTIFY_TO empty)",
+    "adm.relay.notify": "<i class=ic-check></i> “Hot lead” alert active",
+    "adm.relay.offline": "<i class=ic-cross></i> Relay unreachable (network / offline)",
+    "adm.relay.ok": "<i class=ic-check></i> Relay reachable — Brevo key accepted",
+    "adm.relay.unset": "not configured",
+    "adm.sync.encours": "<i class=ic-hourglass></i> Syncing…",
     "adm.audit.manque": "<i class=ic-alert></i> {v0} attribute(s) missing from the account: {v1}",
     "adm.audit.ok": "<i class=ic-check></i> All {v0} attributes exist — the segment builder will offer them.",
-    "adm.audit.remede": "<i class=ic-arrow></i> Run “Save & sync now”: the sync creates them.",
-    "adm.audit.reseau": "<i class=ic-cross></i> Attributes: network error",
-    "adm.audit.segments": "<i class=ic-layers></i> {v0} segment(s) already defined: {v1}",
+    "adm.audit.remede": "<i class=ic-arrow></i> Run “Sync now”: the sync creates them.",
     "adm.bdcba7": "<i class=ic-hourglass></i> Running the test…",
-    "adm.c06700": "<i class=ic-check></i> List #{v0} “{v1}” — {v2} contact(s)",
-    "adm.c95505": "\n    <h2><i class=ic-sliders></i> Administration — Brevo connection</h2>\n    <p style=\"font-size:13px\">Brevo API key (v3) and destination list. Stored in this browser only.\n    <b style=\"color:var(--warn)\">Do not enter the key on a public machine.</b></p>\n    <input type=\"password\" id=\"admin-key\" placeholder=\"xkeysib-…\" value=\"{v0}\" autocomplete=\"off\">\n    <div style=\"display:flex; align-items:center; gap:10px; margin-top:8px\">\n      <span style=\"font-size:13px; color:var(--muted); white-space:nowrap\">List no.</span>\n      <input type=\"text\" id=\"admin-list\" inputmode=\"numeric\" value=\"{v1}\" style=\"max-width:110px\">\n    </div>\n    <div id=\"admin-diag\" style=\"font-size:12px; line-height:1.7; margin-top:12px; color:var(--muted)\"></div>\n    <p style=\"font-size:12px; margin:12px 0 4px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700\">\n      {v2} account(s) · {v3} with opt-in · {v4} synced</p>\n    <div style=\"font-size:12px; max-height:150px; overflow-y:auto\">{v5}</div>\n    {v6}\n    <div class=\"choices\">\n      <button id=\"admin-demo\"><i class=ic-play></i> Launch a sales demo</button>\n      <button id=\"admin-test\"><i class=ic-target></i> Test the connection & the list</button>\n      <button id=\"admin-audit\"><i class=ic-clipboard></i> Check attributes &amp; segments</button>\n      <button id=\"admin-testcontact\"><i class=ic-mail></i> Send a test contact</button>\n      <button class=\"primary\" id=\"admin-save\">Save & sync now</button>\n      <button id=\"admin-clear\">Clear the key</button>\n      <button id=\"admin-close\">Close</button>\n    </div>",
     "adm.e6b539": "<br><i class=ic-arrow></i> {v0} account(s) processed.",
     "adm.f3f027": "\n    <h2><i class=ic-target></i> Sales demo mode</h2>\n    <p style=\"font-size:13px\">Starts a game in the name of the club sitting across from you, already under way in\n    week 12 — DMOS score in the dark, fanbase value unknown, a board full of doubts.\n    <b style=\"color:var(--text)\">No data is sent to Brevo</b> and your own personal game\n    is left untouched.</p>\n    <input type=\"text\" id=\"demo-name\" maxlength=\"46\" placeholder=\"Prospect club name\" autocomplete=\"off\">\n    <input type=\"text\" id=\"demo-city\" maxlength=\"34\" placeholder=\"City (optional)\" autocomplete=\"off\">\n    <div style=\"display:flex;gap:9px;flex-wrap:wrap\">\n      <select id=\"demo-sport\" style=\"flex:1 1 150px\">{v0}</select>\n      <select id=\"demo-div\" style=\"flex:1 1 150px\">\n        <option value=\"1\">Top flight / 1st division</option>\n        <option value=\"2\">2nd division</option>\n      </select>\n    </div>\n    <div style=\"display:flex;gap:9px;flex-wrap:wrap\">\n      <input type=\"text\" id=\"demo-fans\" inputmode=\"numeric\" style=\"flex:1 1 150px\" placeholder=\"Fans (estimate)\">\n      <input type=\"text\" id=\"demo-contacts\" inputmode=\"numeric\" style=\"flex:1 1 150px\" placeholder=\"CRM contacts\">\n    </div>\n    <p style=\"font-size:12px;color:var(--muted);margin-top:2px\">\n      Fans and contacts are optional — without them, the usual orders of magnitude for the chosen sport apply.</p>\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"demo-go\"><i class=ic-play></i> Launch the demo</button>\n      <button id=\"demo-cancel\">Cancel</button>\n    </div>",
     "adm.st.failed": "failed (HTTP {v0}{v1})",
     "adm.st.known": "already known — attached to list {v0}",
-    "adm.st.noconsent": "no opt-in — not transmitted",
-    "adm.st.nokey": "pending (API key not configured)",
-    "adm.st.none": "no (no opt-in)",
-    "adm.st.nooptin": "no opt-in — excluded from sends",
+    "adm.st.nokey": "pending (relay not configured)",
+    "adm.st.none": "not transmitted",
+    "adm.st.nooptin": "no opt-in",
     "adm.st.offline": "pending (offline)",
     "adm.st.optin": "with opt-in",
     "adm.st.pending": "pending",
@@ -5429,7 +5318,7 @@ const TX = {
     "ui.5b768e": "<div style=\"font-size:13px;color:var(--muted)\">No profile on this device. Create yours below.</div>",
     "ui.60b213": "<div style=\"font-size:12px; color:var(--accent); margin-top:10px; line-height:1.5\">\n      <i class=ic-lock></i> Rough internal estimates. Order a <b>Fan Equity Audit</b> (<i class=ic-launch></i> C'mon Sports tab)\n      to reveal your exact scores and unlock certification.</div>",
     "ui.63e48b": "<span style=\"color:var(--bad)\"><i class=ic-cross></i>\n        Code not recognised. Expected format: two club letters, the level, then the seed — for example HC-1-A7K9F2.</span>",
-    "ui.650506": "\n    <h2><i class=ic-lock></i> Privacy & data</h2>\n    <div class=\"privacy-note\">\n      <h4>Data controller</h4>\n      C'mon Corporations SàRL (C'mon Sports), La Chaux-de-Fonds, Switzerland — douglas@cmon-sports.com\n      <h4>What data?</h4>\n      Email address (account identifier), display name, and — only if you provide them —\n      your organisation, your role and the sport of the first club you play. PIN code hashed (salted SHA-256, never stored in clear text),\n      game saves, consent timestamp, marketing opt-in choice.\n      To these are added four <b style=\"color:var(--text)\">aggregated usage indicators</b>: number of seasons completed,\n      C'mon Sports services tried in the game, certification level reached and the date of the last session.\n      No IP address collected, no cookie, no tracker, no audience analytics tool:\n      not a single page view or click is recorded.\n      <h4>Where and how?</h4>\n      <b style=\"color:var(--text)\">On your device</b> — game saves, hashed PIN code and consent timestamp\n      stay in this browser's local storage (localStorage).<br>\n      <b style=\"color:var(--text)\">With our processor Brevo</b> (Sendinblue SAS, France — EU hosting) — your email\n      address, your display name, the Club Catalist solution marker, the optional information you have\n      provided and the four usage indicators above are recorded there, in order to manage the accounts of the\n      platform, to measure its use and to adapt our commercial exchanges to your interest in our services.\n      Legal basis: <b style=\"color:var(--text)\">legitimate interest</b> (Art. 6(1)(f) GDPR), with a right to object —\n      a single email is enough for those indicators to stop being transmitted and to be erased.<br>\n      <b style=\"color:var(--text)\">Marketing sends</b> — only if you have ticked the subscription to the news\n      (consent, Art. 6(1)(a) GDPR). Failing that, your contact is technically flagged at Brevo as excluded from campaigns:\n      no newsletter can be sent to you, not even through a targeting error.\n      <h4>Retention period</h4>\n      Locally: until you delete it yourself (button below, or by clearing your browsing data).\n      At Brevo: for as long as the account remains active, or until you request erasure.\n      <h4>Your rights (GDPR Arts. 15-21 · revFADP, Swiss Federal Act on Data Protection)</h4>\n      Access and portability: “Export my data” (readable JSON file). Local erasure: “Delete my profile”.\n      Objection to processing, erasure at Brevo, withdrawal of marketing consent (or the unsubscribe link\n      present in every email): write to douglas@cmon-sports.com — it will be acted on without delay.\n    </div>\n    <div class=\"choices\">\n      {v0}\n      <button class=\"primary\" id=\"pv-close\">Close</button>\n    </div>",
+    "ui.650506": "\n    <h2><i class=ic-lock></i> Privacy & data</h2>\n    <div class=\"privacy-note\">\n      <h4>Data controller</h4>\n      C'mon Corporations SàRL (C'mon Sports), La Chaux-de-Fonds, Switzerland — douglas@cmon-sports.com\n      <h4>What data?</h4>\n      Email address (account identifier), display name, and — only if you provide them —\n      your organisation, your role and the sport of the first club you play. PIN code hashed (salted SHA-256, never stored in clear text),\n      game saves, consent timestamp, marketing opt-in choice.\n      To these are added four <b style=\"color:var(--text)\">aggregated usage indicators</b>: number of seasons completed,\n      C'mon Sports services tried in the game, certification level reached and the date of the last session,\n      as well as the language in which you use the platform.\n      Finally, if — and only if — you choose to answer it, the <b style=\"color:var(--text)\">three answers\n      to the positioning questionnaire</b> (your organisation's declared maturity, priority for the next twelve\n      months, timing of a possible project) and your progress through the getting-started guide. The questionnaire\n      is optional: not answering it, or answering it later, changes nothing in your game.\n      Each service tried, each season completed and the completed questionnaire are transmitted with their date.\n      No IP address collected, no cookie, no tracker, no audience analytics tool:\n      not a single page view or click is recorded.\n      <h4>Where and how?</h4>\n      <b style=\"color:var(--text)\">On your device</b> — game saves, hashed PIN code and consent timestamp\n      stay in this browser's local storage (localStorage).<br>\n      <b style=\"color:var(--text)\">With our processor Brevo</b> (Sendinblue SAS, France — EU hosting) — your email\n      address, your display name, the Club Catalist solution marker, the optional information you have\n      provided, your answers to the positioning questionnaire if any, and the four usage indicators above are recorded there, in order to manage the accounts of the\n      platform, to measure its use and to adapt our commercial exchanges to your interest in our services\n      (our team is, for example, notified when you announce a project in the questionnaire).\n      Legal basis: <b style=\"color:var(--text)\">legitimate interest</b> (Art. 6(1)(f) GDPR), with a right to object —\n      a single email is enough for those indicators to stop being transmitted and to be erased.<br>\n      <b style=\"color:var(--text)\">In transit</b> — this data goes through a technical relay hosted by Cloudflare (Cloudflare, Inc.),\n      which forwards it to Brevo without keeping it; your IP address is used there only to limit abuse and is not recorded.<br>\n      <b style=\"color:var(--text)\">Marketing sends</b> — only if you have ticked the subscription to the news\n      (consent, Art. 6(1)(a) GDPR). Failing that, Club Catalist signs you up for nothing: an address new to our CRM is technically flagged at Brevo\n      as excluded from campaigns — no newsletter can be sent to it, not even through a targeting error — and if you\n      were already in it, your sending preferences stay as you chose them.\n      <h4>Retention period</h4>\n      Locally: until you delete it yourself (button below, or by clearing your browsing data).\n      At Brevo: for as long as the account remains active, or until you request erasure.\n      <h4>Your rights (GDPR Arts. 15-21 · revFADP, Swiss Federal Act on Data Protection)</h4>\n      Access and portability: “Export my data” (readable JSON file). Local erasure: “Delete my profile”.\n      Objection to processing, erasure at Brevo, withdrawal of marketing consent (or the unsubscribe link\n      present in every email): write to douglas@cmon-sports.com — it will be acted on without delay.\n    </div>\n    <div class=\"choices\">\n      {v0}\n      <button class=\"primary\" id=\"pv-close\">Close</button>\n    </div>",
     "ui.66345c": "\n    <h2><i class=ic-flag></i> Season {v0} review</h2>\n    {v1}\n    <p><b style=\"color:var(--text)\">{v2}/{v3} objectives met</b> — board confidence {v4}{v5} pts</p>\n    <ul style=\"margin:0 0 12px 18px; font-size:13px; line-height:1.7\">{v6}</ul>\n    <p><b style=\"color:var(--text)\">Sponsors:</b></p>\n    <ul style=\"margin:0 0 12px 18px; font-size:13px; line-height:1.7\">{v7}</ul>\n    <p style=\"font-size:13px\">Revenue generated: <b style=\"color:var(--accent)\">{v8}</b> · On the pitch: {v9}W-{v10}L · {v11}</p>\n    <div class=\"choices\">\n      <button id=\"sm-share\"><i class=ic-layers></i> Share my season</button>\n      <button class=\"primary\" id=\"sm-next\"><i class=ic-arrow></i> Take on season {v12}</button>\n    </div>",
     "ui.6ac85b": "<i class=ic-clipboard></i> Fan Equity Audit report delivered by C'mon Sports: your exact scores are out ({v0}/60) and the roadmap is in place. The board is relieved to finally see clearly (+8 confidence). Roadmap-guided training: −20%.",
     "ui.6ec2bf": "Content published: +{v0} fans",
@@ -5471,7 +5360,7 @@ const TX = {
     "ui.c78646": "away",
     "ui.cc2671": "Finish the season in the black",
     "ui.cc6e4f": "<i class=ic-globe></i> Beaten in Europe. TV rights +{v0}, away trip −3 000 CHF. The fans expected better.",
-    "ui.ce6636": "\n    <h2><i class=ic-lock></i> How your data is handled</h2>\n    <p><b style=\"color:var(--text)\">Your progress stays on this device.</b> Club Catalist runs with no server,\n    no cookies and no trackers (fonts are embedded): saves and PIN code (hashed) never leave this browser.</p>\n    <p><b style=\"color:var(--text)\">If you create an account</b>, your email address is recorded in the CRM of\n    C'mon Corporations (Brevo, EU hosting) in order to manage Club Catalist accounts and monitor their use —\n    legal basis: legitimate interest, which you may object to at any time.</p>\n    <p><b style=\"color:var(--text)\">News emails</b>, for their part, will only be sent to you if you tick the box\n    provided for that purpose (consent). Without it, your address is flagged as excluded from all marketing sends.</p>\n    <p>You can export or erase all of your data at any time from the footer\n    (“Privacy & data”).</p>\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"consent-ok\">Understood — continue</button>\n      <button id=\"consent-privacy\">Read the privacy policy</button>\n    </div>",
+    "ui.ce6636": "\n    <h2><i class=ic-lock></i> How your data is handled</h2>\n    <p><b style=\"color:var(--text)\">Your progress stays on this device.</b> Club Catalist runs with no game server,\n    no cookies and no trackers (fonts are embedded): saves and PIN code (hashed) never leave this browser.</p>\n    <p><b style=\"color:var(--text)\">If you create an account</b>, your email address is recorded in the CRM of\n    C'mon Corporations (Brevo, EU hosting) in order to manage Club Catalist accounts and monitor their use —\n    legal basis: legitimate interest, which you may object to at any time.</p>\n    <p><b style=\"color:var(--text)\">News emails</b>, for their part, will only be sent to you if you tick the box\n    provided for that purpose (consent). Without it, Club Catalist signs you up for nothing: an address new to our CRM\n    is flagged there as excluded from all marketing sends, and if you were already in it, your preferences stay unchanged.</p>\n    <p>You can export or erase all of your data at any time from the footer\n    (“Privacy & data”).</p>\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"consent-ok\">Understood — continue</button>\n      <button id=\"consent-privacy\">Read the privacy policy</button>\n    </div>",
     "ui.cmon.intro": "\n          A club can do everything on its own — but it moves blind. C'mon Sports reveals what you do\n          not see (exact DMOS scores, the economic value of the fanbase, the health of your data) and\n          gives your growth a structure. Every service you activate changes your dashboard for good.\n        ",
     "ui.cmon.qz": "<div class=\"cta-out\">\n    <b><i class=ic-target></i> And in your organisation, where do you stand?</b>\n    Three optional questions — maturity, priority, timing — and we will know which of these six\n    services actually concerns you. Nothing changes in your game.\n    <div class=\"intro-cta\" style=\"margin-top:11px\">\n      <button id=\"svc-qz\">{v0}</button>\n      <a class=\"btn-like out-link\" href=\"{v1}\" target=\"_blank\" rel=\"noopener\">Book 30 minutes with C'mon Sports →</a>\n    </div>\n  </div>",
     "ui.cmon.qz.done": "Review my answers",
@@ -5512,7 +5401,7 @@ const TX = {
     "ui.login.back": "<i class=ic-bulb></i> What is Club Catalist?",
     "ui.login.create": "Create an account",
     "ui.login.note": "\n      <i class=ic-lock></i> Your saves and your PIN code (hashed) stay <b style=\"color:var(--text)\">in this browser</b>.\n      Your email address is recorded in the CRM of C'mon Corporations (Brevo, EU) when the account is created;\n      news emails only go out if you tick the box.\n    ",
-    "ui.login.optin": "I agree to receive C'mon Sports news by email. <b style=\"color:var(--text)\">Optional</b> —\n            without this box ticked, no campaign will be sent to me.<br>\n            <span style=\"font-size:11px\">Either way, creating the account records my address in the CRM\n            of C'mon Corporations (Brevo, EU hosting) for the management of Club Catalist accounts.\n            <a id=\"optin-privacy\" style=\"color:var(--accent);cursor:pointer;text-decoration:underline\">Learn more</a></span>",
+    "ui.login.optin": "I agree to receive C'mon Sports news by email. <b style=\"color:var(--text)\">Optional</b> —\n            without this box ticked, Club Catalist signs me up for nothing.<br>\n            <span style=\"font-size:11px\">Either way, creating the account records my address in the CRM\n            of C'mon Corporations (Brevo, EU hosting) for the management of Club Catalist accounts.\n            <a id=\"optin-privacy\" style=\"color:var(--accent);cursor:pointer;text-decoration:underline\">Learn more</a></span>",
     "ui.login.ph.email": "Email address",
     "ui.login.ph.org": "Your organisation — club, league… (optional)",
     "ui.login.ph.pin": "PIN code, 4-8 digits (optional)",

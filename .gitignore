@@ -5,3 +5,8 @@
 .Trashes
 Thumbs.db
 *.icloud
+
+# Relais CRM (relay/)
+node_modules/
+.wrangler/
+.dev.vars
