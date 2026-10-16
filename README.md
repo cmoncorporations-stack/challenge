@@ -2,7 +2,7 @@
 
 **Simulateur de gestion marketing d'un club de sport — by C'mon Sports.**
 
-▶ **Jouer : [clubcatalist.cmon-sports.com](https://clubcatalist.cmon-sports.com/)**
+▶ **Découvrir : [clubcatalist.cmon-sports.com](https://clubcatalist.cmon-sports.com/)** · **Jouer : [clubcatalist.cmon-sports.com/jouer/](https://clubcatalist.cmon-sports.com/jouer/)**
 
 Vous êtes recruté·e comme Responsable Marketing Digital d'un club de sport suisse.
 Chaque semaine, répartissez vos points d'action entre contenu, campagnes, collecte de
@@ -44,14 +44,22 @@ part de son côté dans l'attribut `CC_LANG`.
 
 ## Technique
 
-Application **single-file** en JavaScript vanilla : aucun build, aucune dépendance,
-aucun framework. Le jeu tient dans `index.html` ; les polices Raleway sont
-auto-hébergées dans `fonts/`.
+Site statique en JavaScript vanilla : aucun build, aucune dépendance, aucun framework.
+
+- `index.html` — **landing page** interactive : aperçu animé d'une saison, comparateur
+  des 4 clubs (radar DMOS), mini-simulateur de 4 semaines, bascule « brouillard des
+  données », réglage des 6 piliers DMOS et présentation des solutions C'mon Sports.
+  Trilingue, elle partage la clé de langue du jeu (`mktclubgm_lang`) et propose
+  « Reprendre ma partie » quand une sauvegarde existe sur l'appareil.
+- `jouer/index.html` — **le jeu**, single-file. Même origine que la landing : sauvegardes
+  et langue sont conservées. `jouer/?club=hc|fc|bb|vb` met en avant le club choisi
+  sur la landing à l'écran de sélection.
+- `fonts/` — polices Raleway auto-hébergées.
 
 ```bash
 # lancer en local
 python3 -m http.server 4174
-# puis ouvrir http://localhost:4174
+# puis ouvrir http://localhost:4174 (landing) ou http://localhost:4174/jouer/ (jeu)
 ```
 
 Le fichier fonctionne aussi en ouverture directe (`file://`).
