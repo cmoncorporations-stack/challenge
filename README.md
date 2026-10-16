@@ -26,7 +26,8 @@ sous peine de licenciement.
 
 Sans accompagnement, le club pilote à l'aveugle : score DMOS affiché en fourchette,
 valeur de la fanbase inconnue, qualité des données invisible. L'onglet **C'mon Sports**
-donne accès aux vraies solutions — Audit DMOS, Fan Lab Insight & Pro, Data Factory,
+donne accès aux vraies solutions, regroupées par famille — **Audit** (Fan Equity Audit),
+**Fan Intelligence** (Fan Lab Insight & Pro), **Fan Management** (Fan Data Factory),
 Blue Penguin, Griddy Picks — qui révèlent ces indicateurs et transforment durablement
 le tableau de bord.
 
@@ -47,8 +48,8 @@ part de son côté dans l'attribut `CC_LANG`.
 Site statique en JavaScript vanilla : aucun build, aucune dépendance, aucun framework.
 
 - `index.html` — **landing page** interactive : aperçu animé d'une saison, comparateur
-  des 4 clubs (radar DMOS), mini-simulateur de 4 semaines, bascule « brouillard des
-  données », réglage des 6 piliers DMOS et présentation des solutions C'mon Sports.
+  des 4 clubs (radar de maturité data), mini-simulateur de 4 semaines, bascule « brouillard des
+  données », score DMOS expliqué en langage simple et présentation des solutions C'mon Sports.
   Trilingue, elle partage la clé de langue du jeu (`mktclubgm_lang`) et propose
   « Reprendre ma partie » quand une sauvegarde existe sur l'appareil.
 - `jouer/index.html` — **le jeu**, single-file. Même origine que la landing : sauvegardes
