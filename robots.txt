@@ -1,0 +1,7 @@
+# C'mon Sports Challenge
+User-agent: *
+Allow: /
+# Code du relais CRM : publié avec le dépôt, sans intérêt pour les moteurs
+Disallow: /relay/
+
+Sitemap: https://challenge.cmon-sports.com/sitemap.xml

@@ -59,6 +59,8 @@ Site statique en JavaScript vanilla : aucun build, aucune dépendance, aucun fra
   utilisé par le site) et `logo-challenge-noir.svg` (fonds clairs).
 - `assets/clubs/` — logos des quatre clubs fictifs (`hc`, `fc`, `bb`, `vb`.webp, fond transparent) :
   Glacier Royal HC, Real Riviera, Lakeside Kings, Olympia Léman.
+- `assets/og-image.jpg` — image de partage (1200×630) pour les réseaux sociaux et les messageries.
+- `robots.txt`, `sitemap.xml` — indexation par les moteurs de recherche (Google Search Console).
 - `fonts/` — polices Raleway auto-hébergées.
 
 ```bash
