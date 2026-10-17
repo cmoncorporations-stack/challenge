@@ -1,5 +1,5 @@
 <?php
-/* Club Catalist — configuration du relais.
+/* C'mon Sports Challenge — configuration du relais.
    Copier ce fichier en config.php (même dossier, à côté de public/) et y
    coller la clé Brevo. config.php n'est jamais versionné ni servi par le web. */
 return [
@@ -10,7 +10,7 @@ return [
     'BREVO_LIST_ID'   => 63,
 
     // Sites autorisés à appeler le relais (séparés par des virgules)
-    'ALLOWED_ORIGINS' => 'https://clubcatalist.cmon-sports.com',
+    'ALLOWED_ORIGINS' => 'https://challenge.cmon-sports.com',
 
     // Alerte « appel chaud » : destinataire(s), et expéditeur vérifié chez Brevo
     'NOTIFY_TO'       => 'douglas@cmon-sports.com',

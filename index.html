@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Club Catalist — Le simulateur marketing sportif by C'mon Sports</title>
+<title>C'mon Sports Challenge — Le simulateur marketing sportif</title>
 <meta name="description" content="Prenez les commandes du marketing digital d'un club de sport suisse. 26 semaines, 3 points d'action par semaine, un comité directeur à convaincre. Un jeu gratuit signé C'mon Sports.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://clubcatalist.cmon-sports.com/">
-<meta property="og:title" content="Club Catalist — le simulateur marketing sportif by C'mon Sports">
+<meta property="og:url" content="https://challenge.cmon-sports.com/">
+<meta property="og:title" content="C'mon Sports Challenge — le simulateur marketing sportif">
 <meta property="og:description" content="Vous êtes recruté·e comme Responsable Marketing Digital d'un club. Tiendrez-vous une saison face au comité ?">
 <meta name="theme-color" content="#050910">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJMb2dvIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NjAuOTIgODgzLjM4Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6IzYyYmRmNDtzdHJva2Utd2lkdGg6MHB4O308L3N0eWxlPjwvZGVmcz48cG9seWdvbiBjbGFzcz0iY2xzLTEiIHBvaW50cz0iMzk3LjEgNTg2LjkxIDM3MS41IDU0My4zMSAzMTEuNjYgNDQxLjM5IDMyNC41NiA0MTkuMTUgMjc4Ljg5IDM0MS4zNyAyMjAuOTMgNDQyLjA0IDM1Mi4wMSA2NjUuMjggNDY5LjE1IDY2NS40MSA0MjMuMDcgNTg2LjkzIDM5Ny4xIDU4Ni45MSIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSI1MzcuOSAyOTUuNjIgNTYzLjc3IDI5NS42MyA2NDguNjMgNDQwLjA1IDYzNS43MiA0NjIuNCA2ODEuMzUgNTQwLjExIDczOS4yNSA0MzkuNzQgNjA4LjU5IDIxNy4xOCA0NjYuNzcgMjE3LjI4IDQyMS4yOCAyOTYuMTQgNTc3LjgxIDU2Mi44IDU2My45NSA1ODYuODMgNTM5Ljg2IDU4Ni44NyAzODIuNDIgMzE4LjcyIDQ0MC45IDIxNy4zMyAzNTAuNDMgMjE3LjM1IDI5MS43NiAzMTkuMDcgNDk1IDY2NS4yMyA2MDkuMzQgNjY1LjI3IDY2OC40OCA1NjIuNTIgNTI1IDMxOC4wNCA1MzcuOSAyOTUuNjIiLz48L3N2Zz4=">
@@ -19,7 +19,7 @@
 @font-face{font-family:'Raleway';font-style:normal;font-weight:900;font-display:swap;src:url('fonts/raleway-900.woff2') format('woff2')}
 @font-face{font-family:'Raleway';font-style:italic;font-weight:900;font-display:swap;src:url('fonts/raleway-900-italic.woff2') format('woff2')}
 /* ═══════════════════════════════════════════════════════════════════════════
-   CLUB CATALIST — landing.
+   C'MON SPORTS CHALLENGE — landing.
    Même grammaire que le jeu (/jouer/) : fonds étagés à l'arête et à l'ombre,
    encres ≥ 4,5:1, marque C'mon Sports en accent. Tout est local : aucune
    requête externe, aucun traceur — la page tient ses promesses RGPD.
@@ -83,7 +83,8 @@ nav.top .btn{padding:9px 18px;font-size:14px}
 .lang button{font:inherit;font-size:12px;font-weight:800;color:var(--ink-3);background:none;border:0;padding:5px 9px;border-radius:999px;cursor:pointer}
 .lang button[aria-pressed="true"]{background:var(--raised);color:var(--ink)}
 @media(max-width:900px){nav.top .links{display:none} nav.top .lang{margin-left:auto}}
-@media(max-width:520px){.wordmark small{display:none} nav.top .btn-nav{display:none}}
+@media(max-width:520px){nav.top .btn-nav{display:none} nav.top .wrap{gap:10px} .wordmark{font-size:14px;letter-spacing:.6px}}
+@media(max-width:360px){.wordmark{font-size:12.5px;letter-spacing:.3px} .lang button{padding:5px 7px}}
 
 /* ── Héros ── */
 .hero{padding:76px 0 56px;position:relative}
@@ -327,7 +328,7 @@ footer a{color:var(--ink-2);font-weight:700}
 
 <nav class="top" aria-label="Navigation principale">
   <div class="wrap">
-    <a class="wordmark" href="#top"><span class="sig">C</span>LUB CATALIST<span class="sig">.</span><small data-i18n="nav.by">by C'mon Sports</small></a>
+    <a class="wordmark" href="#top"><span class="sig">C</span>'MON SPORTS CHALLENGE<span class="sig">.</span></a>
     <div class="links">
       <a href="#jeu" data-i18n="nav.game">Le jeu</a>
       <a href="#clubs" data-i18n="nav.clubs">Les clubs</a>
@@ -352,7 +353,7 @@ footer a{color:var(--ink-2);font-weight:700}
         <div>
           <span class="eyebrow"><span class="dot"></span><span data-i18n="hero.eyebrow">Jeu gratuit · navigateur · sans installation</span></span>
           <h1 data-i18n="hero.title">Vous voilà responsable marketing du club. <em>Le comité vous attend.</em></h1>
-          <p class="lead" data-i18n="hero.lead">Club Catalist est le simulateur de gestion marketing d'un club de sport, conçu par C'mon Sports. Contenu, campagnes, données des fans, sponsors, RGPD : 26 semaines pour faire grandir votre club ou être licencié.</p>
+          <p class="lead" data-i18n="hero.lead">C'mon Sports Challenge est le simulateur de gestion marketing d'un club de sport, conçu par C'mon Sports. Contenu, campagnes, données des fans, sponsors, RGPD : 26 semaines pour faire grandir votre club ou être licencié.</p>
           <div class="ctas">
             <a class="btn btn-primary btn-lg play-link" href="jouer/" id="cta-hero">
               <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 3.8v12.4a.8.8 0 0 0 1.2.7l9.9-6.2a.8.8 0 0 0 0-1.4L7.2 3.1a.8.8 0 0 0-1.2.7Z"/></svg>
@@ -551,10 +552,10 @@ footer a{color:var(--ink-2);font-weight:700}
           <svg class="cmon-logo" viewBox="210 200 1600 480" fill="#ffffff" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="C’mon Sports"><polygon class="cls-1" points="397.1 586.91 371.5 543.31 311.66 441.39 324.56 419.15 278.89 341.37 220.93 442.04 352.01 665.28 469.15 665.41 423.07 586.93 397.1 586.91"/><polygon class="cls-1" points="537.9 295.62 563.77 295.63 648.63 440.05 635.72 462.4 681.35 540.11 739.25 439.74 608.59 217.18 466.77 217.28 421.28 296.14 577.81 562.8 563.95 586.83 539.86 586.87 382.42 318.72 440.9 217.33 350.43 217.35 291.76 319.07 495 665.23 609.34 665.27 668.48 562.52 525 318.04 537.9 295.62"/><polygon class="cls-1" points="957.24 414.4 942.26 388.86 883.17 388.89 853.69 439.98 883.73 491.14 942.24 491.11 956.98 465.56 1015.99 465.54 971.82 542.23 854.38 542.23 794.56 440.35 853.65 337.81 971.47 337.73 1016.47 414.38 957.24 414.4"/><polygon class="cls-1" points="959.89 217.33 1004.89 293.97 945.66 294 900.63 217.33 959.89 217.33"/><path class="cls-1" d="m1512.33,337.79l-117.78.08-59.08,102.51,59.8,101.85h117.4s59.27-102.9,59.27-102.9l-59.61-101.54Zm-29.22,153.34l-58.5.02-30.02-51.14,29.46-51.08,59.08-.02,29.72,50.65-29.75,51.57Z"/><polygon class="cls-1" points="1232.85 338 1180.05 429.32 1126.3 337.73 1061.66 337.73 1062.64 541.88 1121.88 541.86 1119.65 437.3 1151.11 490.85 1209.29 490.81 1240.46 437.58 1238.23 542.13 1297.47 542.16 1298.44 338.01 1232.85 338"/><polygon class="cls-1" points="1788.36 542.19 1787.89 541.34 1787.89 337.73 1730.08 337.73 1730.08 430.98 1675.32 337.73 1610.57 337.73 1611.55 542.23 1670.88 542.21 1668.65 437.47 1730.08 542.23 1787.89 542.23 1787.89 542.19 1788.36 542.19"/><path class="cls-1" d="m828.13,666.72c-6.04,0-11.82-.99-17.35-2.96-5.53-1.97-9.81-4.51-12.82-7.6l3.37-6.62c2.86,2.78,6.71,5.13,11.55,7.02,4.83,1.9,9.92,2.84,15.26,2.84s9.26-.64,12.48-1.91c3.21-1.28,5.57-3,7.08-5.17,1.51-2.17,2.26-4.56,2.26-7.2,0-3.17-.91-5.73-2.73-7.66-1.82-1.93-4.2-3.46-7.14-4.59-2.94-1.12-6.19-2.11-9.75-2.96-3.56-.85-7.12-1.76-10.68-2.73-3.56-.97-6.83-2.26-9.81-3.89-2.98-1.63-5.38-3.77-7.2-6.44-1.82-2.67-2.73-6.17-2.73-10.5,0-4.02,1.06-7.72,3.19-11.08,2.13-3.37,5.4-6.07,9.81-8.13,4.41-2.05,10.06-3.07,16.95-3.07,4.56,0,9.09.64,13.58,1.91,4.49,1.28,8.36,3.04,11.61,5.28l-2.9,6.85c-3.48-2.32-7.18-4.02-11.08-5.11-3.91-1.08-7.68-1.63-11.32-1.63-4.87,0-8.9.66-12.07,1.97-3.17,1.32-5.51,3.07-7.02,5.28s-2.26,4.7-2.26,7.49c0,3.17.91,5.73,2.73,7.66,1.82,1.94,4.22,3.44,7.2,4.53,2.98,1.08,6.25,2.05,9.81,2.9,3.56.85,7.1,1.78,10.62,2.79,3.52,1.01,6.77,2.3,9.75,3.89,2.98,1.59,5.38,3.7,7.2,6.32,1.82,2.63,2.73,6.08,2.73,10.33,0,3.95-1.08,7.6-3.25,10.97-2.17,3.37-5.48,6.08-9.92,8.13-4.45,2.05-10.16,3.07-17.12,3.07Z"/><path class="cls-1" d="m982.27,666.03v-81.24h30.41c6.89,0,12.81,1.1,17.76,3.31,4.95,2.2,8.76,5.38,11.43,9.52,2.67,4.14,4,9.15,4,15.03s-1.33,10.66-4,14.8c-2.67,4.14-6.48,7.33-11.43,9.57-4.95,2.25-10.87,3.37-17.76,3.37h-25.65l3.83-4.06v29.71h-8.59Zm8.59-29.02l-3.83-4.18h25.42c8.12,0,14.29-1.76,18.51-5.28,4.22-3.52,6.33-8.49,6.33-14.92s-2.11-11.53-6.33-15.09c-4.22-3.56-10.39-5.34-18.51-5.34h-25.42l3.83-4.06v48.86Z"/><path class="cls-1" d="m1206.27,666.72c-6.11,0-11.78-1.02-17-3.07-5.22-2.05-9.75-4.95-13.58-8.7-3.83-3.75-6.81-8.13-8.94-13.12-2.13-4.99-3.19-10.46-3.19-16.42s1.06-11.43,3.19-16.42c2.13-4.99,5.11-9.36,8.94-13.12,3.83-3.75,8.34-6.65,13.52-8.7,5.18-2.05,10.87-3.07,17.06-3.07s11.76,1.03,16.95,3.07c5.18,2.05,9.69,4.93,13.52,8.65,3.83,3.71,6.81,8.09,8.94,13.11,2.13,5.03,3.19,10.52,3.19,16.48s-1.07,11.45-3.19,16.48c-2.13,5.03-5.11,9.4-8.94,13.11-3.83,3.72-8.34,6.6-13.52,8.65-5.18,2.05-10.83,3.07-16.95,3.07Zm0-7.66c4.88,0,9.38-.83,13.52-2.5,4.14-1.66,7.74-4.02,10.79-7.08,3.06-3.06,5.44-6.62,7.14-10.68,1.7-4.06,2.55-8.53,2.55-13.41s-.85-9.34-2.55-13.4c-1.7-4.06-4.08-7.62-7.14-10.68-3.06-3.06-6.66-5.41-10.79-7.08-4.14-1.66-8.65-2.5-13.52-2.5s-9.4.83-13.58,2.5c-4.18,1.66-7.82,4.02-10.91,7.08-3.1,3.06-5.49,6.62-7.2,10.68-1.7,4.06-2.55,8.53-2.55,13.4s.85,9.25,2.55,13.35c1.7,4.1,4.1,7.68,7.2,10.74,3.09,3.06,6.73,5.42,10.91,7.08,4.18,1.67,8.7,2.5,13.58,2.5Z"/><path class="cls-1" d="m1373.28,666.03v-81.24h30.41c6.88,0,12.8,1.1,17.76,3.31,4.95,2.2,8.76,5.38,11.43,9.52,2.67,4.14,4,9.15,4,15.03s-1.33,10.66-4,14.8c-2.67,4.14-6.48,7.31-11.43,9.52-4.95,2.21-10.87,3.31-17.76,3.31h-25.65l3.83-3.95v29.71h-8.59Zm8.59-29.02l-3.83-4.06h25.42c8.13,0,14.29-1.78,18.51-5.34,4.22-3.56,6.33-8.55,6.33-14.97s-2.11-11.53-6.33-15.09c-4.22-3.56-10.39-5.34-18.51-5.34h-25.42l3.83-4.06v48.86Zm46.89,29.02l-20.89-29.48h9.28l21.01,29.48h-9.4Z"/><path class="cls-1" d="m1576.98,666.03v-73.82h-28.55v-7.43h65.69v7.43h-28.55v73.82h-8.59Z"/><path class="cls-1" d="m1754.09,666.72c-6.04,0-11.82-.99-17.35-2.96-5.53-1.97-9.81-4.51-12.83-7.6l3.37-6.62c2.86,2.78,6.71,5.13,11.55,7.02,4.83,1.9,9.92,2.84,15.26,2.84s9.26-.64,12.48-1.91c3.21-1.28,5.57-3,7.08-5.17,1.51-2.17,2.26-4.56,2.26-7.2,0-3.17-.91-5.73-2.73-7.66-1.82-1.93-4.2-3.46-7.14-4.59-2.94-1.12-6.19-2.11-9.75-2.96-3.56-.85-7.12-1.76-10.68-2.73-3.56-.97-6.83-2.26-9.81-3.89-2.98-1.63-5.38-3.77-7.2-6.44-1.82-2.67-2.73-6.17-2.73-10.5,0-4.02,1.06-7.72,3.19-11.08,2.13-3.37,5.4-6.07,9.81-8.13,4.41-2.05,10.06-3.07,16.94-3.07,4.57,0,9.09.64,13.58,1.91,4.49,1.28,8.36,3.04,11.61,5.28l-2.9,6.85c-3.48-2.32-7.18-4.02-11.08-5.11-3.91-1.08-7.68-1.63-11.32-1.63-4.87,0-8.9.66-12.07,1.97-3.17,1.32-5.51,3.07-7.02,5.28-1.51,2.21-2.26,4.7-2.26,7.49,0,3.17.91,5.73,2.73,7.66,1.82,1.94,4.22,3.44,7.2,4.53,2.98,1.08,6.25,2.05,9.81,2.9,3.56.85,7.1,1.78,10.62,2.79,3.52,1.01,6.77,2.3,9.75,3.89,2.98,1.59,5.38,3.7,7.2,6.32,1.82,2.63,2.73,6.08,2.73,10.33,0,3.95-1.08,7.6-3.25,10.97-2.17,3.37-5.48,6.08-9.92,8.13-4.45,2.05-10.16,3.07-17.12,3.07Z"/></svg>
           <h2 style="font-size:clamp(28px,3.2vw,38px)" data-i18n="cmon.t">L'agence data &amp; marketing des clubs de sport.</h2>
           <p data-i18n="cmon.p1">Basée à Lausanne, C'mon Sports accompagne les clubs et ligues suisses pour transformer leurs fans en un actif tangible, leurs données en revenus, et leurs revenus en arguments face aux sponsors.</p>
-          <p data-i18n="cmon.p2">Club Catalist est né d'un constat : la plupart des clubs pilotent leur marketing sans instruments. Le jeu rend visible, en 20 minutes, ce qu'un audit révèle en quelques semaines.</p>
+          <p data-i18n="cmon.p2">Le C'mon Sports Challenge est né d'un constat : la plupart des clubs pilotent leur marketing sans instruments. Le jeu rend visible, en 20 minutes, ce qu'un audit révèle en quelques semaines.</p>
           <div class="ctas">
-            <a class="btn btn-primary" href="https://calendly.com/meeting-douglas-finazzi/c-mon-sports-huddle-clone?utm_source=clubcatalist&amp;utm_medium=landing" target="_blank" rel="noopener" data-i18n="cmon.cta1">Parler 30 minutes avec nous</a>
-            <a class="btn" href="https://fanlab.cmon-sports.com/?utm_source=clubcatalist&amp;utm_medium=landing" target="_blank" rel="noopener" data-i18n="cmon.cta2">Estimer la valeur de ma fanbase</a>
+            <a class="btn btn-primary" href="https://calendly.com/meeting-douglas-finazzi/c-mon-sports-huddle-clone?utm_source=challenge&amp;utm_medium=landing" target="_blank" rel="noopener" data-i18n="cmon.cta1">Parler 30 minutes avec nous</a>
+            <a class="btn" href="https://fanlab.cmon-sports.com/?utm_source=challenge&amp;utm_medium=landing" target="_blank" rel="noopener" data-i18n="cmon.cta2">Estimer la valeur de ma fanbase</a>
           </div>
         </div>
         <div class="about-list">
@@ -613,10 +614,10 @@ let lang = detectLang();
 
 const TX = {
 de: {
-  "nav.by":"by C'mon Sports","nav.game":"Das Spiel","nav.clubs":"Die Clubs","nav.try":"Ausprobieren","nav.solutions":"Lösungen","nav.cmon":"C'mon Sports","nav.play":"Spielen",
+  "nav.game":"Das Spiel","nav.clubs":"Die Clubs","nav.try":"Ausprobieren","nav.solutions":"Lösungen","nav.cmon":"C'mon Sports","nav.play":"Spielen",
   "hero.eyebrow":"Gratis · im Browser · ohne Installation",
   "hero.title":"Sie übernehmen das Marketing des Clubs. <em>Der Vorstand wartet.</em>",
-  "hero.lead":"Club Catalist ist der Marketing-Management-Simulator eines Sportclubs, entwickelt von C'mon Sports. Content, Kampagnen, Daten der Fans, Sponsoren, DSGVO: 26 Wochen, um Ihren Club wachsen zu lassen oder entlassen zu werden.",
+  "hero.lead":"C'mon Sports Challenge ist der Marketing-Management-Simulator eines Sportclubs, entwickelt von C'mon Sports. Content, Kampagnen, Daten der Fans, Sponsoren, DSGVO: 26 Wochen, um Ihren Club wachsen zu lassen oder entlassen zu werden.",
   "hero.cta":"Jetzt spielen","hero.cta2":"Hier eine Woche testen","hero.resume":"Auf diesem Gerät wartet eine Partie: Machen Sie dort weiter, wo Sie aufgehört haben.",
   "hero.resumecta":"Partie fortsetzen",
   "hero.r1":"Eine Partie in 20 Minuten","hero.r2":"FR · DE · EN","hero.r3":"Ihr Spielstand bleibt in Ihrem Browser",
@@ -642,7 +643,7 @@ de: {
   "svc.k":"Das C'mon-Sports-Ökosystem im Spiel","svc.t":"Echte Lösungen mit echter Wirkung.","svc.p":"Im Reiter C'mon Sports des Spiels aktivieren Sie die Dienste, die die Agentur tatsächlich bei Clubs einsetzt. Das Spiel ist ein getreues Modell, keine Metapher.",
   "cmon.t":"Die Daten- &amp; Marketingagentur der Sportclubs.",
   "cmon.p1":"C'mon Sports mit Sitz in Lausanne begleitet Schweizer Clubs und Ligen dabei, ihre Fans in einen greifbaren Vermögenswert, ihre Daten in Einnahmen und ihre Einnahmen in Argumente gegenüber Sponsoren zu verwandeln.",
-  "cmon.p2":"Club Catalist entstand aus einer Feststellung: Die meisten Clubs steuern ihr Marketing ohne Instrumente. Das Spiel macht in 20 Minuten sichtbar, was ein Audit in wenigen Wochen aufdeckt.",
+  "cmon.p2":"Die C'mon Sports Challenge entstand aus einer Feststellung: Die meisten Clubs steuern ihr Marketing ohne Instrumente. Das Spiel macht in 20 Minuten sichtbar, was ein Audit in wenigen Wochen aufdeckt.",
   "cmon.cta1":"30 Minuten mit uns sprechen","cmon.cta2":"Den Wert meiner Fanbase schätzen",
   "cmon.a1t":"Messen · Audit &amp; Fan Intelligence","cmon.a1p":"Fan Equity Audit, Fan Lab Insight und Fan Lab Pro: die Datenreife Ihres Clubs und der wirtschaftliche Wert Ihres Publikums.",
   "cmon.a2t":"Strukturieren · Fan Management","cmon.a2p":"Fan Data Factory: eine saubere Kontaktbasis, DSGVO- und nDSG-konform, dauerhaft gepflegt.",
@@ -653,10 +654,10 @@ de: {
   "foot.ch":"Schweiz","foot.privacy":"Keine Cookies, keine Tracker: Diese Seite sammelt keine Daten."
 },
 en: {
-  "nav.by":"by C'mon Sports","nav.game":"The game","nav.clubs":"The clubs","nav.try":"Try it","nav.solutions":"Solutions","nav.cmon":"C'mon Sports","nav.play":"Play",
+  "nav.game":"The game","nav.clubs":"The clubs","nav.try":"Try it","nav.solutions":"Solutions","nav.cmon":"C'mon Sports","nav.play":"Play",
   "hero.eyebrow":"Free game · in your browser · no install",
   "hero.title":"You now run the club's marketing. <em>The board is waiting.</em>",
-  "hero.lead":"Club Catalist is the marketing management simulator of a sports club, built by C'mon Sports. Content, campaigns, fan data, sponsors, GDPR: 26 weeks to grow your club or get fired.",
+  "hero.lead":"C'mon Sports Challenge is the marketing management simulator of a sports club, built by C'mon Sports. Content, campaigns, fan data, sponsors, GDPR: 26 weeks to grow your club or get fired.",
   "hero.cta":"Play now","hero.cta2":"Try a week right here","hero.resume":"A game is waiting on this device: pick up where you left off.",
   "hero.resumecta":"Resume my game",
   "hero.r1":"A game in 20 minutes","hero.r2":"FR · DE · EN","hero.r3":"Your progress stays in your browser",
@@ -682,7 +683,7 @@ en: {
   "svc.k":"The C'mon Sports ecosystem, in play","svc.t":"Real solutions, with their real effects.","svc.p":"In the game's C'mon Sports tab, you can switch on the services the agency actually deploys for clubs. The game is a faithful model, not a metaphor.",
   "cmon.t":"The data &amp; marketing agency for sports clubs.",
   "cmon.p1":"Based in Lausanne, C'mon Sports helps Swiss clubs and leagues turn their fans into a tangible asset, their data into revenue, and their revenue into arguments in front of sponsors.",
-  "cmon.p2":"Club Catalist grew out of one observation: most clubs run their marketing with no instruments. In 20 minutes, the game makes visible what an audit reveals in a few weeks.",
+  "cmon.p2":"C'mon Sports Challenge grew out of one observation: most clubs run their marketing with no instruments. In 20 minutes, the game makes visible what an audit reveals in a few weeks.",
   "cmon.cta1":"Talk to us for 30 minutes","cmon.cta2":"Estimate my fanbase's value",
   "cmon.a1t":"Measure · Audit &amp; Fan Intelligence","cmon.a1p":"Fan Equity Audit, Fan Lab Insight and Fan Lab Pro: your club's data maturity and the economic value of your audience.",
   "cmon.a2t":"Structure · Fan Management","cmon.a2p":"Fan Data Factory: a clean contact base, GDPR and Swiss FADP compliant, maintained over time.",

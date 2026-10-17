@@ -1,4 +1,4 @@
-# Club Catalist — relais.
+# C'mon Sports Challenge — relais.
 # Idéalement, le site pointe sur relay/public/ et ce fichier ne sert pas.
 # S'il pointe sur relay/, on interdit tout sauf le point d'entrée public.
 Options -Indexes
