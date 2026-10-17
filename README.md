@@ -78,7 +78,7 @@ de traceur, pas d'outil d'analyse d'audience. Codes PIN (hachés SHA-256 salés)
 sauvegardes vivent dans le `localStorage` de l'appareil.
 
 Seule sortie, le CRM, annoncée à l'inscription : tout compte créé rejoint la liste Brevo
-`CMON_SOLUTION_CLUBCATALIST` (n° 63) avec le marqueur du même nom, les informations
+`CMON_SOLUTION_CHALLENGE` (n° 63) avec le marqueur du même nom, les informations
 facultatives du formulaire, les signaux d'usage `CC_*` et, s'il est rempli, le questionnaire
 de positionnement — base légale : intérêt légitime, avec droit d'opposition.
 

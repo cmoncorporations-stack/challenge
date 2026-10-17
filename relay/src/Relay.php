@@ -61,7 +61,7 @@ final class Relay
        au vrai prénom ; CC_LANG plutôt que LANGUE, une catégorie à valeurs
        figées où un texte libre vaudrait un HTTP 400. */
     public const ATTRIBUTES = [
-        ['CMON_SOLUTION_CLUBCATALIST', 'boolean'], ['PSEUDO', 'text'],
+        ['CMON_SOLUTION_CHALLENGE', 'boolean'], ['PSEUDO', 'text'],
         ['CC_SEASONS', 'float'], ['CC_SERVICES', 'text'], ['CC_CERT', 'text'],
         ['CC_LAST_PLAYED', 'date'], ['CC_LANG', 'text'],
         ['CC_MATURITY', 'text'], ['CC_PRIORITY', 'text'], ['CC_TIMING', 'text'],
@@ -315,10 +315,12 @@ final class Relay
 
     /* Un segment Brevo ne peut porter que sur un attribut existant : on crée
        ceux du jeu au premier passage. Un fichier témoin évite de relire la
-       liste des attributs à chaque requête ; il expire au bout d'un jour. */
+       liste des attributs à chaque requête ; il expire au bout d'un jour, et
+       son nom dépend de la liste attendue : un attribut ajouté ou renommé
+       dans une nouvelle version du relais est donc créé dès la requête suivante. */
     private function ensureAttributes(): void
     {
-        $flag = $this->var . '/attributes.ok';
+        $flag = $this->var . '/attributes-' . substr(md5(json_encode(self::ATTRIBUTES)), 0, 12) . '.ok';
         if (is_file($flag) && filemtime($flag) > time() - 86400) return;
         $r = $this->call('GET', '/contacts/attributes');
         if (!$r['ok']) return;   // non bloquant : l'écriture du contact dira ce qui manque
@@ -380,7 +382,7 @@ final class Relay
         $prev = is_array($existing) ? ($existing['attributes'] ?? []) : [];
 
         // Attributs du jeu : toujours à jour
-        $attrs = ['CMON_SOLUTION_CLUBCATALIST' => true, 'PSEUDO' => $p['pseudo'], 'CC_LANG' => $p['lang']];
+        $attrs = ['CMON_SOLUTION_CHALLENGE' => true, 'PSEUDO' => $p['pseudo'], 'CC_LANG' => $p['lang']];
         if ($p['tuto']) $attrs['CC_TUTO'] = $p['tuto'];
         $attrs += $p['q'];
         if ($p['cc']) {

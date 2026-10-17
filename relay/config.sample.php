@@ -6,7 +6,7 @@ return [
     // Clé API Brevo dédiée au relais (Brevo → Paramètres → Clés API)
     'BREVO_API_KEY'   => '',
 
-    // Liste Brevo « CMON_SOLUTION_CLUBCATALIST »
+    // Liste Brevo « CMON_SOLUTION_CHALLENGE »
     'BREVO_LIST_ID'   => 63,
 
     // Sites autorisés à appeler le relais (séparés par des virgules)
