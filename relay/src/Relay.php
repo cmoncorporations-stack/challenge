@@ -252,6 +252,8 @@ final class Relay
             'email'  => $email,
             'optIn'  => ($b['optIn'] ?? null) === true,
             'pseudo' => self::str($b['pseudo'] ?? null, 40) ?: explode('@', $email)[0],
+            'firstName' => self::str($b['firstName'] ?? null, 40),
+            'lastName'  => self::str($b['lastName'] ?? null, 40),
             'org'    => self::str($b['org'] ?? null, 60),
             'role'   => self::oneOf($b['role'] ?? null, self::ROLES, 'role'),
             'sport'  => $sport,
@@ -318,21 +320,34 @@ final class Relay
        liste des attributs à chaque requête ; il expire au bout d'un jour, et
        son nom dépend de la liste attendue : un attribut ajouté ou renommé
        dans une nouvelle version du relais est donc créé dès la requête suivante. */
-    private function ensureAttributes(): void
+    /** @return string[]|null attributs connus du compte (null : inconnus) */
+    private function ensureAttributes(): ?array
     {
         $flag = $this->var . '/attributes-' . substr(md5(json_encode(self::ATTRIBUTES)), 0, 12) . '.ok';
-        if (is_file($flag) && filemtime($flag) > time() - 86400) return;
+        if (is_file($flag) && filemtime($flag) > time() - 86400) {
+            $cached = json_decode((string)@file_get_contents($flag), true);
+            if (is_array($cached)) return $cached;
+        }
         $r = $this->call('GET', '/contacts/attributes');
-        if (!$r['ok']) return;   // non bloquant : l'écriture du contact dira ce qui manque
+        if (!$r['ok']) return null;   // non bloquant : l'écriture du contact dira ce qui manque
         $known = array_column($r['data']['attributes'] ?? [], 'name');
         $allOk = true;
         foreach (self::ATTRIBUTES as [$name, $type]) {
             if (in_array($name, $known, true)) continue;
             $c = $this->call('POST', "/contacts/attributes/normal/$name", ['type' => $type]);
             // 400 = déjà créé entre-temps par une autre requête : ça convient aussi
-            if (!$c['ok'] && $c['status'] !== 400) $allOk = false;
+            if ($c['ok'] || $c['status'] === 400) $known[] = $name;
+            else $allOk = false;
         }
-        if ($allOk) @touch($flag);
+        if ($allOk) @file_put_contents($flag, json_encode($known));
+        return $known;
+    }
+
+    /* Prénom et nom : attributs standard du CRM (PRENOM / NOM sur un compte
+       Brevo en français), réglables dans config.php. */
+    private function nameAttrs(): array
+    {
+        return [(string)($this->cfg['FIRSTNAME_ATTR'] ?? 'PRENOM'), (string)($this->cfg['LASTNAME_ATTR'] ?? 'NOM')];
     }
 
     private static function esc(mixed $v): string
@@ -348,7 +363,8 @@ final class Relay
         if (!$to) return false;
         $cc = $p['cc'] ?? [];
         $rows = array_filter([
-            ['E-mail', $p['email']], ['Pseudo', $p['pseudo']], ['Organisation', $p['org']], ['Rôle', $p['role']],
+            ['E-mail', $p['email']], ['Prénom', $p['firstName']], ['Nom', $p['lastName']],
+            ['Organisation', $p['org']], ['Rôle', $p['role']],
             ['Sport', $p['sport'] ? self::SPORTS[$p['sport']] : null], ['Maturité', $p['q']['CC_MATURITY'] ?? null],
             ['Priorité', $p['q']['CC_PRIORITY'] ?? null], ['Projet', $p['q']['CC_TIMING'] ?? null],
             ['Services essayés', $cc['services'] ?? null], ['Saisons terminées', $cc['seasons'] ?? null],
@@ -373,7 +389,7 @@ final class Relay
     public function syncPlayer(array $p): void
     {
         $listId = $this->listId();
-        $this->ensureAttributes();
+        $known = $this->ensureAttributes();
         $path = '/contacts/' . rawurlencode($p['email']);
 
         $found = $this->call('GET', $path);
@@ -396,6 +412,12 @@ final class Relay
         if ($p['org'] !== '' && $empty('COMPANY')) $attrs['COMPANY'] = $p['org'];
         if ($p['role'] && $empty('JOB_TITLE')) $attrs['JOB_TITLE'] = $p['role'];
         if ($p['sport'] && $empty('SPORT')) $attrs['SPORT'] = $p['sport'];
+        // Prénom / nom : seulement si l'attribut existe au compte (un attribut
+        // inconnu ferait refuser toute la fiche) et s'il est encore vide.
+        [$fnAttr, $lnAttr] = $this->nameAttrs();
+        $exists = fn(string $k) => $known === null || in_array($k, $known, true);
+        if ($p['firstName'] !== '' && $exists($fnAttr) && $empty($fnAttr)) $attrs[$fnAttr] = $p['firstName'];
+        if ($p['lastName'] !== '' && $exists($lnAttr) && $empty($lnAttr)) $attrs[$lnAttr] = $p['lastName'];
         if ($existing === null) $attrs['OPT_IN'] = $p['optIn'];
         elseif ($p['optIn'] && ($prev['OPT_IN'] ?? null) !== true) $attrs['OPT_IN'] = true;
 
@@ -451,6 +473,10 @@ final class Relay
                 ? array_values(array_diff(array_column(self::ATTRIBUTES, 0), $known))
                 : null,
             'notify'   => trim((string)($this->cfg['NOTIFY_TO'] ?? '')) !== '',
+            // Attributs prénom / nom présents au compte ?
+            'names'    => $attrs['ok']
+                ? array_combine($this->nameAttrs(), array_map(fn($k) => in_array($k, $known, true), $this->nameAttrs()))
+                : null,
         ];
     }
 

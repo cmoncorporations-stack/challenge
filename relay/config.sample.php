@@ -16,6 +16,11 @@ return [
     'NOTIFY_TO'       => 'douglas@cmon-sports.com',
     'NOTIFY_SENDER'   => 'noreply@cmon-sports.com',
 
+    // Attributs Brevo du prénom et du nom (PRENOM / NOM sur un compte en français,
+    // FIRSTNAME / LASTNAME sur un compte en anglais). Jamais écrasés s'ils sont remplis.
+    'FIRSTNAME_ATTR'  => 'PRENOM',
+    'LASTNAME_ATTR'   => 'NOM',
+
     // Requêtes autorisées par minute et par adresse IP (0 = pas de limite)
     'RATE_LIMIT'      => 30,
 

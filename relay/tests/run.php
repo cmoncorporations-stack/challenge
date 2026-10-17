@@ -281,11 +281,59 @@ test("témoin d'une ancienne version : le nouvel attribut est quand même créé
     eq(count($b->to('/contacts/attributes/normal/CMON_SOLUTION_CHALLENGE')), 1, 'attribut créé');
 });
 
+// Compte Brevo « réel » : attributs du jeu + prénom / nom standard
+function withNames(): array { return [...array_column(Relay::ATTRIBUTES, 0), 'PRENOM', 'NOM']; }
+
+test('prénom et nom transmis à PRENOM / NOM pour un nouveau contact', function () {
+    $b = new FakeBrevo(attributes: withNames());
+    post(relay($b), ['email' => 'anne@club.ch', 'pseudo' => 'Anne', 'firstName' => '  Anne ', 'lastName' => "Dupont\n"]);
+    $a = $b->contacts['anne@club.ch']['attributes'];
+    eq([$a['PRENOM'] ?? null, $a['NOM'] ?? null, $a['PSEUDO'] ?? null], ['Anne', 'Dupont', 'Anne']);
+});
+
+test('prénom / nom déjà au CRM : jamais écrasés, seul le vide est complété', function () {
+    $b = new FakeBrevo(attributes: withNames(), contacts: ['anne@club.ch' => [
+        'email' => 'anne@club.ch', 'attributes' => ['PRENOM' => 'Anne-Laure', 'NOM' => '']]]);
+    post(relay($b), ['email' => 'anne@club.ch', 'firstName' => 'Anne', 'lastName' => 'Dupont']);
+    $put = array_values(array_filter($b->writes(), fn($c) => $c['method'] === 'PUT'))[0];
+    ok(!array_key_exists('PRENOM', $put['body']['attributes']), 'PRENOM ne doit pas être écrasé');
+    eq($put['body']['attributes']['NOM'] ?? null, 'Dupont', 'NOM vide : complété');
+});
+
+test('attributs prénom / nom absents du compte : non envoyés (la fiche passe quand même)', function () {
+    $b = new FakeBrevo();   // compte sans PRENOM ni NOM
+    $res = post(relay($b), ['email' => 'x@club.ch', 'firstName' => 'Anne', 'lastName' => 'Dupont']);
+    eq($res['status'], 200);
+    $a = $b->contacts['x@club.ch']['attributes'];
+    ok(!isset($a['PRENOM']) && !isset($a['NOM']), 'PRENOM / NOM ne doivent pas partir');
+});
+
+test('noms d\'attributs réglables (compte Brevo en anglais)', function () {
+    $b = new FakeBrevo(attributes: [...array_column(Relay::ATTRIBUTES, 0), 'FIRSTNAME', 'LASTNAME']);
+    post(relay($b, CFG + ['FIRSTNAME_ATTR' => 'FIRSTNAME', 'LASTNAME_ATTR' => 'LASTNAME']),
+         ['email' => 'en@club.ch', 'firstName' => 'Anne', 'lastName' => 'Dupont']);
+    $a = $b->contacts['en@club.ch']['attributes'];
+    eq([$a['FIRSTNAME'] ?? null, $a['LASTNAME'] ?? null], ['Anne', 'Dupont']);
+});
+
+test('appel chaud : prénom et nom dans l\'alerte', function () {
+    $b = new FakeBrevo(attributes: withNames());
+    post(relay($b), ['email' => 'chaud@club.ch', 'firstName' => 'Anne', 'lastName' => 'Dupont', 'q' => ['CC_TIMING' => 'Budget prévu']]);
+    $html = $b->to('/smtp/email')[0]['body']['htmlContent'] ?? '';
+    ok(str_contains($html, 'Anne') && str_contains($html, 'Dupont'), 'prénom et nom attendus dans l\'alerte');
+});
+
+test('santé : attributs prénom / nom détectés', function () {
+    [, , $body] = relay(new FakeBrevo(attributes: withNames()))->handle(['method' => 'GET', 'path' => '/health', 'origin' => ORIGIN, 'ip' => '1']);
+    eq($body['names'], ['PRENOM' => true, 'NOM' => true]);
+});
+
 test('santé : liste et attributs', function () {
     [$s, , $body] = relay(new FakeBrevo())->handle(['method' => 'GET', 'path' => '/health', 'origin' => ORIGIN, 'ip' => '1']);
     eq($s, 200);
     eq($body, ['ok' => true, 'brevo' => 'ok', 'listId' => 63, 'list' => true,
-               'expected' => count(Relay::ATTRIBUTES), 'missing' => [], 'notify' => true]);
+               'expected' => count(Relay::ATTRIBUTES), 'missing' => [], 'notify' => true,
+               'names' => ['PRENOM' => false, 'NOM' => false]]);
 });
 
 test('limite de débit respectée, par adresse IP', function () {
