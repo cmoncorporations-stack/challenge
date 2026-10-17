@@ -88,8 +88,8 @@ Export et effacement des données en un clic depuis le pied de page.
 ## Relais CRM
 
 Le jeu est un fichier statique : une clé Brevo qu'il contiendrait serait publique, et elle
-ouvre le CRM entier. Le dossier `relay/` contient donc un Cloudflare Worker qui garde la clé
-côté serveur et n'expose que deux routes :
+ouvre le CRM entier. Le dossier `relay/` contient donc un petit relais PHP, hébergé en Suisse
+chez Infomaniak, qui garde la clé côté serveur et n'expose que deux routes :
 
 - `POST /sync` — inscrit ou met à jour un joueur dans la liste 63, transmet ses événements
   d'usage et, le cas échéant, envoie l'alerte « appel chaud » ;
@@ -98,30 +98,50 @@ côté serveur et n'expose que deux routes :
 Garde-fous : le relais ne touche jamais à la liste noire d'un contact existant ; `COMPANY`,
 `JOB_TITLE` et `SPORT` ne sont remplis que s'ils sont vides ; `OPT_IN` ne peut que passer à
 vrai ; seules les valeurs canoniques du jeu sont acceptées ; CORS limité au domaine du jeu ;
-30 requêtes par minute et par IP ; la réponse ne dit pas si l'adresse existait déjà.
+30 requêtes par minute et par IP (l'adresse n'est conservée que hachée, une minute au plus) ;
+la réponse ne dit pas si l'adresse existait déjà.
 
-### Déployer
+```
+relay/
+├── public/index.php    seul fichier exposé au web (+ .htaccess)
+├── src/Relay.php       logique du relais
+├── config.sample.php   modèle de configuration → à copier en config.php (clé Brevo)
+├── var/                compteurs de débit et cache, inscriptible par PHP
+└── tests/run.php       tests, sans dépendance : php relay/tests/run.php
+```
 
-1. Dans Brevo, créer une clé API dédiée (« club-catalist-relay »), puis **révoquer l'ancienne
-   clé** qui était saisie dans le navigateur de l'administrateur.
-2. Déployer le relais :
+PHP 8.1 ou plus récent, avec l'extension cURL (présente par défaut chez Infomaniak).
 
-   ```bash
-   cd relay
-   npx wrangler@4.147.0 login
-   npx wrangler@4.147.0 secret put BREVO_API_KEY   # coller la nouvelle clé
-   npx wrangler@4.147.0 deploy
-   ```
+### Déployer chez Infomaniak
 
-3. Reporter l'adresse affichée (`https://clubcatalist-relay.<compte>.workers.dev`) dans
-   `RELAY_URL`, en tête de la section « Synchronisation CRM » de `jouer/index.html`, puis publier.
-4. Dans le jeu, **⚙️ Admin → Tester le relais**, puis **Synchroniser maintenant**.
+1. **Clé Brevo** — dans Brevo (Paramètres → Clés API), créer une clé dédiée
+   (« club-catalist-relay »), puis **révoquer l'ancienne clé** qui était saisie dans le
+   navigateur de l'administrateur.
+2. **Site** — dans le Manager Infomaniak, sur l'hébergement web, ajouter un site ou un
+   sous-domaine, par exemple `relay.cmon-sports.com`, en PHP 8.1 ou plus, avec un certificat
+   SSL (Let's Encrypt, gratuit). Si le Manager le permet, faire pointer le dossier racine du
+   site sur `relay/public`.
+3. **Fichiers** — envoyer le contenu de `relay/` (FTP/SFTP ou gestionnaire de fichiers du
+   Manager) : `public/`, `src/`, `var/`, `.htaccess` et `config.sample.php`.
+4. **Clé** — sur le serveur, copier `config.sample.php` en `config.php` et y coller la clé.
+   Ce fichier reste hors du dossier public ; il n'est jamais versionné.
+5. **Contrôle** — ouvrir `https://relay.cmon-sports.com/health` dans un navigateur : la réponse
+   `{"ok":false,"error":"origin"}` est **normale** (le relais répond et refuse ce qui ne vient
+   pas du jeu).
+6. **Branchement** — reporter `https://relay.cmon-sports.com` dans `RELAY_URL`, en tête de la
+   section « Synchronisation CRM » de `jouer/index.html`, puis publier.
+7. Dans le jeu, **⚙️ Admin → Tester le relais**, puis **Synchroniser maintenant**.
+
+Si le dossier racine ne peut pas viser `relay/public`, le faire pointer sur `relay/` : le
+`.htaccess` de `relay/` redirige vers le point d'entrée et interdit tout le reste. Sans
+réécriture d'URL, `RELAY_URL` prend la forme `https://relay.cmon-sports.com/index.php`
+(ou `…/public/index.php`).
 
 Les comptes créés avant la mise en service sont restés en file sur l'appareil de chaque
 joueur : ils partent d'eux-mêmes à sa visite suivante.
 
-Réglages dans `relay/wrangler.toml` : origines autorisées, numéro de liste, destinataire et
-expéditeur de l'alerte. Tests : `cd relay && node --test` (sans dépendance).
+Réglages dans `config.php` : origines autorisées, numéro de liste, destinataire et expéditeur
+de l'alerte, limite de débit.
 
 ### Événements et notifications
 

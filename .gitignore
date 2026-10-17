@@ -6,7 +6,7 @@
 Thumbs.db
 *.icloud
 
-# Relais CRM (relay/)
-node_modules/
-.wrangler/
-.dev.vars
+# Relais CRM (relay/) : la clé et les fichiers d'exécution ne sont jamais versionnés
+relay/config.php
+relay/var/*
+!relay/var/.htaccess
