@@ -101,7 +101,8 @@ chez Infomaniak, qui garde la clé côté serveur et n'expose que deux routes :
 - `GET /health` — diagnostic utilisé par le panneau **⚙️ Admin**.
 
 Garde-fous : le relais ne touche jamais à la liste noire d'un contact existant ; `COMPANY`,
-`JOB_TITLE` et `SPORT` ne sont remplis que s'ils sont vides ; `OPT_IN` ne peut que passer à
+`JOB_TITLE`, `SPORT`, `PRENOM` et `NOM` ne sont remplis que s'ils sont vides (prénom et nom
+seulement si ces attributs existent au compte ; noms réglables dans `config.php`) ; `OPT_IN` ne peut que passer à
 vrai ; seules les valeurs canoniques du jeu sont acceptées ; CORS limité au domaine du jeu ;
 30 requêtes par minute et par IP (l'adresse n'est conservée que hachée, une minute au plus) ;
 la réponse ne dit pas si l'adresse existait déjà.
