@@ -1,0 +1,15 @@
+# Club Catalist — relais.
+# Idéalement, le site pointe sur relay/public/ et ce fichier ne sert pas.
+# S'il pointe sur relay/, on interdit tout sauf le point d'entrée public.
+Options -Indexes
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(src|var|tests)(/|$) - [F,L]
+  RewriteRule ^(config|config\.sample)\.php$ - [F,L]
+  RewriteRule ^(README\.md|\.htaccess)$ - [F,L]
+  RewriteCond %{REQUEST_URI} !/public/index\.php
+  RewriteRule ^(.*)$ public/index.php/$1 [L,QSA]
+</IfModule>
+<Files "config.php">
+  Require all denied
+</Files>

@@ -1,9 +1,0 @@
-{
-  "name": "clubcatalist-relay",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "test": "node --test",
-    "deploy": "npx wrangler@4.147.0 deploy"
-  }
-}
