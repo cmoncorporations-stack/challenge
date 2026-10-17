@@ -130,7 +130,7 @@ test('nouveau joueur sans opt-in : créé dans la liste 63, exclu des campagnes'
     eq($c['emailBlacklisted'], true);
     eq($c['listIds'], [63]);
     eq($c['attributes']['OPT_IN'], false);
-    eq($c['attributes']['CMON_SOLUTION_CLUBCATALIST'], true);
+    eq($c['attributes']['CMON_SOLUTION_CHALLENGE'], true);
     eq($c['attributes']['COMPANY'], 'HC Test');
     eq($c['attributes']['JOB_TITLE'], 'Marketing & communication');
     eq($c['attributes']['SPORT'], 4);
@@ -271,6 +271,14 @@ test('attributs manquants créés une seule fois', function () {
     sort($expected);
     eq($created, $expected);
     eq(count(array_filter($b->calls, fn($c) => $c['path'] === '/contacts/attributes')), 1, 'liste relue une seule fois');
+});
+
+test("témoin d'une ancienne version : le nouvel attribut est quand même créé", function () {
+    $var = tmpdir();
+    touch("$var/attributes.ok");                       // témoin laissé par la version précédente
+    $b = new FakeBrevo(attributes: array_values(array_diff(array_column(Relay::ATTRIBUTES, 0), ['CMON_SOLUTION_CHALLENGE'])));
+    post(relay($b, CFG, $var), ['email' => 'a@b.ch']);
+    eq(count($b->to('/contacts/attributes/normal/CMON_SOLUTION_CHALLENGE')), 1, 'attribut créé');
 });
 
 test('santé : liste et attributs', function () {

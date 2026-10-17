@@ -495,6 +495,7 @@ select option{background:var(--card);color:var(--ink)}
 
 /* ── Blasons ──────────────────────────────────────────────────────────── */
 .crest{display:block;width:100%;height:100%;overflow:visible}
+.crest-img{object-fit:contain}
 .crest-field{fill:rgba(4,9,18,.72)}
 .crest-edge{fill:none;stroke:currentColor;stroke-width:2.4;
   filter:drop-shadow(0 0 6px color-mix(in srgb, currentColor 45%, transparent))}
@@ -1072,19 +1073,19 @@ const WEEKS_PER_SEASON = 26;
 
 /* ---------------- Clubs jouables ---------------- */
 const CLUBS = [
-  { id:"hc",  color:"#7FD4FF", code:"HCM", icon:"shield", name:"HC Montagnards", sport:"Hockey sur glace", city:"La Chaux-de-Fonds", division:1,
-    desc:"Club historique de l'élite, fanbase fidèle mais vieillissante. Digital quasi inexistant : tout est à construire.",
+  { id:"hc",  color:"#5B8DEF", code:"GRH", icon:"shield", name:"Glacier Royal HC", sport:"Hockey sur glace", city:"Valcrête", division:1,
+    desc:"Club historique de l'élite, cinq titres en vitrine et une patinoire qui chante encore. Fanbase fidèle mais vieillissante, digital quasi inexistant : tout est à construire.",
     fans:14000, contacts:1800, engagement:38, budget:60000, strength:52, capacity:5200, ticket:24,
     dmos:{strategie:2, contenu:3, donnees:1, outils:2, acquisition:2, conformite:2} },
-  { id:"fc",  color:"#4ADE80", code:"FCR", icon:"shield", name:"FC Riviera 04", sport:"Football", city:"Vevey", division:2,
-    desc:"Ambitieux club de 2e division qui rêve de promotion. Bonne présence sociale, mais données fans éparpillées et sponsors impatients.",
+  { id:"fc",  color:"#E0BC6A", code:"RRV", icon:"shield", name:"Real Riviera", sport:"Football", city:"Port-Riviera", division:2,
+    desc:"Un nom de géant pour un club de 2e division qui rêve de promotion. Belle présence sociale, mais données fans éparpillées et sponsors impatients.",
     fans:32000, contacts:5200, engagement:45, budget:95000, strength:58, capacity:8600, ticket:19,
     dmos:{strategie:4, contenu:5, donnees:2, outils:3, acquisition:4, conformite:3} },
-  { id:"bb",  color:"#FF9F5A", code:"LB89", icon:"shield", name:"Lions Basket 89", sport:"Basketball", city:"Fribourg", division:2,
-    desc:"Petit budget, grosse énergie, 2e division. Communauté jeune et engagée, mais zéro CRM et une conformité RGPD douteuse.",
+  { id:"bb",  color:"#9B7CF5", code:"LSK", icon:"shield", name:"Lakeside Kings", sport:"Basketball", city:"Rive-Dorée", division:2,
+    desc:"Petit budget, grosse énergie, 2e division. Un public jeune qui fait trembler la salle, mais zéro CRM et une conformité RGPD douteuse.",
     fans:9500, contacts:900, engagement:56, budget:42000, strength:60, capacity:3100, ticket:16,
     dmos:{strategie:3, contenu:4, donnees:1, outils:1, acquisition:3, conformite:1} },
-  { id:"vb", color:"#C4A2FF", code:"VLE", icon:"shield", name:"Volley Léman Élite", sport:"Volleyball", city:"Lausanne", division:1,
+  { id:"vb", color:"#2BC4BE", code:"OLY", icon:"shield", name:"Olympia Léman", sport:"Volleyball", city:"Saint-Aurèle", division:1,
     desc:"Champion en titre de l'élite, l'Europe en ligne de mire. Le sportif tourne, le marketing dort : le comité veut monétiser, vite.",
     fans:21000, contacts:3400, engagement:41, budget:78000, strength:68, capacity:4000, ticket:21,
     dmos:{strategie:3, contenu:3, donnees:3, outils:2, acquisition:2, conformite:4} },
@@ -1096,13 +1097,13 @@ const CLUBS = [
    Le tracé suit currentColor, donc le blason s'accorde partout où il est
    posé — en-tête de partie comme carte de sélection. */
 const CREST_MARKS = {
-  // Montagnards : palet de hockey posé au-dessus des sommets du Jura
+  // Hockey : palet de hockey posé au-dessus des sommets
   hc:`<ellipse cx="32" cy="20" rx="7.6" ry="2.9" fill="currentColor"/>
       <path d="M24.4 20v2.6c0 1.6 3.4 2.9 7.6 2.9s7.6-1.3 7.6-2.9V20" fill="currentColor" opacity=".5"/>
       <path d="M12 55 23 36l6.5 9L40 29l12 26Z" fill="currentColor" opacity=".92"/>
       <path d="M23 36l4.2 7.2h-8.4Z" fill="#fff" opacity=".6"/>
       <path d="M40 29l4.6 8h-9.2Z" fill="#fff" opacity=".6"/>`,
-  // Riviera : ballon de football et les vagues du Léman
+  // Football : ballon de football et les vagues de la Riviera
   fc:`<circle cx="32" cy="28" r="11.5" fill="none" stroke="currentColor" stroke-width="2.4"/>
       <path d="M32 23.4 36.4 26.6 34.7 31.8h-5.4L27.6 26.6Z" fill="currentColor"/>
       <path d="M32 23.4v-4.2M36.4 26.6l4-1.4M34.7 31.8l2.5 3.4M29.3 31.8l-2.5 3.4M27.6 26.6l-4-1.4"
@@ -1111,14 +1112,12 @@ const CREST_MARKS = {
             stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".85"/>
       <path d="M13 56c5-3.4 8-3.4 13 0s8 3.4 13 0 8-3.4 12 0" fill="none"
             stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".45"/>`,
-  // Lions : ballon de basket marqué de trois griffures
+  // Basket : ballon de basket
   bb:`<circle cx="32" cy="34" r="14.5" fill="none" stroke="currentColor" stroke-width="2.6"/>
       <path d="M32 19.5v29M17.5 34h29" stroke="currentColor" stroke-width="1.7" opacity=".7"/>
       <path d="M21.8 23.7c5.3 5.3 5.3 15.3 0 20.6M42.2 23.7c-5.3 5.3-5.3 15.3 0 20.6"
-            fill="none" stroke="currentColor" stroke-width="1.7" opacity=".7"/>
-      <path d="M22.5 20.5 30.5 32M28.5 17.5 36.5 29M34.5 15.5 42.5 27" stroke="#fff"
-            stroke-width="3" stroke-linecap="round" opacity=".92"/>`,
-  // Volley Léman : ballon à trois bandes et le lac
+            fill="none" stroke="currentColor" stroke-width="1.7" opacity=".7"/>`,
+  // Volley : ballon à trois bandes et le lac
   vb:`<circle cx="32" cy="28" r="12.5" fill="none" stroke="currentColor" stroke-width="2.4"/>
       <path d="M23.2 19.4c6.6 5.8 9.8 14.2 8.8 21.1" fill="none" stroke="currentColor" stroke-width="2.1"/>
       <path d="M19.9 32.2c8.2-4.3 17.9-3.2 24.3 2.9" fill="none" stroke="currentColor" stroke-width="2.1"/>
@@ -1129,7 +1128,17 @@ const CREST_MARKS = {
             stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".45"/>`,
 };
 
+/* Logos officiels des quatre clubs (assets/clubs/). Un club de démo reprend
+   l'identifiant d'un club du catalogue mais porte le nom du prospect : il
+   garde le blason vectoriel générique, jamais le logo d'un autre club. */
+function clubLogo(club) {
+  const ref = club && CLUBS.find(c => c.id === club.id);
+  return ref && ref.name === club.name ? `../assets/clubs/${club.id}.webp` : null;
+}
+
 function clubCrest(club, cls) {
+  const logo = clubLogo(club);
+  if (logo) return `<img class="crest crest-img ${cls || ""}" src="${logo}" alt="Blason ${esc(club.name)}" loading="lazy">`;
   return `<svg class="crest ${cls || ""}" viewBox="0 0 64 74" role="img"
     aria-label="Blason ${esc(club.name)}" style="color:${club.color}">
     <path class="crest-field" d="M32 2.5 58 10.6V37c0 16.4-11.7 27.9-26 33.6C17.7 64.9 6 53.4 6 37V10.6Z"/>
@@ -2569,10 +2578,13 @@ async function buildShareCard(s) {
 
   // Blason
   try {
+    const logo = location.protocol !== "file:" && clubLogo(club);
     const img = new Image();
-    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(crestStandalone(club));
+    img.src = logo || "data:image/svg+xml;charset=utf-8," + encodeURIComponent(crestStandalone(club));
     await new Promise((ok, ko) => { img.onload = ok; img.onerror = ko; });
-    ctx.drawImage(img, 74, 74, 128, 148);
+    // Logo carré dans le cadre 128×148 du blason, centré
+    if (logo) ctx.drawImage(img, 74 - 6, 74 + 4, 140, 140);
+    else ctx.drawImage(img, 74, 74, 128, 148);
   } catch (e) { /* sans blason, la carte reste lisible */ }
 
   // Identité du club
@@ -2881,7 +2893,7 @@ const FANLAB_CALC_URL = "https://fanlab.cmon-sports.com/?utm_source=challenge&ut
 
 // Adresse du relais déployé (README, « Relais CRM »). Vide : rien ne part.
 const RELAY_URL = "https://relay.cmon-sports.com";
-const BREVO_LIST_ID = 63;   // liste « CMON_SOLUTION_CLUBCATALIST », fixée côté relais
+const BREVO_LIST_ID = 63;   // liste « CMON_SOLUTION_CHALLENGE », fixée côté relais
 const CRM_EVENTS_MAX = 20;  // file d'événements par compte
 
 // Héritage : la clé API vivait dans le navigateur de l'administrateur. Le
@@ -4383,17 +4395,17 @@ const TX = {
     "brief.frame": "<h2><i class=ic-{v0}></i> {v1}</h2>\n    <div class=\"tuto-trail\" style=\"margin:0 0 14px\">{v3}</div>\n    {v2}\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"brief-next\"><i class=ic-arrow></i> {v6}</button>\n      <button id=\"brief-skip\" style=\"text-align:center\">Briefing überspringen ({v4}/{v5})</button>\n    </div>",
     "brief.go": "Meinen Club wählen",
     "brief.next": "Weiter",
-    "club.bb.desc": "Kleines Budget, grosse Energie, zweite Liga. Junge, engagierte Community – aber kein CRM und eine DSGVO-Compliance, die diesen Namen kaum verdient.",
-    "club.bb.name": "Lions Basket 89",
+    "club.bb.desc": "Kleines Budget, grosse Energie, 2. Liga. Ein junges Publikum, das die Halle beben lässt, aber kein CRM und ein fragwürdiger Datenschutz.",
+    "club.bb.name": "Lakeside Kings",
     "club.bb.sport": "Basketball",
-    "club.fc.desc": "Ehrgeiziger Zweitligist mit Aufstiegsträumen. Starke Social-Präsenz, doch die Fandaten liegen über alle Systeme verstreut und die Sponsoren werden ungeduldig.",
-    "club.fc.name": "FC Riviera 04",
+    "club.fc.desc": "Ein grosser Name für einen Zweitligisten, der vom Aufstieg träumt. Gute Präsenz in den sozialen Medien, aber verstreute Fandaten und ungeduldige Sponsoren.",
+    "club.fc.name": "Real Riviera",
     "club.fc.sport": "Fussball",
-    "club.hc.desc": "Traditionsclub der höchsten Liga, treue, aber überalterte Fanbase. Digital praktisch inexistent: Hier ist alles noch aufzubauen.",
-    "club.hc.name": "HC Montagnards",
+    "club.hc.desc": "Traditionsclub der höchsten Liga, fünf Meistertitel in der Vitrine und eine Eishalle, die noch immer singt. Treue, aber alternde Fanbasis, digital praktisch inexistent: Alles muss aufgebaut werden.",
+    "club.hc.name": "Glacier Royal HC",
     "club.hc.sport": "Eishockey",
     "club.vb.desc": "Amtierender Meister der höchsten Liga, Europa im Visier. Sportlich läuft es, das Marketing schläft: Der Vorstand will monetarisieren – und zwar sofort.",
-    "club.vb.name": "Volley Léman Élite",
+    "club.vb.name": "Olympia Léman",
     "club.vb.sport": "Volleyball",
     "dec.dataleak.c0.label": "Volle Transparenz: Fans informieren",
     "dec.dataleak.c0.sub": "−2 000 CHF Krisenkommunikation · schützt langfristig das Vertrauen",
@@ -4943,17 +4955,17 @@ const TX = {
     "brief.frame": "<h2><i class=ic-{v0}></i> {v1}</h2>\n    <div class=\"tuto-trail\" style=\"margin:0 0 14px\">{v3}</div>\n    {v2}\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"brief-next\"><i class=ic-arrow></i> {v6}</button>\n      <button id=\"brief-skip\" style=\"text-align:center\">Skip the briefing ({v4}/{v5})</button>\n    </div>",
     "brief.go": "Choose my club",
     "brief.next": "Next",
-    "club.bb.desc": "Small budget, big energy, second division. A young, engaged community — but no CRM at all and GDPR compliance that would not survive a closer look.",
-    "club.bb.name": "Lions Basket 89",
+    "club.bb.desc": "Small budget, big energy, second division. A young crowd that makes the arena shake, but zero CRM and shaky GDPR compliance.",
+    "club.bb.name": "Lakeside Kings",
     "club.bb.sport": "Basketball",
-    "club.fc.desc": "An ambitious second-division side dreaming of promotion. Strong on social, but the fan data is scattered everywhere and the sponsors are losing patience.",
-    "club.fc.name": "FC Riviera 04",
+    "club.fc.desc": "A giant's name for a second-division club dreaming of promotion. Strong on social, but fan data is scattered and sponsors are impatient.",
+    "club.fc.name": "Real Riviera",
     "club.fc.sport": "Football",
-    "club.hc.desc": "A top-flight institution with a loyal but ageing fanbase. Digital is close to non-existent: everything still has to be built.",
-    "club.hc.name": "HC Montagnards",
+    "club.hc.desc": "A historic top-flight club with five titles in the cabinet and an arena that still sings. A loyal but ageing fanbase, digital almost non-existent: everything has to be built.",
+    "club.hc.name": "Glacier Royal HC",
     "club.hc.sport": "Ice hockey",
     "club.vb.desc": "Reigning national champion with Europe in its sights. The sporting side delivers, the marketing sleeps: the board wants money on the table, fast.",
-    "club.vb.name": "Volley Léman Élite",
+    "club.vb.name": "Olympia Léman",
     "club.vb.sport": "Volleyball",
     "dec.dataleak.c0.label": "Full transparency: tell the fans",
     "dec.dataleak.c0.sub": "−2 000 CHF in crisis management · protects trust for the long run",

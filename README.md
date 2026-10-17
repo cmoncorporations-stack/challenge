@@ -57,6 +57,8 @@ Site statique en JavaScript vanilla : aucun build, aucune dépendance, aucun fra
   sur la landing à l'écran de sélection.
 - `assets/` — logo C'mon Sports Challenge en SVG : `logo-challenge-blanc.svg` (fonds sombres,
   utilisé par le site) et `logo-challenge-noir.svg` (fonds clairs).
+- `assets/clubs/` — logos des quatre clubs fictifs (`hc`, `fc`, `bb`, `vb`.webp, fond transparent) :
+  Glacier Royal HC, Real Riviera, Lakeside Kings, Olympia Léman.
 - `fonts/` — polices Raleway auto-hébergées.
 
 ```bash
@@ -78,7 +80,7 @@ de traceur, pas d'outil d'analyse d'audience. Codes PIN (hachés SHA-256 salés)
 sauvegardes vivent dans le `localStorage` de l'appareil.
 
 Seule sortie, le CRM, annoncée à l'inscription : tout compte créé rejoint la liste Brevo
-`CMON_SOLUTION_CLUBCATALIST` (n° 63) avec le marqueur du même nom, les informations
+`CMON_SOLUTION_CHALLENGE` (n° 63) avec le marqueur du même nom, les informations
 facultatives du formulaire, les signaux d'usage `CC_*` et, s'il est rempli, le questionnaire
 de positionnement — base légale : intérêt légitime, avec droit d'opposition.
 
