@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 require __DIR__ . '/../src/Relay.php';
 
-use ClubCatalist\Relay;
+use CmonSportsChallenge\Relay;
 
-const ORIGIN = 'https://clubcatalist.cmon-sports.com';
+const ORIGIN = 'https://challenge.cmon-sports.com';
 const CFG = ['BREVO_API_KEY' => 'test-key', 'NOTIFY_TO' => 'sales@example.com'];
 
 $failures = 0;

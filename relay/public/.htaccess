@@ -1,4 +1,4 @@
-# Club Catalist — relais : toute requête passe par index.php (/sync, /health)
+# C'mon Sports Challenge — relais : toute requête passe par index.php (/sync, /health)
 Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On

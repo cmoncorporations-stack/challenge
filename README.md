@@ -1,8 +1,8 @@
-# Club Catalist
+# C'mon Sports Challenge
 
-**Simulateur de gestion marketing d'un club de sport — by C'mon Sports.**
+**Simulateur de gestion marketing d'un club de sport, par C'mon Sports.**
 
-▶ **Découvrir : [clubcatalist.cmon-sports.com](https://clubcatalist.cmon-sports.com/)** · **Jouer : [clubcatalist.cmon-sports.com/jouer/](https://clubcatalist.cmon-sports.com/jouer/)**
+▶ **Découvrir : [challenge.cmon-sports.com](https://challenge.cmon-sports.com/)** · **Jouer : [challenge.cmon-sports.com/jouer/](https://challenge.cmon-sports.com/jouer/)**
 
 Vous êtes recruté·e comme Responsable Marketing Digital d'un club de sport suisse.
 Chaque semaine, répartissez vos points d'action entre contenu, campagnes, collecte de
@@ -55,6 +55,8 @@ Site statique en JavaScript vanilla : aucun build, aucune dépendance, aucun fra
 - `jouer/index.html` — **le jeu**, single-file. Même origine que la landing : sauvegardes
   et langue sont conservées. `jouer/?club=hc|fc|bb|vb` met en avant le club choisi
   sur la landing à l'écran de sélection.
+- `assets/` — logo C'mon Sports Challenge en SVG : `logo-challenge-blanc.svg` (fonds sombres,
+  utilisé par le site) et `logo-challenge-noir.svg` (fonds clairs).
 - `fonts/` — polices Raleway auto-hébergées.
 
 ```bash
@@ -115,7 +117,7 @@ PHP 8.1 ou plus récent, avec l'extension cURL (présente par défaut chez Infom
 ### Déployer chez Infomaniak
 
 1. **Clé Brevo** — dans Brevo (Paramètres → Clés API), créer une clé dédiée
-   (« club-catalist-relay »), puis **révoquer l'ancienne clé** qui était saisie dans le
+   (« cmon-sports-challenge-relay »), puis **révoquer l'ancienne clé** qui était saisie dans le
    navigateur de l'administrateur.
 2. **Site** — dans le Manager Infomaniak, sur l'hébergement web, ajouter un site ou un
    sous-domaine, par exemple `relay.cmon-sports.com`, en PHP 8.1 ou plus, avec un certificat

@@ -1,14 +1,14 @@
 <?php
 /* ═══════════════════════════════════════════════════════════════════════════
-   Club Catalist — relais CRM (PHP, hébergement Infomaniak)
+   C'mon Sports Challenge — relais CRM (PHP, hébergement Infomaniak)
 
    Le jeu est un fichier statique : toute clé qu'il contiendrait serait
    publique, et une clé Brevo ouvre le CRM entier. Le relais garde la clé
    (config.php, hors du dossier public) et n'expose qu'une opération :
-   inscrire ou mettre à jour un joueur dans la liste Club Catalist, avec
+   inscrire ou mettre à jour un joueur dans la liste C'mon Sports Challenge, avec
    les seuls attributs du jeu, et transmettre ses événements d'usage.
 
-   Trois règles, parce que la liste Club Catalist côtoie le reste du CRM :
+   Trois règles, parce que la liste C'mon Sports Challenge côtoie le reste du CRM :
    — un contact déjà connu garde son statut d'envoi. Le relais ne touche
      jamais à la liste noire d'un contact existant : un prospect qui jouait
      sans cocher la case ne doit pas être exclu de TOUTES les campagnes ;
@@ -24,7 +24,7 @@
 
 declare(strict_types=1);
 
-namespace ClubCatalist;
+namespace CmonSportsChallenge;
 
 final class Invalid extends \RuntimeException {}
 final class BrevoError extends \RuntimeException {
@@ -33,7 +33,7 @@ final class BrevoError extends \RuntimeException {
 
 final class Relay
 {
-    public const DEFAULT_ORIGINS = 'https://clubcatalist.cmon-sports.com';
+    public const DEFAULT_ORIGINS = 'https://challenge.cmon-sports.com';
     public const MAX_BODY = 16384;
     public const MAX_EVENTS = 20;
     public const EVENT_MAX_AGE = 90 * 24 * 3600;
@@ -133,7 +133,7 @@ final class Relay
         } catch (BrevoError $e) {
             return [502, $cors, ['ok' => false, 'error' => 'brevo', 'status' => $e->status]];
         } catch (\Throwable $e) {
-            error_log('relais Club Catalist : erreur inattendue — ' . $e->getMessage());
+            error_log("relais C'mon Sports Challenge : erreur inattendue — " . $e->getMessage());
             return [500, $cors, ['ok' => false, 'error' => 'internal']];
         }
     }
@@ -354,17 +354,17 @@ final class Relay
         ], fn($r) => $r[1] !== null && $r[1] !== '');
         $table = implode('', array_map(fn($r) =>
             '<tr><th align="left">' . self::esc($r[0]) . '</th><td>' . self::esc($r[1]) . '</td></tr>', $rows));
-        $html = "<h2>Club Catalist — appel chaud</h2>\n<p>Un joueur vient d'annoncer un projet dans le questionnaire de positionnement.\n"
+        $html = "<h2>C'mon Sports Challenge — appel chaud</h2>\n<p>Un joueur vient d'annoncer un projet dans le questionnaire de positionnement.\n"
               . "Répondre à cet e-mail lui écrit directement.</p>\n<table cellpadding=\"4\">$table</table>";
         $r = $this->call('POST', '/smtp/email', [
-            'sender'      => ['name' => 'Club Catalist', 'email' => $this->cfg['NOTIFY_SENDER'] ?? 'noreply@cmon-sports.com'],
+            'sender'      => ['name' => "C'mon Sports Challenge", 'email' => $this->cfg['NOTIFY_SENDER'] ?? 'noreply@cmon-sports.com'],
             'to'          => array_map(fn($e) => ['email' => $e], $to),
             'replyTo'     => ['email' => $p['email']],
-            'subject'     => 'Club Catalist — appel chaud : ' . ($p['org'] ?: $p['email']),
+            'subject'     => "C'mon Sports Challenge — appel chaud : " . ($p['org'] ?: $p['email']),
             'htmlContent' => $html,
-            'tags'        => ['club-catalist', 'hot-lead'],
+            'tags'        => ['cmon-sports-challenge', 'hot-lead'],
         ]);
-        if (!$r['ok']) error_log('relais Club Catalist : alerte appel chaud refusée par Brevo (' . $r['status'] . ')');
+        if (!$r['ok']) error_log("relais C'mon Sports Challenge : alerte appel chaud refusée par Brevo (" . $r['status'] . ')');
         return $r['ok'];
     }
 
@@ -430,7 +430,7 @@ final class Relay
             $r = $this->call('POST', '/events', $body);
             if (!$r['ok']) $refused[] = $r['status'];
         }
-        if ($refused) error_log('relais Club Catalist : événements refusés par Brevo (' . implode(', ', $refused) . ')');
+        if ($refused) error_log("relais C'mon Sports Challenge : événements refusés par Brevo (" . implode(', ', $refused) . ')');
     }
 
     public function health(): array

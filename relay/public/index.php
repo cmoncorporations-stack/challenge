@@ -1,5 +1,5 @@
 <?php
-/* Club Catalist — relais CRM : point d'entrée web.
+/* C'mon Sports Challenge — relais CRM : point d'entrée web.
    Seul fichier exposé : la logique (../src) et la clé (../config.php)
    restent hors du dossier public. Routes : POST /sync, GET /health —
    avec ou sans réécriture d'URL (/index.php/sync fonctionne aussi). */
@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/../src/Relay.php';
 
-use ClubCatalist\Relay;
+use CmonSportsChallenge\Relay;
 
 $cfgFile = __DIR__ . '/../config.php';
 $cfg = is_file($cfgFile) ? (array)require $cfgFile : [];
