@@ -67,7 +67,8 @@ python3 -m http.server 4174
 
 Le fichier fonctionne aussi en ouverture directe (`file://`), sans synchronisation CRM.
 
-La synchronisation avec Brevo passe par un petit relais serveur, dans `relay/`
+La synchronisation avec Brevo passe par un petit relais serveur, dans `relay/`,
+en service sur `https://relay.cmon-sports.com`
 (voir [Relais CRM](#relais-crm)).
 
 ## Confidentialité (RGPD / nLPD)
