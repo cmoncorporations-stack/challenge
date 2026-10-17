@@ -57,6 +57,8 @@ Site statique en JavaScript vanilla : aucun build, aucune dépendance, aucun fra
   sur la landing à l'écran de sélection.
 - `assets/` — logo C'mon Sports Challenge en SVG : `logo-challenge-blanc.svg` (fonds sombres,
   utilisé par le site) et `logo-challenge-noir.svg` (fonds clairs).
+- `assets/clubs/` — logos des quatre clubs fictifs (`hc`, `fc`, `bb`, `vb`.webp, fond transparent) :
+  Glacier Royal HC, Real Riviera, Lakeside Kings, Olympia Léman.
 - `fonts/` — polices Raleway auto-hébergées.
 
 ```bash
