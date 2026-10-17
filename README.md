@@ -55,6 +55,8 @@ Site statique en JavaScript vanilla : aucun build, aucune dépendance, aucun fra
 - `jouer/index.html` — **le jeu**, single-file. Même origine que la landing : sauvegardes
   et langue sont conservées. `jouer/?club=hc|fc|bb|vb` met en avant le club choisi
   sur la landing à l'écran de sélection.
+- `assets/` — logo C'mon Sports Challenge en SVG : `logo-challenge-blanc.svg` (fonds sombres,
+  utilisé par le site) et `logo-challenge-noir.svg` (fonds clairs).
 - `fonts/` — polices Raleway auto-hébergées.
 
 ```bash

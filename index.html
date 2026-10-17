@@ -75,7 +75,7 @@ nav.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);-webkit-back
   background:rgba(5,9,16,.72);border-bottom:1px solid var(--edge)}
 nav.top .wrap{display:flex;align-items:center;gap:18px;height:64px}
 .wordmark{font-weight:900;letter-spacing:1.4px;font-size:17px;color:var(--ink);white-space:nowrap}
-.wordmark small{font-weight:600;letter-spacing:0;color:var(--ink-3);font-size:13px;margin-left:6px}
+.wordmark img{height:32px;width:auto;display:block}
 nav.top .links{display:flex;gap:22px;margin-left:auto;font-weight:700;font-size:14px}
 nav.top .links a{color:var(--ink-2)} nav.top .links a:hover{color:var(--ink)}
 nav.top .btn{padding:9px 18px;font-size:14px}
@@ -83,8 +83,7 @@ nav.top .btn{padding:9px 18px;font-size:14px}
 .lang button{font:inherit;font-size:12px;font-weight:800;color:var(--ink-3);background:none;border:0;padding:5px 9px;border-radius:999px;cursor:pointer}
 .lang button[aria-pressed="true"]{background:var(--raised);color:var(--ink)}
 @media(max-width:900px){nav.top .links{display:none} nav.top .lang{margin-left:auto}}
-@media(max-width:520px){nav.top .btn-nav{display:none} nav.top .wrap{gap:10px} .wordmark{font-size:14px;letter-spacing:.6px}}
-@media(max-width:360px){.wordmark{font-size:12.5px;letter-spacing:.3px} .lang button{padding:5px 7px}}
+@media(max-width:520px){nav.top .btn-nav{display:none} nav.top .wrap{gap:10px} .wordmark img{height:28px}}
 
 /* ── Héros ── */
 .hero{padding:76px 0 56px;position:relative}
@@ -328,7 +327,7 @@ footer a{color:var(--ink-2);font-weight:700}
 
 <nav class="top" aria-label="Navigation principale">
   <div class="wrap">
-    <a class="wordmark" href="#top"><span class="sig">C</span>'MON SPORTS CHALLENGE<span class="sig">.</span></a>
+    <a class="wordmark" href="#top"><img src="assets/logo-challenge-blanc.svg" alt="C'mon Sports Challenge" width="128" height="32"></a>
     <div class="links">
       <a href="#jeu" data-i18n="nav.game">Le jeu</a>
       <a href="#clubs" data-i18n="nav.clubs">Les clubs</a>
