@@ -43,7 +43,7 @@ final class Relay
        concordent : un écart ferait rejeter les joueurs en HTTP 400. */
     public const SERVICES = ['Fan Equity Audit', 'Fan Lab Insight', 'Fan Lab Pro', 'Fan Data Factory', 'Blue Penguin', 'Griddy Picks'];
     public const CERTS = ['Gold', 'Silver', 'Audité non certifié', 'Non audité'];
-    public const ROLES = ['Direction générale', 'Marketing & communication', 'Sponsoring & commercial', 'Data & billetterie', 'Autre'];
+    public const ROLES = ['Direction générale', 'Marketing & communication', 'Sponsoring & commercial', 'Data & billetterie', 'Ligue / fédération', 'École / université', 'Autre'];
     public const QUALIFY = [
         'CC_MATURITY' => ['Pas de base de données fans', 'Base peu exploitée', 'CRM et segmentation actifs', 'Hors club'],
         'CC_PRIORITY' => ['Collecte et qualification de données', 'Valorisation fanbase / sponsors',
