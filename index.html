@@ -151,6 +151,17 @@ nav.top .btn{padding:9px 18px;font-size:14px}
 /* ── Sections ── */
 section{padding:84px 0;position:relative}
 .sec-head{max-width:720px;margin-bottom:40px}
+.fe{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center}
+.fe-levers{display:grid;gap:14px}
+.fe-lever{padding:18px 20px}
+.fe-lever b{color:var(--ink);font-size:16px}
+.fe-lever p{color:var(--ink-2);margin-top:6px;font-size:15px}
+.fe-pyramid{padding:26px 22px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.fe-floor{padding:10px 12px;text-align:center;font-weight:700;font-size:14px;color:var(--ink);
+  background:var(--brand-soft);border:1px solid var(--brand-line);border-radius:8px}
+.fe-floor.anon{background:transparent;border-style:dashed;color:var(--ink-3)}
+.fe-pyramid small{margin-top:10px;color:var(--ink-3);font-size:13px;text-align:center}
+@media(max-width:860px){.fe{grid-template-columns:1fr}}
 .sec-head .kicker{font-size:13px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--brand)}
 .sec-head h2{font-size:clamp(30px,3.6vw,44px);margin:10px 0 14px}
 .sec-head p{color:var(--ink-2);font-size:17px}
@@ -489,7 +500,7 @@ footer a{color:var(--ink-2);font-weight:700}
             <div class="kicker" data-i18n="fog.k">Le brouillard des données</div>
             <h2 data-i18n="fog.t">Tant qu'on ne mesure pas, on pilote à l'aveugle.</h2>
           </div>
-          <p data-i18n="fog.p1">Au début du jeu, comme dans la plupart des clubs, vous ne connaissez ni la qualité de votre base, ni la valeur de votre fanbase. Votre niveau de maturité data n'est qu'une fourchette.</p>
+          <p data-i18n="fog.p1">Au début du jeu, comme dans la plupart des clubs, vous ne connaissez ni la qualité de votre base, ni votre Fan Equity Value®. Votre niveau de maturité data n'est qu'une fourchette.</p>
           <p data-i18n="fog.p2">Les solutions C'mon Sports lèvent ce brouillard — dans le jeu comme dans la réalité. Faites l'essai :</p>
           <button class="switch" id="fog-switch" role="switch" aria-checked="false">
             <span class="track"></span><span data-i18n="fog.switch">Activer l'accompagnement C'mon Sports</span>
@@ -500,10 +511,36 @@ footer a{color:var(--ink-2);font-weight:700}
           <h3 id="fog-title">Tableau de bord · Glacier Royal HC</h3>
           <div class="fog-grid">
             <div class="kpi"><div class="l" data-i18n="fog.dmos">Maturité data</div><div class="v num keep" id="fog-dmos">8–16 /60</div><small id="fog-dmos-s">Fourchette estimée</small></div>
-            <div class="kpi"><div class="l" data-i18n="fog.value">Valeur de la fanbase</div><div class="v num" id="fog-value">? CHF</div><small id="fog-value-s">Inconnue</small></div>
+            <div class="kpi"><div class="l" data-i18n="fog.value">Fan Equity Value®</div><div class="v num" id="fog-value">? CHF</div><small id="fog-value-s">Inconnue</small></div>
             <div class="kpi"><div class="l" data-i18n="fog.quality">Qualité des données</div><div class="v num" id="fog-quality">? /10</div><small id="fog-quality-s">Invisible</small></div>
             <div class="kpi"><div class="l" data-i18n="fog.pen">Pénétration du bassin</div><div class="v num" id="fog-pen">? %</div><small id="fog-pen-s">Non mesurée</small></div>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAN EQUITY ============ -->
+  <section id="fan-equity">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="kicker" data-i18n="fe.k">La fan equity, expliquée simplement</div>
+        <h2 data-i18n="fe.t">Vos fans sont un actif. Sa valeur se mesure.</h2>
+        <p data-i18n="fe.p">La Fan Equity Value® est ce que rapporte votre public sur la durée, en francs. Elle repose sur trois leviers — et le jeu vous apprend à les faire bouger.</p>
+      </div>
+      <div class="fe reveal">
+        <div class="fe-levers">
+          <div class="card fe-lever"><b data-i18n="fe.l1t">1 · Les fans que vous connaissez vraiment</b><p data-i18n="fe.l1p">Un fan anonyme vaut zéro : on ne peut ni le joindre, ni le fidéliser, ni le présenter à un sponsor. Tout commence par la collecte.</p></div>
+          <div class="card fe-lever"><b data-i18n="fe.l2t">2 · La profondeur de leur relation</b><p data-i18n="fe.l2p">C'est votre fandom : du curieux à l'ambassadeur. Faire monter 100 spectateurs au rang d'abonnés rapporte plus que recruter 1 000 nouveaux curieux.</p></div>
+          <div class="card fe-lever"><b data-i18n="fe.l3t">3 · La qualité de vos données</b><p data-i18n="fe.l3p">Des adresses fausses, des doublons, des consentements flous : une base mal tenue perd sa valeur année après année.</p></div>
+        </div>
+        <div class="card fe-pyramid" aria-hidden="true">
+          <div class="fe-floor" style="width:46%" data-i18n="fe.f4">Ambassadeurs</div>
+          <div class="fe-floor" style="width:60%" data-i18n="fe.f3">Abonnés / membres</div>
+          <div class="fe-floor" style="width:74%" data-i18n="fe.f2">Spectateurs</div>
+          <div class="fe-floor" style="width:88%" data-i18n="fe.f1">Curieux</div>
+          <div class="fe-floor anon" style="width:100%" data-i18n="fe.f0">Anonymes · 0 CHF</div>
+          <small data-i18n="fe.cap">Le fandom : plus on monte, plus un fan rapporte.</small>
         </div>
       </div>
     </div>
@@ -563,7 +600,7 @@ footer a{color:var(--ink-2);font-weight:700}
           <p data-i18n="cmon.p2">La plupart des clubs pilotent leur marketing sans instruments. Le C'mon Sports Challenge est un jeu qui rend visibles les défis d'une organisation sportive et les missions de son responsable marketing, et présente les instruments utilisés par C'mon Sports.</p>
           <div class="ctas">
             <a class="btn btn-primary" href="https://calendly.com/meeting-douglas-finazzi/c-mon-sports-huddle-clone?utm_source=challenge&amp;utm_medium=landing" target="_blank" rel="noopener" data-i18n="cmon.cta1">Parler 30 minutes avec nous</a>
-            <a class="btn" href="https://fanlab.cmon-sports.com/?utm_source=challenge&amp;utm_medium=landing" target="_blank" rel="noopener" data-i18n="cmon.cta2">Estimer la valeur de ma fanbase</a>
+            <a class="btn" href="https://fanlab.cmon-sports.com/?utm_source=challenge&amp;utm_medium=landing" target="_blank" rel="noopener" data-i18n="cmon.cta2">Estimer la Fan Equity Value® de mon club</a>
           </div>
         </div>
         <div class="about-list">
@@ -642,9 +679,10 @@ de: {
   "sim.k":"Jetzt ausprobieren","sim.t":"Spielen Sie Ihre ersten Wochen gleich hier.","sim.p":"Eine Miniaturversion des Spiels: Wählen Sie Ihre Aktionen innerhalb von 3 Punkten und starten Sie die Woche. Das echte Spiel hat 26 davon, mit Spiel, Ereignissen und Vorstand.",
   "sim.ap":"Aktionspunkte","sim.play":"Woche spielen","sim.hint":"Wählen Sie bis zu 3 Aktionspunkte.","sim.endcta":"Im echten Spiel weitermachen","sim.reset":"Neu beginnen",
   "fog.k":"Der Datennebel","fog.t":"Solange man nicht misst, steuert man blind.",
-  "fog.p1":"Zu Beginn des Spiels kennen Sie — wie die meisten Clubs — weder die Qualität Ihrer Datenbasis noch den Wert Ihrer Fanbase. Ihre Datenreife ist nur eine Spanne.",
+  "fog.p1":"Zu Beginn des Spiels kennen Sie — wie die meisten Clubs — weder die Qualität Ihrer Datenbasis noch Ihre Fan Equity Value®. Ihre Datenreife ist nur eine Spanne.",
   "fog.p2":"Die Lösungen von C'mon Sports lichten diesen Nebel — im Spiel wie in der Realität. Probieren Sie es aus:",
-  "fog.switch":"Begleitung durch C'mon Sports aktivieren","fog.dmos":"Datenreife","fog.value":"Wert der Fanbase","fog.quality":"Datenqualität","fog.pen":"Marktdurchdringung",
+  "fog.switch":"Begleitung durch C'mon Sports aktivieren","fog.dmos":"Datenreife","fog.value":"Fan Equity Value®","fog.quality":"Datenqualität","fog.pen":"Marktdurchdringung",
+  "fe.k":"Fan Equity, einfach erklärt","fe.t":"Ihre Fans sind ein Vermögenswert. Sein Wert lässt sich messen.","fe.p":"Die Fan Equity Value® ist das, was Ihr Publikum über die Zeit einbringt, in Franken. Sie beruht auf drei Hebeln — und das Spiel zeigt Ihnen, wie man sie bewegt.","fe.l1t":"1 · Die Fans, die Sie wirklich kennen","fe.l1p":"Ein anonymer Fan ist null wert: Man kann ihn weder erreichen noch binden noch einem Sponsor vorstellen. Alles beginnt mit der Datensammlung.","fe.l2t":"2 · Die Tiefe ihrer Bindung","fe.l2p":"Das ist Ihr Fandom: vom Neugierigen bis zum Botschafter. 100 Zuschauer zu Abonnenten zu machen bringt mehr, als 1 000 neue Neugierige zu gewinnen.","fe.l3t":"3 · Die Qualität Ihrer Daten","fe.l3p":"Falsche Adressen, Dubletten, unklare Einwilligungen: Eine schlecht gepflegte Basis verliert Jahr für Jahr an Wert.","fe.f4":"Botschafter","fe.f3":"Abonnenten / Mitglieder","fe.f2":"Zuschauer","fe.f1":"Neugierige","fe.f0":"Anonyme · 0 CHF","fe.cap":"Das Fandom: Je höher, desto mehr bringt ein Fan ein.",
   "dmos.k":"Datenreife, einfach erklärt","dmos.t":"Weiss Ihr Club, was er an seinen Fans hat? Eine Note von 60 sagt es.",
   "dmos.p":"C'mon Sports misst die Datenreife eines Clubs mit seinem DMOS-Raster (für <i>Data Marketing Operating System</i>, das «Betriebssystem» des datengestützten Marketings). Einfach gesagt: sechs einfache Fragen, jede mit bis zu 10 Punkten bewertet. Zusammen ergibt das eine Note von 60; ab 30 ist der Club Silver-zertifiziert, ab 45 Gold. Klicken Sie auf eine Frage und erhöhen oder senken Sie ihre Note.",
   "dmos.silver":"≥ 30 · Silver","dmos.gold":"≥ 45 · Gold",
@@ -652,7 +690,7 @@ de: {
   "cmon.t":"Die Daten- &amp; Marketingagentur der Sportclubs.",
   "cmon.p1":"C'mon Sports mit Sitz in Lausanne begleitet Clubs, Ligen und Verbände dabei, ihre Fans in einen greifbaren Vermögenswert, ihre Daten in Einnahmen und ihre Einnahmen in Argumente gegenüber Sponsoren zu verwandeln.",
   "cmon.p2":"Die meisten Clubs steuern ihr Marketing ohne Instrumente. Die C'mon Sports Challenge ist ein Spiel, das die Herausforderungen einer Sportorganisation und die Aufgaben ihrer Marketingverantwortlichen sichtbar macht und die Instrumente vorstellt, die C'mon Sports einsetzt.",
-  "cmon.cta1":"30 Minuten mit uns sprechen","cmon.cta2":"Den Wert meiner Fanbase schätzen",
+  "cmon.cta1":"30 Minuten mit uns sprechen","cmon.cta2":"Die Fan Equity Value® meines Clubs schätzen",
   "cmon.a1t":"Messen · Fan Equity Audit &amp; Fan Equity Intelligence","cmon.a1p":"Fan Equity Audit, Fan Lab Insight und Fan Lab Pro: die Datenreife Ihres Clubs und der wirtschaftliche Wert Ihres Publikums.",
   "cmon.a2t":"Strukturieren · Fan Equity Management","cmon.a2p":"Fan Data Factory: eine saubere Kontaktbasis, DSGVO- und nDSG-konform, dauerhaft gepflegt.",
   "cmon.a3t":"Begeistern","cmon.a3p":"Blue Penguin und Griddy Picks: tokenisierte Treue und Tippspiele, die an jedem Spieltag Daten sammeln.",
@@ -682,9 +720,10 @@ en: {
   "sim.k":"Try it now","sim.t":"Play your first weeks, right here.","sim.p":"A miniature version of the game: choose your actions within 3 points, then play the week. The real game has 26, with matches, events and a board.",
   "sim.ap":"Action points","sim.play":"Play the week","sim.hint":"Select up to 3 action points.","sim.endcta":"Carry on in the real game","sim.reset":"Start over",
   "fog.k":"The data fog","fog.t":"If you don't measure, you're flying blind.",
-  "fog.p1":"At the start of the game, like most clubs, you know neither the quality of your database nor the value of your fanbase. Your data maturity is only a range.",
+  "fog.p1":"At the start of the game, like most clubs, you know neither the quality of your database nor your Fan Equity Value®. Your data maturity is only a range.",
   "fog.p2":"C'mon Sports' solutions lift that fog — in the game as in real life. Try it:",
-  "fog.switch":"Switch on C'mon Sports support","fog.dmos":"Data maturity","fog.value":"Fanbase value","fog.quality":"Data quality","fog.pen":"Catchment penetration",
+  "fog.switch":"Switch on C'mon Sports support","fog.dmos":"Data maturity","fog.value":"Fan Equity Value®","fog.quality":"Data quality","fog.pen":"Catchment penetration",
+  "fe.k":"Fan equity, explained simply","fe.t":"Your fans are an asset. Its value can be measured.","fe.p":"The Fan Equity Value® is what your audience brings in over time, in francs. It rests on three levers — and the game teaches you how to move them.","fe.l1t":"1 · The fans you actually know","fe.l1p":"An anonymous fan is worth nothing: you can't reach them, keep them or show them to a sponsor. It all starts with data capture.","fe.l2t":"2 · How deep their bond runs","fe.l2p":"That's your fandom: from curious to ambassador. Turning 100 spectators into season-ticket holders is worth more than signing up 1,000 new curious fans.","fe.l3t":"3 · The quality of your data","fe.l3p":"Wrong addresses, duplicates, fuzzy consents: a poorly kept database loses value year after year.","fe.f4":"Ambassadors","fe.f3":"Season ticket holders","fe.f2":"Spectators","fe.f1":"Curious","fe.f0":"Anonymous · CHF 0","fe.cap":"The fandom: the higher up, the more a fan is worth.",
   "dmos.k":"Data maturity, explained simply","dmos.t":"Does your club know how to make the most of its fans? A score out of 60 tells you.",
   "dmos.p":"C'mon Sports measures a club's data maturity with its DMOS grid (short for <i>Data Marketing Operating System</i>, the operating system of data-driven marketing). Put simply: six plain questions, each scored out of 10. Together they make a score out of 60; from 30 the club is certified Silver, from 45 Gold. Click a question, then raise or lower its score.",
   "dmos.silver":"≥ 30 · Silver","dmos.gold":"≥ 45 · Gold",
@@ -692,7 +731,7 @@ en: {
   "cmon.t":"The data &amp; marketing agency for sports clubs.",
   "cmon.p1":"Based in Lausanne, C'mon Sports helps clubs, leagues and federations turn their fans into a tangible asset, their data into revenue and their revenue into arguments in front of sponsors.",
   "cmon.p2":"Most clubs run their marketing with no instruments. The C'mon Sports Challenge is a game that makes visible the challenges of a sports organisation and the missions of its head of marketing, and presents the instruments used by C'mon Sports.",
-  "cmon.cta1":"Talk to us for 30 minutes","cmon.cta2":"Estimate my fanbase's value",
+  "cmon.cta1":"Talk to us for 30 minutes","cmon.cta2":"Estimate my club's Fan Equity Value®",
   "cmon.a1t":"Measure · Fan Equity Audit &amp; Fan Equity Intelligence","cmon.a1p":"Fan Equity Audit, Fan Lab Insight and Fan Lab Pro: your club's data maturity and the economic value of your audience.",
   "cmon.a2t":"Structure · Fan Equity Management","cmon.a2p":"Fan Data Factory: a clean contact base, GDPR and Swiss FADP compliant, maintained over time.",
   "cmon.a3t":"Engage","cmon.a3p":"Blue Penguin and Griddy Picks: tokenised loyalty and prediction games that collect data every matchday.",
@@ -789,17 +828,17 @@ const FAMILIES = {
   engage:{fr:"Engagement",de:"Engagement",en:"Engagement"},
 };
 const SERVICES = [
-  { id:"audit", fam:"audit", name:"Fan Equity Audit", price:{fr:"5 000 CHF · one-shot",de:"CHF 5 000 · einmalig",en:"CHF 5,000 · one-off"},
-    pitch:{fr:"Le bilan complet de ce que vaut votre relation aux fans et de la manière dont le club collecte et utilise ses données : lancement, analyse, atelier avec le comité, rapport et feuille de route.",
-           de:"Die vollständige Bilanz, was Ihre Beziehung zu den Fans wert ist und wie der Club seine Daten sammelt und nutzt: Kick-off, Analyse, Workshop mit dem Vorstand, Bericht und Roadmap.",
-           en:"The full picture of what your relationship with fans is worth and how the club collects and uses its data: kick-off, analysis, a workshop with the board, report and roadmap."},
+  { id:"audit", fam:"audit", name:"Fan Equity Audit", price:{fr:"4 000 – 6 000 CHF · one-shot",de:"CHF 4 000 – 6 000 · einmalig",en:"CHF 4,000 – 6,000 · one-off"},
+    pitch:{fr:"Le bilan complet de la manière dont le club collecte et utilise ses données : lancement, analyse, atelier avec le comité, rapport et feuille de route. L'audit ne chiffre pas encore vos fans : il mesure la capacité de votre club à faire fructifier sa fan equity. La valeur en francs, c'est Fan Lab Pro.",
+           de:"Die vollständige Bilanz, wie der Club seine Daten sammelt und nutzt: Kick-off, Analyse, Workshop mit dem Vorstand, Bericht und Roadmap. Das Audit beziffert Ihre Fans noch nicht: Es misst, wie gut Ihr Club seine Fan Equity zur Entfaltung bringen kann. Den Wert in Franken liefert Fan Lab Pro.",
+           en:"The full picture of how the club collects and uses its data: kick-off, analysis, a workshop with the board, report and roadmap. The audit doesn't put a number on your fans yet: it measures how well your club can make its fan equity grow. The value in francs is Fan Lab Pro's job."},
     game:{fr:"Révèle votre note de maturité data exacte (fini les fourchettes), débloque la certification Silver/Gold, formations guidées −20 %. Confiance du comité +8.",
           de:"Deckt Ihre exakte Datenreife-Note auf (Schluss mit Spannen), schaltet die Silver-/Gold-Zertifizierung frei, geführte Schulungen −20 %. Vertrauen des Vorstands +8.",
           en:"Reveals your exact data maturity score (no more ranges), unlocks Silver/Gold certification, guided training −20%. Board confidence +8."},
     real:{fr:"Il transforme une intuition sur vos données en note comparable d'une année sur l'autre, avec une feuille de route chiffrée.",
           de:"Es verwandelt ein Bauchgefühl über Ihre Daten in eine Note, die von Jahr zu Jahr vergleichbar ist — mit einer bezifferten Roadmap.",
           en:"It turns a hunch about your data into a score you can compare year on year, with a costed roadmap."} },
-  { id:"insight", fam:"intel", name:"Fan Lab Insight", price:{fr:"6 000 CHF · analyse",de:"CHF 6 000 · Analyse",en:"CHF 6,000 · analysis"},
+  { id:"insight", fam:"intel", name:"Fan Lab Insight", price:{fr:"5 000 – 8 000 CHF · analyse",de:"CHF 5 000 – 8 000 · Analyse",en:"CHF 5,000 – 8,000 · analysis"},
     pitch:{fr:"L'analyse fondamentale de votre base CRM : qualité des données et indice de pénétration de votre bassin de fans.",
            de:"Die Grundanalyse Ihrer CRM-Basis: Datenqualität und Durchdringungsindex Ihres Fan-Einzugsgebiets.",
            en:"The fundamental analysis of your CRM base: data quality and the penetration index of your fan catchment."},
@@ -809,17 +848,17 @@ const SERVICES = [
     real:{fr:"La première mesure sérieuse d'une base : combien de personnes le club pourrait réellement atteindre, et ce que valent les adresses qu'il possède déjà.",
           de:"Die erste ernsthafte Messung einer Basis: Wie viele Personen der Club tatsächlich erreichen könnte und was die vorhandenen Adressen wert sind.",
           en:"The first serious measurement of a base: how many people the club could actually reach, and what the addresses it already holds are worth."} },
-  { id:"pro", fam:"intel", name:"Fan Lab Pro", price:{fr:"18 000 CHF · inclut Insight",de:"CHF 18 000 · inkl. Insight",en:"CHF 18,000 · includes Insight"},
-    pitch:{fr:"L'analyse complète de la valeur de votre audience : ROI ticketing, ROI merchandising et valorisation économique de la fanbase.",
-           de:"Die vollständige Analyse des Werts Ihres Publikums: Ticketing-ROI, Merchandising-ROI und wirtschaftliche Bewertung der Fanbase.",
-           en:"The complete analysis of your audience's value: ticketing ROI, merchandising ROI and an economic valuation of the fanbase."},
+  { id:"pro", fam:"intel", name:"Fan Lab Pro", price:{fr:"15 000 – 22 000 CHF / an · engagement 3 ans",de:"CHF 15 000 – 22 000 / Jahr · 3 Jahre",en:"CHF 15,000 – 22,000 / year · 3-year commitment"},
+    pitch:{fr:"La mesure de la valeur de votre audience, suivie dans la durée : Fan Equity Value®, Fan Equity Index, ROI ticketing et merchandising.",
+           de:"Die Messung des Werts Ihres Publikums, über die Zeit verfolgt: Fan Equity Value®, Fan Equity Index, Ticketing- und Merchandising-ROI.",
+           en:"Measuring what your audience is worth, tracked over time: Fan Equity Value®, Fan Equity Index, ticketing and merchandising ROI."},
     game:{fr:"Révèle votre Fan Equity Value® en francs et lance le Fan Equity Index, chances de signature sponsor nettement accrues, part billetterie 5 → 6 %, merchandising +10 %.",
           de:"Deckt Ihre Fan Equity Value® in Franken auf und startet den Fan Equity Index, deutlich höhere Chancen auf Sponsorenabschlüsse, Ticketing-Anteil 5 → 6 %, Merchandising +10 %.",
           en:"Reveals your Fan Equity Value® in francs and starts the Fan Equity Index, much better odds of signing sponsors, ticketing share 5 → 6%, merchandising +10%."},
     real:{fr:"Le document qu'on pose sur la table en rendez-vous sponsor, quand il faut justifier un montant plutôt que le négocier.",
           de:"Das Dokument, das man beim Sponsorentermin auf den Tisch legt, wenn ein Betrag begründet statt verhandelt werden muss.",
           en:"The document you put on the table in a sponsor meeting, when a price has to be justified rather than haggled over."} },
-  { id:"df", fam:"mgmt", name:"Fan Data Factory", price:{fr:"2 000 CHF / mois",de:"CHF 2 000 / Monat",en:"CHF 2,000 / month"},
+  { id:"df", fam:"mgmt", name:"Fan Data Factory", price:{fr:"1 500 – 2 500 CHF / mois · engagement 3 ans",de:"CHF 1 500 – 2 500 / Monat · 3 Jahre",en:"CHF 1,500 – 2,500 / month · 3-year commitment"},
     pitch:{fr:"Le service opérationnel qui structure et entretient vos données fans : nettoyage, déduplication, procédures de collecte et de maintenance.",
            de:"Der operative Dienst, der Ihre Fandaten strukturiert und pflegt: Bereinigung, Deduplizierung, Erfassungs- und Wartungsprozesse.",
            en:"The operational service that structures and maintains your fan data: cleaning, de-duplication, collection and maintenance procedures."},
@@ -829,7 +868,7 @@ const SERVICES = [
     real:{fr:"Sans lui, une base perd environ un cinquième de sa valeur par an.",
           de:"Ohne ihn verliert eine Datenbasis rund ein Fünftel ihres Werts pro Jahr.",
           en:"Without it, a database loses about a fifth of its value every year."} },
-  { id:"bp", fam:"engage", name:"Blue Penguin", price:{fr:"12 000 CHF + 1 500 CHF / mois",de:"CHF 12 000 + CHF 1 500 / Monat",en:"CHF 12,000 + CHF 1,500 / month"},
+  { id:"bp", fam:"engage", name:"Blue Penguin", price:{fr:"10 000 – 15 000 CHF + 1 000 – 2 000 CHF / mois",de:"CHF 10 000 – 15 000 + CHF 1 000 – 2 000 / Monat",en:"CHF 10,000 – 15,000 + CHF 1,000 – 2,000 / month"},
     pitch:{fr:"Programme de fidélité tokenisé : les fans gagnent des récompenses à chaque interaction avec le club.",
            de:"Tokenisiertes Treueprogramm: Fans erhalten bei jeder Interaktion mit dem Club Belohnungen.",
            en:"A tokenised loyalty programme: fans earn rewards with every interaction with the club."},
@@ -839,7 +878,7 @@ const SERVICES = [
     real:{fr:"Chaque interaction du fan avec le club lui rapporte quelque chose — et rapporte au club une donnée de plus.",
           de:"Jede Interaktion des Fans mit dem Club bringt ihm etwas — und dem Club ein weiteres Datum.",
           en:"Every interaction a fan has with the club earns them something — and earns the club one more data point."} },
-  { id:"gp", fam:"engage", name:"Griddy Picks", price:{fr:"2 500 CHF + 500 CHF / jour de match",de:"CHF 2 500 + CHF 500 / Spieltag",en:"CHF 2,500 + CHF 500 / matchday"},
+  { id:"gp", fam:"engage", name:"Griddy Picks", price:{fr:"2 000 – 3 000 CHF + 400 – 600 CHF / jour de match",de:"CHF 2 000 – 3 000 + CHF 400 – 600 / Spieltag",en:"CHF 2,000 – 3,000 + CHF 400 – 600 / matchday"},
     pitch:{fr:"Jeu de pronostics aux couleurs du club : les fans jouent chaque journée de championnat et laissent leurs données.",
            de:"Tippspiel in den Clubfarben: Die Fans spielen an jedem Meisterschaftsspieltag mit und hinterlassen ihre Daten.",
            en:"A prediction game in the club's colours: fans play every matchday and leave their data."},
@@ -859,6 +898,7 @@ const S = {
   dmosStart:{fr:"Maturité data de départ",de:"Datenreife zu Beginn",en:"Starting data maturity"},
   week:{fr:"Semaine",de:"Woche",en:"Week"}, wk:{fr:"S",de:"W",en:"W"},
   inGame:{fr:"Dans le jeu",de:"Im Spiel",en:"In the game"}, inReal:{fr:"Dans la réalité",de:"In der Realität",en:"In real life"},
+  priceHint:{fr:"Prix indicatif :",de:"Richtpreis:",en:"Indicative price:"},
   noMeasure:{fr:"Sans mesure",de:"Ohne Messung",en:"Unmeasured"}, measured:{fr:"Avec C'mon Sports",de:"Mit C'mon Sports",en:"With C'mon Sports"},
   board:{fr:"Tableau de bord",de:"Dashboard",en:"Dashboard"},
   fogDmos0:{fr:"Fourchette estimée",de:"Geschätzte Spanne",en:"Estimated range"}, fogDmos1:{fr:"Note exacte · Fan Equity Audit",de:"Exakte Note · Fan Equity Audit",en:"Exact score · Fan Equity Audit"},
@@ -1119,8 +1159,9 @@ function renderFog() {
   // Ordres de grandeur illustratifs, dérivés des données du club
   const quality = (2.4 + club.contacts / club.fans * 12).toFixed(1).replace(".", lang === "en" ? "." : ",");
   const pen = Math.round(club.contacts / (club.fans * 1.6) * 100);
-  const value = club.fans * 52 + club.contacts * 85;
-  const vTxt = value >= 1e6 ? (value/1e6).toFixed(1).replace(".", lang === "en" ? "." : ",") + " M" : fmt(Math.round(value/1000)) + " k";
+  // Fan Equity Value® de départ, telle que le jeu la calcule pour chaque club
+  const value = { hc: 404000, fc: 1499000, bb: 330000, vb: 895000 }[club.id] || club.contacts * 220;
+  const vTxt = value >= 1e5 ? (value/1e6).toFixed(2).replace(".", lang === "en" ? "." : ",") + " M" : fmt(Math.round(value/1000)) + " k";
   const set = (id, off, on, s0, s1) => { $("#fog-" + id).textContent = fogOn ? on : off; $("#fog-" + id + "-s").textContent = L(fogOn ? s1 : s0); };
   set("dmos", `${Math.max(0, d-5)}–${d+4} /60`, `${d} /60`, S.fogDmos0, S.fogDmos1);
   set("value", "? CHF", `CHF ${vTxt}`, S.fogVal0, S.fogVal1);
@@ -1159,7 +1200,7 @@ function renderSvc() {
   document.querySelectorAll(".svc-tab").forEach(b => b.onclick = () => { svcSel = +b.dataset.s; renderSvc(); });
   const s = SERVICES[svcSel];
   $("#svc-panel").innerHTML = `
-    <div class="fade-swap"><div class="fam">${esc(L(FAMILIES[s.fam]))}</div><h3>${esc(s.name)}</h3><div class="price">${esc(L(s.price))}</div><p class="pitch">${esc(L(s.pitch))}</p></div>
+    <div class="fade-swap"><div class="fam">${esc(L(FAMILIES[s.fam]))}</div><h3>${esc(s.name)}</h3><div class="price">${esc(L(S.priceHint))} ${esc(L(s.price))}</div><p class="pitch">${esc(L(s.pitch))}</p></div>
     <div class="fade-swap">
       <div class="svc-col game"><h4>${esc(L(S.inGame))}</h4><p>${esc(L(s.game))}</p></div>
       <div class="svc-col real"><h4>${esc(L(S.inReal))}</h4><p>${esc(L(s.real))}</p></div>
