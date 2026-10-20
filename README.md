@@ -17,7 +17,7 @@ sous peine de licenciement.
 - **Saison de 26 semaines** : 3 points d'action par semaine, un match simulé chaque semaine
 - **Promotion / relégation / coupe d'Europe** : monter fait grimper les revenus, mais aussi
   les charges et les attentes des fans
-- **Score DMOS** (6 piliers /60), **Fan Equity Value®** et **Fan Equity Index**, portefeuille sponsors,
+- **Score DMOS** (6 piliers /60), **Fan Equity Value®**, **Fan Equity Index** et paliers du fandom, portefeuille sponsors,
   taux de pénétration du bassin CRM
 - **Mode défi** : un code fige la saison entière — mêmes événements pour tous, scores comparables
 - **Carte de partage** : une image 1200×630 du bilan, générée dans le navigateur
@@ -62,6 +62,9 @@ Site statique en JavaScript vanilla : aucun build, aucune dépendance, aucun fra
 - `assets/og-image.jpg` — image de partage (1200×630) pour les réseaux sociaux et les messageries.
 - `robots.txt`, `sitemap.xml` — indexation par les moteurs de recherche (Google Search Console).
 - `fonts/` — polices Raleway auto-hébergées.
+- `outils/simulation.js` — simulation automatique (quatre clubs, plusieurs saisons, trois stratégies)
+  qui vérifie l'absence d'erreur console et la cohérence du fandom :
+  `npm i playwright && node outils/simulation.js 3`. Outil de développement, non publié sur le site.
 
 ```bash
 # lancer en local

@@ -394,6 +394,13 @@ tbody tr:hover{background:var(--brand-soft)}
 .badge.silver{color:var(--silver);border-color:rgba(203,216,230,.36);
   background:linear-gradient(180deg,rgba(203,216,230,.13),rgba(203,216,230,.04))}
 .badge.none{color:var(--ink-3)}
+.fandom-floor{display:grid;grid-template-columns:1fr auto minmax(86px,auto);align-items:center;gap:10px;margin:0 auto 4px;
+  padding:7px 12px;background:var(--club-soft);border:1px solid var(--edge-strong);font-size:12.5px;color:var(--ink)}
+.fandom-floor b{font-variant-numeric:tabular-nums}
+.fandom-floor .v{color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+@media (max-width:640px){.fandom-floor{width:100%!important}}
+.fandom-head{font-size:12.5px;color:var(--ink-3);margin-bottom:10px}
+.fandom-note{font-size:12px;color:var(--ink-3);line-height:1.5;margin-top:10px}
 .fei-block{margin:12px 0;padding:10px 12px;border:1px solid var(--edge-strong);background:var(--sunken);font-size:13px;line-height:1.6}
 .fei-block svg{margin:8px 0 4px}
 .tag{font-size:var(--t0);font-weight:800;color:var(--brand);background:var(--brand-soft);
@@ -866,6 +873,11 @@ input[type="text"]:focus,input[type="password"]:focus{border-color:var(--brand-l
           <div class="card">
             <h3><i class=ic-target></i> <span data-i18n="ui.dash.objectives"><span class="sig-cap">O</span>BJECTIFS DE LA SAISON.</span> <span class="tag" id="obj-tag" data-i18n="ui.dash.board">comité directeur</span></h3>
             <ul class="objectives" id="objectives"></ul>
+          </div>
+          <div class="card">
+            <h3><i class=ic-layers></i> <span data-i18n="ui.fandom.title"><span class="sig-cap">V</span>OTRE FANDOM.</span></h3>
+            <div id="fandom"></div>
+            <p class="fandom-note" data-i18n="ui.fandom.note">Le fandom, c'est l'intensité de la relation. Faire monter 100 spectateurs au rang d'abonnés rapporte plus que recruter 1 000 nouveaux curieux.</p>
           </div>
           <div class="card">
             <h3><i class=ic-news></i> <span data-i18n="ui.dash.log"><span class="sig-cap">J</span>OURNAL.</span></h3>
@@ -1525,14 +1537,82 @@ function dmosDisplay(s) {
    parlants : ce n'est pas l'outil de mesure de C'mon Sports. Les fans
    anonymes valent 0 CHF — un fan n'est pas un contact. */
 const FEV = {
-  yearBase: 20,          // CHF par an pour un contact peu engagé
-  yearPerEngagement: 2.5, // CHF par an et par point d'engagement
   years: 3.2,            // durée de relation (valeur de jeu)
   yearsFactory: 4.3,     // la Fan Data Factory entretient la relation plus longtemps
   qualityBase: 0.5,      // des données médiocres font perdre jusqu'à la moitié de la valeur
   qualityStep: 0.05,
 };
-function fevYearValue(s) { return FEV.yearBase + FEV.yearPerEngagement * s.engagement; }
+/* Le fandom : les contacts connus se répartissent en quatre paliers, du
+   curieux à l'ambassadeur. Chaque palier a sa valeur annuelle (valeurs de
+   jeu) et sa profondeur de relation ; l'engagement affiché n'est plus une
+   variable à part, c'est la profondeur moyenne du fandom. Les fans hors CRM
+   forment le palier des anonymes, à 0 CHF. */
+const TIERS = [
+  { id:"curieux",      value: 20,  depth: 10  },   // contact connu, aucun achat
+  { id:"spectateurs",  value: 60,  depth: 45  },   // billets de temps en temps
+  { id:"abonnes",      value: 300, depth: 80  },   // abonnement ou carte membre
+  { id:"ambassadeurs", value: 450, depth: 100 },   // achètent, recommandent, participent
+];
+const TIER_START = [0.50, 0.30, 0.15, 0.05];
+function tierCounts(s) { return TIERS.map(t => s.tiers[t.id] || 0); }
+/* Les contacts restent la référence (pénétration, CRM) : les nouveaux
+   arrivent au premier palier, une perte se répartit sur tous. */
+function syncTiers(s) {
+  if (!s.tiers) return;
+  const n = tierCounts(s), sum = n.reduce((a, b) => a + b, 0);
+  const diff = Math.max(0, s.contacts) - sum;
+  if (Math.abs(diff) < 1e-6) return;
+  if (diff > 0 || sum <= 0) s.tiers.curieux = (s.tiers.curieux || 0) + Math.max(0, diff);
+  else { const f = Math.max(0, s.contacts) / sum; TIERS.forEach(t => s.tiers[t.id] *= f); }
+}
+function fandomDepth(s) {
+  syncTiers(s);
+  const n = tierCounts(s), N = n.reduce((a, b) => a + b, 0);
+  return N > 0 ? n.reduce((a, x, i) => a + x * TIERS[i].depth, 0) / N : 0;
+}
+/* Fait monter (delta > 0) ou descendre une part du fandom d'un palier, jusqu'à
+   ce que la profondeur moyenne ait bougé de delta points. « from » cible un
+   palier de départ (une action précise) ; le reliquat se répartit sur tous. */
+function shiftFandom(s, delta, from) {
+  syncTiers(s);
+  for (let k = 0; k < 6 && Math.abs(delta) > 1e-6; k++) {
+    const n = tierCounts(s), N = n.reduce((a, b) => a + b, 0);
+    if (N <= 0) return;
+    const idx = delta > 0 ? (from != null ? [from] : [0, 1, 2]) : [1, 2, 3];
+    const per = idx.reduce((a, i) => a + n[i] * Math.abs(TIERS[i + (delta > 0 ? 1 : -1)].depth - TIERS[i].depth), 0);
+    from = null;
+    if (per <= 0) continue;
+    const f = Math.min(1, Math.abs(delta) * N / per);
+    idx.forEach(i => {
+      const m = n[i] * f, j = i + (delta > 0 ? 1 : -1);
+      s.tiers[TIERS[i].id] -= m; s.tiers[TIERS[j].id] += m;
+    });
+    delta -= Math.sign(delta) * f * per / N;
+  }
+}
+/* L'engagement devient une vue sur le fandom : toutes les règles existantes
+   qui le lisent ou le modifient (matchs, événements, billetterie…) passent
+   désormais par les paliers. */
+function installFandom(s, startShares) {
+  const e = typeof s.engagement === "number" ? s.engagement : 40;
+  delete s.engagement;
+  const fresh = !s.tiers;
+  if (fresh) {
+    s.tiers = {};
+    TIERS.forEach((t, i) => s.tiers[t.id] = Math.max(0, s.contacts) * (startShares || TIER_START)[i]);
+  }
+  Object.defineProperty(s, "engagement", {
+    get() { return fandomDepth(this); },
+    set(v) { shiftFandom(this, clamp(v, 0, 100) - fandomDepth(this)); },
+    enumerable: true, configurable: true,
+  });
+  if (fresh && !startShares) s.engagement = e;
+}
+function fevYearValue(s) {
+  syncTiers(s);
+  const n = tierCounts(s), N = n.reduce((a, b) => a + b, 0);
+  return N > 0 ? n.reduce((a, x, i) => a + x * TIERS[i].value, 0) / N : 0;
+}
 function fevYears(s) { return s.services.datafactory ? FEV.yearsFactory : FEV.years; }
 function fevQuality(s) { return FEV.qualityBase + FEV.qualityStep * s.dataQuality; }
 function fanEquityValue(s) {
@@ -1629,7 +1709,7 @@ function newGame(club, difficulty = 1, challenge = null) {
   // de départ doit être identique d'un joueur à l'autre sur un même défi.
   state = { rng: challenge ? challenge.seed : freshSeed() };
   Object.assign(state, {
-    version: 8,
+    version: 9,
     challenge: challenge ? challenge.code : null,
     tuto: freshTuto(),
     clubId: club.id,
@@ -1663,6 +1743,7 @@ function newGame(club, difficulty = 1, challenge = null) {
   // éviter deux sponsors identiques au départ
   while (state.sponsors[1].name === state.sponsors[0].name) state.sponsors[1].name = pick(SPONSOR_POOL).name;
   state.usedSponsors = state.sponsors.map(sp=>sp.name);
+  installFandom(state);
   state.seasonStats = freshSeasonStats(state);
   state.objectives = makeObjectives(state);
   log(state, tr("msg.84c087", {v0: club.name}, `Bienvenue au {v0} ! Le comité attend des résultats dès cette saison. Bon courage.`), "good");
@@ -1782,7 +1863,14 @@ function load() {
       s.fevBase = s.services && s.services.fanlabPro ? fanEquityValue(s) : null;
       s.version = 8;
     }
-    if (s && s.version === 8) return s;
+    if (s && s.version === 8) {
+      // migration v8 → v9 : paliers du fandom. Les contacts sont répartis de
+      // façon à retrouver l'engagement de la sauvegarde : la partie reprend
+      // exactement où elle en était.
+      installFandom(s);
+      s.version = 9;
+    }
+    if (s && s.version === 9) { installFandom(s); return s; }
   } catch(e){}
   return null;
 }
@@ -1849,7 +1937,7 @@ function resolveActions(s) {
           // rendements décroissants quand l'engagement est déjà élevé
           const engGain = (2 + s.dmos.contenu * 0.35) * clamp(1 - s.engagement/110, 0.1, 1);
           const fanGain = Math.round(s.fans * (0.002 + s.dmos.acquisition*0.0008) * (0.5 + s.engagement/100) * marketSaturation(s));
-          s.engagement = clamp(s.engagement + engGain, 0, 100);
+          shiftFandom(s, engGain, 0);   // le contenu fait passer des curieux au stade
           s.fans += fanGain;
           summary.push(tr("msg.6ec2bf", {v0: fmt(fanGain)}, tr("ui.6ec2bf", null, `Contenu publié : +{v0} fans`)));
           break;
@@ -1865,7 +1953,9 @@ function resolveActions(s) {
           const rev = Math.round(effContacts * (0.15 + s.dataQuality*0.06) * fatigueMult);
           s.budget += rev;
           s.seasonStats.ticketRevenue += rev; s.seasonStats.revenue += rev;
-          s.engagement = clamp(s.engagement + 1.5*fatigueMult, 0, 100);
+          // emailing ciblé : des curieux deviennent spectateurs ; avec une base
+          // segmentée (Fan Data Factory), des spectateurs passent à l'abonnement
+          shiftFandom(s, 1.5*fatigueMult, s.services.datafactory ? 1 : 0);
           s.emailFatigue = clamp(s.emailFatigue + fatigueGain, 0, 4);
           summary.push(`Campagne emailing : +${fmtCHF(rev)}${fatigueMult<1 ? tr("lbl.ef3c28", null, " (fatigue de la base)") : ""}`);
           break;
@@ -1882,6 +1972,7 @@ function resolveActions(s) {
         case "activation": {
           let bonus = 0;
           s.sponsors.forEach(sp => { sp.satisfaction = clamp(sp.satisfaction + 8, 0, 100); bonus += Math.round(sp.amount*0.01); });
+          shiftFandom(s, 0.4, 2);   // activations exclusives : des abonnés deviennent ambassadeurs
           s.budget += bonus;
           summary.push(`Activation sponsor : satisfaction +8 %${bonus?`, bonus ${fmtCHF(bonus)}`:""}`);
           break;
@@ -1954,7 +2045,9 @@ function advanceWeek() {
     }
   }
   if (s.services.bluepenguin) {
-    s.engagement = clamp(s.engagement + 0.8 * clamp(1 - s.engagement/110, 0.1, 1), 0, 100);
+    // programme de fidélité : vers l'abonnement, puis vers le rang d'ambassadeur
+    const g = 0.8 * clamp(1 - s.engagement/110, 0.1, 1);
+    shiftFandom(s, g / 2, 1); shiftFandom(s, g / 2, 2);
   }
   if (s.services.griddy) {
     const g = Math.round(s.fans * 0.0015 * clamp(1 - penetration(s), 0.05, 1));
@@ -2005,7 +2098,9 @@ function advanceWeek() {
 
   // 4. Dérives naturelles — l'attention s'érode d'autant plus vite que le niveau est haut
   const lvl = expectationLevel(s);
-  s.engagement = clamp(s.engagement - (1 + lvl * 0.5), 0, 100);
+  // sans activité, chaque palier glisse vers le palier inférieur ; une base
+  // entretenue par la Fan Data Factory s'érode deux fois moins vite
+  shiftFandom(s, -(1 + lvl * 0.5) * (s.services.datafactory ? 0.5 : 1));
   s.emailFatigue = clamp(s.emailFatigue - 0.5, 0, 4);        // la fatigue email retombe
   if (!s.services.datafactory) s.dataQuality = clamp(s.dataQuality - 0.05, 0, 10); // sans Fan Data Factory, les données vieillissent
   s.sponsors.forEach(sp => sp.satisfaction = clamp(sp.satisfaction - 1.5, 0, 100));
@@ -2523,6 +2618,28 @@ function feiBlock(s) {
     <span style="color:var(--ink-3); font-size:12px">${tr("ui.fei.legend", null, "Un point à l'activation, puis aux semaines 7, 13, 20 et 26 de chaque saison.")}</span></div>`;
 }
 
+/* Pyramide du fandom : Insight révèle la répartition, Pro révèle la valeur. */
+function renderFandom() {
+  const s = state, insight = insightActive(s), pro = s.services.fanlabPro;
+  syncTiers(s);
+  const n = tierCounts(s);
+  const mult = fevYears(s) * fevQuality(s);
+  const names = [
+    tr("ui.fandom.t4", null, "Ambassadeurs"), tr("ui.fandom.t3", null, "Abonnés / membres"),
+    tr("ui.fandom.t2", null, "Spectateurs"), tr("ui.fandom.t1", null, "Curieux"), tr("ui.fandom.t0", null, "Anonymes"),
+  ];
+  const floors = [3, 2, 1, 0].map(i => ({ count: n[i], value: n[i] * TIERS[i].value * mult }))
+    .concat([{ count: Math.max(0, s.fans - s.contacts), value: 0 }]);
+  const html = floors.map((f, k) => {
+    const width = 62 + k * 9.5;
+    const count = insight ? fmt(f.count) : "?";
+    const value = pro ? fmtCHF(f.value) : "? CHF";
+    return `<div class="fandom-floor" style="width:${width}%"><span>${names[k]}</span><b>${count}</b><span class="v">${value}</span></div>`;
+  }).join("");
+  $("#fandom").innerHTML = `<div class="fandom-head">${tr("ui.fandom.head", {v0: fmt(s.fans), v1: fmt(s.contacts)}, "{v0} fans · {v1} contacts connus")}</div>` + html +
+    (insight ? "" : `<div class="fandom-head" style="margin-top:8px"><i class=ic-lock></i> ${tr("ui.fandom.lock", null, "Fan Lab Insight révèle la répartition, Fan Lab Pro sa valeur.")}</div>`);
+}
+
 function renderSponsors() {
   const rows = state.sponsors.map(sp => {
     const c = sp.satisfaction>=70?'var(--good)':sp.satisfaction>=45?'var(--warn)':'var(--bad)';
@@ -2607,7 +2724,7 @@ function renderHistory() {
 
 function renderAll() {
   renderHeader(); renderKpis(); renderLastResult(); renderActions(); renderObjectives();
-  renderLog(); renderDmos(); renderSponsors(); renderServices(); renderHistory();
+  renderLog(); renderDmos(); renderFandom(); renderSponsors(); renderServices(); renderHistory();
   renderTuto();
   prevKpis = kpiList(state);
 }
@@ -5080,6 +5197,15 @@ const TX = {
     "ui.fei.title": "Fan Equity Index — der Beweis, dass Ihr Fan-Vermögen wächst",
     "ui.fei.none": "Noch nicht gemessen: Der Index startet bei 100 an dem Tag, an dem Fan Lab Pro Ihre Fan Equity Value® beziffert.",
     "ui.fei.legend": "Ein Punkt bei der Aktivierung, dann in den Wochen 7, 13, 20 und 26 jeder Saison.",
+    "ui.fandom.title": "<span class=\"sig-cap\">I</span>HR FANDOM.",
+    "ui.fandom.note": "Fandom ist die Intensität der Bindung. 100 Zuschauer zu Abonnenten zu machen bringt mehr, als 1 000 neue Neugierige zu gewinnen.",
+    "ui.fandom.t4": "Botschafter",
+    "ui.fandom.t3": "Abonnenten / Mitglieder",
+    "ui.fandom.t2": "Zuschauer",
+    "ui.fandom.t1": "Neugierige",
+    "ui.fandom.t0": "Anonyme",
+    "ui.fandom.head": "{v0} Fans · {v1} bekannte Kontakte",
+    "ui.fandom.lock": "Fan Lab Insight zeigt die Verteilung, Fan Lab Pro ihren Wert.",
   },  /* TX-DE */
   en: {
     "action.activation.desc": "A visibility operation for your sponsors (LED boards, social, hospitality). +sponsor satisfaction, plus a small revenue bonus.",
@@ -5665,6 +5791,15 @@ const TX = {
     "ui.fei.title": "Fan Equity Index — proof that your fan asset is compounding",
     "ui.fei.none": "Not measured yet: the Index starts at 100 on the day Fan Lab Pro puts a number on your Fan Equity Value®.",
     "ui.fei.legend": "One point at activation, then in weeks 7, 13, 20 and 26 of every season.",
+    "ui.fandom.title": "<span class=\"sig-cap\">Y</span>OUR FANDOM.",
+    "ui.fandom.note": "Fandom is the strength of the bond. Turning 100 spectators into season-ticket holders is worth more than signing up 1,000 new curious fans.",
+    "ui.fandom.t4": "Ambassadors",
+    "ui.fandom.t3": "Season ticket holders",
+    "ui.fandom.t2": "Spectators",
+    "ui.fandom.t1": "Curious",
+    "ui.fandom.t0": "Anonymous",
+    "ui.fandom.head": "{v0} fans · {v1} known contacts",
+    "ui.fandom.lock": "Fan Lab Insight reveals the breakdown, Fan Lab Pro its value.",
   },  /* TX-EN */
 };
 
