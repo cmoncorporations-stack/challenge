@@ -17,7 +17,7 @@ sous peine de licenciement.
 - **Saison de 26 semaines** : 3 points d'action par semaine, un match simulé chaque semaine
 - **Promotion / relégation / coupe d'Europe** : monter fait grimper les revenus, mais aussi
   les charges et les attentes des fans
-- **Score DMOS** (6 piliers /60), **Fan Equity Value®**, **Fan Equity Index** et paliers du fandom, portefeuille sponsors,
+- **Score DMOS** (6 piliers /60), **Fan Equity Value**, **Fan Equity Index** et paliers du fandom, portefeuille sponsors,
   taux de pénétration du bassin CRM
 - **Mode défi** : un code fige la saison entière — mêmes événements pour tous, scores comparables
 - **Carte de partage** : une image 1200×630 du bilan, générée dans le navigateur
@@ -25,7 +25,7 @@ sous peine de licenciement.
 ### Le rôle de C'mon Sports
 
 Sans accompagnement, le club pilote à l'aveugle : score DMOS affiché en fourchette,
-Fan Equity Value® inconnue, qualité des données invisible. L'onglet **C'mon Sports**
+Fan Equity Value inconnue, qualité des données invisible. L'onglet **C'mon Sports**
 donne accès aux vraies solutions, regroupées par famille — **Audit** (Fan Equity Audit),
 **Fan Equity Intelligence** (Fan Lab Insight & Pro), **Fan Equity Management** (Fan Data Factory),
 Blue Penguin, Griddy Picks — qui révèlent ces indicateurs et transforment durablement
