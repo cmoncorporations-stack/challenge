@@ -941,7 +941,7 @@ input[type="text"]:focus,input[type="password"]:focus{border-color:var(--brand-l
 
   </div>
 
-  <div class="footer-note"><svg class="cmon-icon" viewBox="210 210 545 465" fill="#62bdf4" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="C’mon Sports"><polygon class="cls-1" points="397.1 586.91 371.5 543.31 311.66 441.39 324.56 419.15 278.89 341.37 220.93 442.04 352.01 665.28 469.15 665.41 423.07 586.93 397.1 586.91"/><polygon class="cls-1" points="537.9 295.62 563.77 295.63 648.63 440.05 635.72 462.4 681.35 540.11 739.25 439.74 608.59 217.18 466.77 217.28 421.28 296.14 577.81 562.8 563.95 586.83 539.86 586.87 382.42 318.72 440.9 217.33 350.43 217.35 291.76 319.07 495 665.23 609.34 665.27 668.48 562.52 525 318.04 537.9 295.62"/></svg><div style="margin-top:8px" data-i18n="ui.footer.note">C'mon Sports Challenge — prototype v7 · l'écosystème C'mon Sports en jeu · sauvegarde locale automatique en fin de semaine</div>
+  <!-- prototype v7 --><div class="footer-note"><svg class="cmon-icon" viewBox="210 210 545 465" fill="#62bdf4" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="C’mon Sports"><polygon class="cls-1" points="397.1 586.91 371.5 543.31 311.66 441.39 324.56 419.15 278.89 341.37 220.93 442.04 352.01 665.28 469.15 665.41 423.07 586.93 397.1 586.91"/><polygon class="cls-1" points="537.9 295.62 563.77 295.63 648.63 440.05 635.72 462.4 681.35 540.11 739.25 439.74 608.59 217.18 466.77 217.28 421.28 296.14 577.81 562.8 563.95 586.83 539.86 586.87 382.42 318.72 440.9 217.33 350.43 217.35 291.76 319.07 495 665.23 609.34 665.27 668.48 562.52 525 318.04 537.9 295.62"/></svg><div style="margin-top:8px" data-i18n="ui.footer.note">C'mon Sports Challenge · l'écosystème C'mon Sports en jeu · sauvegarde locale automatique en fin de semaine</div>
     <div id="lang-switch" class="lang-switch" role="group" aria-label="Langue / Sprache / Language"></div>
     <div class="footer-links">
       <a href="../" data-i18n="ui.footer.home">Découvrir le C'mon Sports Challenge</a> ·
@@ -1363,11 +1363,6 @@ const SPONSOR_POOL = [
    Le cœur du propos : sans accompagnement, le club pilote à l'aveugle
    (scores DMOS flous, valeur fanbase inconnue, données qui pourrissent
    en silence). Chaque service révèle et/ou protège. */
-/* Grille tarifaire officielle C'mon Sports (fournie par Doug) :
-   audit 5 000 · Fan Lab Insight 6 000 · Fan Lab Pro 18 000 ·
-   Fan Data Factory 2 000/mois · Blue Penguin 12 000 + 1 500/mois ·
-   Griddy Picks 2 500 + 500/jour de compétition (1 match/sem en jeu).
-   Les mensuels sont convertis en hebdo interne (×12/52). */
 const SERVICES = [
   { id:"audit", name:"Fan Equity Audit", setup:5000, duration:3,
     subLabel:"Audit · one-shot", btnLabel:"Commander · 5 000 CHF",
@@ -2793,8 +2788,13 @@ function showScreen(id) {
   ["screen-intro", "screen-login", "screen-setup", "screen-game"].forEach(s =>
     $("#" + s).classList.toggle("hidden", s !== id));
   const wrap = $("#admin-wrap");
-  if (wrap) wrap.style.display = isAdmin() ? "" : "none";
+  // Lien discret : visible seulement avec /jouer/#admin, pour le compte autorisé
+  if (wrap) wrap.style.display = isAdmin() && location.hash === "#admin" ? "" : "none";
 }
+window.addEventListener("hashchange", () => {
+  const wrap = $("#admin-wrap");
+  if (wrap) wrap.style.display = isAdmin() && location.hash === "#admin" ? "" : "none";
+});
 
 function renderLogin() {
   showScreen("screen-login");
@@ -4885,7 +4885,7 @@ const TX = {
     "ui.footer.export": "Meine Daten exportieren",
     "ui.footer.home": "Die C'mon Sports Challenge entdecken",
     "ui.footer.help": "<i class=ic-bulb></i> Hilfe &amp; Regeln",
-    "ui.footer.note": "C'mon Sports Challenge — Prototyp v7 · das Ökosystem von C'mon Sports als Spiel · automatische lokale Speicherung am Ende jeder Woche",
+    "ui.footer.note": "C'mon Sports Challenge · das Ökosystem von C'mon Sports als Spiel · automatische lokale Speicherung am Ende jeder Woche",
     "ui.footer.privacy": "<i class=ic-lock></i> Datenschutz & Daten (DSGVO / revDSG)",
     "ui.hist.title": "<span class=\"sig-cap\">S</span>AISONBILANZEN.",
     "ui.kpi.info": "Verstehen: {v0}",
@@ -5450,7 +5450,7 @@ const TX = {
     "ui.footer.export": "Export my data",
     "ui.footer.home": "Discover C'mon Sports Challenge",
     "ui.footer.help": "<i class=ic-bulb></i> Help &amp; rules",
-    "ui.footer.note": "C'mon Sports Challenge — prototype v7 · the C'mon Sports ecosystem, playable · automatic local save at the end of each week",
+    "ui.footer.note": "C'mon Sports Challenge · the C'mon Sports ecosystem, playable · automatic local save at the end of each week",
     "ui.footer.privacy": "<i class=ic-lock></i> Privacy & data (GDPR / revFADP)",
     "ui.hist.title": "<span class=\"sig-cap\">S</span>EASON REVIEWS.",
     "ui.kpi.info": "Understand: {v0}",
