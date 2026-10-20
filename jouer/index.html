@@ -1590,6 +1590,14 @@ function shiftFandom(s, delta, from) {
     delta -= Math.sign(delta) * f * per / N;
   }
 }
+function erodeFandom(s, rate) {
+  syncTiers(s);
+  const n = tierCounts(s);
+  for (let i = 1; i < TIERS.length; i++) {
+    const m = n[i] * rate;
+    s.tiers[TIERS[i].id] -= m; s.tiers[TIERS[i - 1].id] += m;
+  }
+}
 /* L'engagement devient une vue sur le fandom : toutes les règles existantes
    qui le lisent ou le modifient (matchs, événements, billetterie…) passent
    désormais par les paliers. */
@@ -1954,8 +1962,9 @@ function resolveActions(s) {
           s.budget += rev;
           s.seasonStats.ticketRevenue += rev; s.seasonStats.revenue += rev;
           // emailing ciblé : des curieux deviennent spectateurs ; avec une base
-          // segmentée (Fan Data Factory), des spectateurs passent à l'abonnement
-          shiftFandom(s, 1.5*fatigueMult, s.services.datafactory ? 1 : 0);
+          // segmentée (Fan Data Factory), une partie des spectateurs passe à l'abonnement
+          if (s.services.datafactory) { shiftFandom(s, 0.75*fatigueMult, 0); shiftFandom(s, 0.75*fatigueMult, 1); }
+          else shiftFandom(s, 1.5*fatigueMult, 0);
           s.emailFatigue = clamp(s.emailFatigue + fatigueGain, 0, 4);
           summary.push(`Campagne emailing : +${fmtCHF(rev)}${fatigueMult<1 ? tr("lbl.ef3c28", null, " (fatigue de la base)") : ""}`);
           break;
@@ -1963,9 +1972,9 @@ function resolveActions(s) {
         case "collect": {
           // plus le bassin est déjà pénétré, plus les nouveaux contacts qualifiés sont durs à trouver
           const satMult = clamp(1 - penetration(s), 0.05, 1);
-          const gain = Math.round((120 + s.fans*0.006*(1 + s.dmos.donnees*0.15)) * satMult);
+          const gain = Math.round((30 + s.fans*0.003*(1 + s.dmos.donnees*0.15)) * satMult);
           s.contacts += gain;
-          s.dataQuality = clamp(s.dataQuality + 0.3, 0, 10);
+          s.dataQuality = clamp(s.dataQuality + 0.15, 0, 10);
           summary.push(tr("msg.b0a94f", {v0: fmt(gain), v1: satMult < 0.5 ? tr("lbl.3ae078", null, " (bassin déjà bien couvert)") : ""}, tr("ui.b0a94f", null, `Collecte data : +{v0} contacts qualifiés{v1}`)));
           break;
         }
@@ -2098,9 +2107,11 @@ function advanceWeek() {
 
   // 4. Dérives naturelles — l'attention s'érode d'autant plus vite que le niveau est haut
   const lvl = expectationLevel(s);
-  // sans activité, chaque palier glisse vers le palier inférieur ; une base
-  // entretenue par la Fan Data Factory s'érode deux fois moins vite
-  shiftFandom(s, -(1 + lvl * 0.5) * (s.services.datafactory ? 0.5 : 1));
+  // l'attention retombe d'elle-même, d'autant plus vite que le niveau est haut…
+  shiftFandom(s, -(1 + lvl * 0.5));
+  // … et sans entretien, chaque palier perd une petite part vers le palier
+  // inférieur ; une base suivie par la Fan Data Factory s'érode deux fois moins
+  erodeFandom(s, s.services.datafactory ? 0.0025 : 0.005);
   s.emailFatigue = clamp(s.emailFatigue - 0.5, 0, 4);        // la fatigue email retombe
   if (!s.services.datafactory) s.dataQuality = clamp(s.dataQuality - 0.05, 0, 10); // sans Fan Data Factory, les données vieillissent
   s.sponsors.forEach(sp => sp.satisfaction = clamp(sp.satisfaction - 1.5, 0, 100));

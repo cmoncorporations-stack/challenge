@@ -46,7 +46,7 @@ const server = http.createServer((req, res) => {
       newGame(c, 1);
       const fev = fanEquityValue(state);
       if (fev < 10 * proPrice) problems.push(`${c.name} : valeur de départ < 10 × Fan Lab Pro`);
-      return { club: c.name, fev: Math.round(fev), engagement: Math.round(state.engagement) };
+      return { club: c.name, fev: Math.round(fev), engagement: Math.round(state.engagement), contacts: `${clubOf(state).contacts}→${Math.round(state.contacts)}` };
     });
     const ACTS = ["collect", "content", "campaign", "activation"];
     const run = (pro, factory) => CLUBS.map(c => {
@@ -66,7 +66,7 @@ const server = http.createServer((req, res) => {
       }
       return { club: c.name, saisons: state.history.length, licencie: state.gameOver,
         objectifs: state.history.map(h => h.okCount).reverse().join("/"),
-        score: challengeScore(state), index: fanEquityIndex(state), engagement: Math.round(state.engagement) };
+        score: challengeScore(state), index: fanEquityIndex(state), engagement: Math.round(state.engagement), contacts: `${clubOf(state).contacts}→${Math.round(state.contacts)}` };
     });
     return { start, problems,
       sans: run(false, false), pro: run(true, false), proFactory: run(true, true) };
