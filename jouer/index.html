@@ -907,7 +907,7 @@ input[type="text"]:focus,input[type="password"]:focus{border-color:var(--brand-l
           </div>
         </div>
         <div class="card">
-          <h3><i class=ic-beaker></i> <span data-i18n="ui.fanlab.title"><span class="sig-cap">F</span>AN EQUITY VALUE® — CE QUE VAUT VOTRE PUBLIC.</span></h3>
+          <h3><i class=ic-beaker></i> <span data-i18n="ui.fanlab.title"><span class="sig-cap">F</span>AN EQUITY VALUE — CE QUE VAUT VOTRE PUBLIC.</span></h3>
           <p style="font-size:13px;color:var(--muted);line-height:1.5" data-i18n="ui.fanlab.intro">
             Vos fans sont un actif. Sa valeur dépend de quatre leviers : les fans que vous connaissez vraiment,
             l'intensité de leur relation au club, leur fidélité dans la durée et la qualité de vos données.
@@ -915,7 +915,7 @@ input[type="text"]:focus,input[type="password"]:focus{border-color:var(--brand-l
           </p>
           <div style="text-align:center; padding:18px 0">
             <div style="font-size:34px; font-weight:800; color:var(--accent)" id="fanlab-value"></div>
-            <div style="font-size:12px; color:var(--muted)" data-i18n="ui.fanlab.caption">Fan Equity Value® (CHF)</div>
+            <div style="font-size:12px; color:var(--muted)" data-i18n="ui.fanlab.caption">Fan Equity Value (CHF)</div>
             <div id="fei-now" style="font-size:12px; margin-top:6px"></div>
           </div>
           <div id="fanlab-details" style="font-size:13px; color:var(--muted); line-height:1.8"></div>
@@ -934,7 +934,7 @@ input[type="text"]:focus,input[type="password"]:focus{border-color:var(--brand-l
         <p style="font-size:12px; color:var(--muted); margin-top:10px; line-height:1.5" data-i18n="ui.spons.hint">
           <i class=ic-bulb></i> L'action « Activation sponsor » augmente la satisfaction. En fin de saison, les sponsors satisfaits (≥ 60 %)
           renouvellent — parfois à la hausse. L'action « Prospection sponsor » peut décrocher un nouveau contrat :
-          les chances dépendent du score DMOS et de la progression de votre Fan Equity Value®.
+          les chances dépendent du score DMOS et de la progression de votre Fan Equity Value.
         </p>
       </div>
     </div>
@@ -945,7 +945,7 @@ input[type="text"]:focus,input[type="password"]:focus{border-color:var(--brand-l
         <h3><i class=ic-launch></i> <span data-i18n="ui.cmon.title"><span class="sig-cap">C</span>'MON SPORTS — VOTRE PARTENAIRE DATA & MARKETING.</span></h3>
         <p class="blue-rule" style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px" data-i18n="ui.cmon.intro">
           Un club peut tout faire seul — mais il avance à l'aveugle. C'mon Sports révèle ce que vous ne
-          voyez pas (scores DMOS exacts, Fan Equity Value®, santé de vos données) et
+          voyez pas (scores DMOS exacts, Fan Equity Value, santé de vos données) et
           structure votre croissance. Chaque service activé transforme durablement votre tableau de bord.
         </p>
         <div id="services-list"></div>
@@ -1213,7 +1213,7 @@ const ACTIONS = [
     desc:"Opération visibilité pour vos sponsors (LED, réseaux, hospitalité). +satisfaction sponsors, petit bonus de revenus.",
     real:"Activer un sponsor, c'est lui donner la preuve qu'il est vu. C'est aussi le travail le plus souvent repoussé d'une saison, parce qu'il n'a pas d'échéance — jusqu'au non-renouvellement." },
   { id:"prospect", name:"<i class=ic-userplus></i> Prospection sponsor", ap:2, cost:2000,
-    desc:"Démarchage d'un nouveau sponsor. Chances de succès selon score DMOS et progression de la Fan Equity Value®.",
+    desc:"Démarchage d'un nouveau sponsor. Chances de succès selon score DMOS et progression de la Fan Equity Value.",
     real:"Un nouveau sponsor ne se décroche pas avec un dossier de présentation, mais avec des chiffres sur l'audience qu'on lui vend. C'est précisément ce que produit une analyse Fan Lab." },
   { id:"training", name:"<i class=ic-clipboard></i> Formation & outils", ap:1, cost:3000,
     desc:"Investissement structurel : +1 point sur le pilier DMOS le plus faible.",
@@ -1400,8 +1400,8 @@ const SERVICES = [
   { id:"fanlabPro", name:"Fan Lab Pro", setup:18500, weekly:300, commit:3,
     subLabel:"Fan Equity Intelligence · engagement 3 saisons · inclut Insight", btnLabel:"Activer · 18 500 CHF + 300 CHF/sem.",
     range:"15 000 – 22 000 CHF / an",
-    pitch:"La mesure de la valeur de votre audience, suivie dans la durée : Fan Equity Value®, Fan Equity Index, ROI ticketing et merchandising, l'argument chiffré face aux sponsors.",
-    effect:"Mise en place à l'activation, puis licence hebdomadaire pendant 3 saisons. Tout Insight + révèle votre Fan Equity Value® en francs et suit le Fan Equity Index, chances de signature sponsor nettement accrues, part marketing billetterie 5 → 6 % et merchandising +10 %.",
+    pitch:"La mesure de la valeur de votre audience, suivie dans la durée : Fan Equity Value, Fan Equity Index, ROI ticketing et merchandising, l'argument chiffré face aux sponsors.",
+    effect:"Mise en place à l'activation, puis licence hebdomadaire pendant 3 saisons. Tout Insight + révèle votre Fan Equity Value en francs et suit le Fan Equity Index, chances de signature sponsor nettement accrues, part marketing billetterie 5 → 6 % et merchandising +10 %.",
     real:"La valorisation économique complète de l'audience. Concrètement : le document qu'on pose sur la table en rendez-vous sponsor, quand il faut justifier un montant plutôt que le négocier." },
   { id:"datafactory", name:"Fan Data Factory", weekly:920, commit:3,
     subLabel:"Fan Equity Management · engagement 3 saisons", btnLabel:"Activer · 920 CHF/sem.",
@@ -1447,7 +1447,7 @@ function buyService(id) {
   const MSG = {
     audit: tr("ui.57e497", {v0: fmtCHF(upfront), v1: svc.duration}, `<i class=ic-launch></i> Fan Equity Audit commandé auprès de C'mon Sports ({v0}). Kick-off cette semaine — rapport dans {v1} semaines.`),
     fanlabInsight: tr("ui.f3388d", {v0: fmtCHF(upfront)}, `<i class=ic-launch></i> Fan Lab Insight livré ({v0}) : qualité de vos données CRM et pénétration du bassin enfin mesurées.`),
-    fanlabPro: tr("ui.923517", {v0: fmtCHF(upfront)}, `<i class=ic-launch></i> Fan Lab Pro activé ({v0}, puis 300 CHF/sem. sur 3 saisons) : votre Fan Equity Value® est chiffrée et le Fan Equity Index démarre à 100. ROI ticketing et merchandising optimisés. Vos sponsors vont adorer.`),
+    fanlabPro: tr("ui.923517", {v0: fmtCHF(upfront)}, `<i class=ic-launch></i> Fan Lab Pro activé ({v0}, puis 300 CHF/sem. sur 3 saisons) : votre Fan Equity Value est chiffrée et le Fan Equity Index démarre à 100. ROI ticketing et merchandising optimisés. Vos sponsors vont adorer.`),
     datafactory: tr("ui.35c35b", null, `<i class=ic-launch></i> Fan Data Factory activé (920 CHF/sem., engagement 3 saisons) : base nettoyée, procédures en place. Qualité +1, dégradation stoppée.`),
     bluepenguin: tr("ui.35d2d7", {v0: fmtCHF(upfront)}, `<i class=ic-launch></i> Blue Penguin intégré ({v0} + 690 CHF/sem.) : le programme de fidélité tokenisé est en ligne.`),
     griddy: tr("ui.b5410e", {v0: fmtCHF(upfront)}, `<i class=ic-launch></i> Griddy Picks intégré ({v0} + 500 CHF/jour de match) : le jeu de pronostics collecte ses premiers contacts.`),
@@ -1545,7 +1545,7 @@ function dmosDisplay(s) {
   if (s.services.audited) return t + "/60";
   return "~" + clamp(t-5, 0, 60) + "–" + clamp(t+5, 0, 60) + " ?";
 }
-/* Fan Equity Value® — modèle pédagogique propre au jeu. Quatre leviers et
+/* Fan Equity Value — modèle pédagogique propre au jeu. Quatre leviers et
    des coefficients ronds, choisis pour donner des ordres de grandeur
    parlants : ce n'est pas l'outil de mesure de C'mon Sports. Les fans
    anonymes valent 0 CHF — un fan n'est pas un contact. */
@@ -1799,7 +1799,7 @@ function checkObjective(st, o) { return OBJECTIVE_CHECKS[o.id](st, o); }
    dans l'ancienne. Les parties antérieures retombent sur le libellé stocké. */
 const OBJECTIVE_LABELS = {
   fans:    o => tr("obj.cec88c", {v0: fmt(o.target)}, `Atteindre {v0} fans`),
-  fev:     o => tr("obj.fev", {v0: Math.round((o.growth - 1) * 100)}, `Faire progresser votre Fan Equity Value® de +{v0} %`),
+  fev:     o => tr("obj.fev", {v0: Math.round((o.growth - 1) * 100)}, `Faire progresser votre Fan Equity Value de +{v0} %`),
   dmos:    o => tr("obj.acfe59", {v0: o.target}, `Score DMOS ≥ {v0}/60`),
   budget:  o => tr("obj.cc2671", null, `Finir la saison avec un budget positif`),
   sponsor: o => tr("obj.58dd4b", {v0: o.target}, `Satisfaction sponsors moyenne ≥ {v0} %`),
@@ -1877,7 +1877,7 @@ function load() {
       s.version = 7;
     }
     if (s && s.version === 7) {
-      // migration v7 → v8 : Fan Equity Value® et Index. L'historique démarre
+      // migration v7 → v8 : Fan Equity Value et Index. L'historique démarre
       // vide ; si Fan Lab Pro tournait déjà, la base 100 est posée maintenant.
       // Les objectifs de la saison entamée restent ceux d'origine.
       s.fevHistory = [];
@@ -2595,7 +2595,7 @@ function renderDmos() {
         tr("ui.7b8d82", null, `<i class=ic-beaker></i> Qualité des données : <span style="color:var(--muted)">inconnue</span><br>`)) +
     tr("lbl.fd6f54", {v0: Math.round(state.engagement)}, `<i class=ic-pulse></i> Engagement : {v0} %<br>`) +
     (pro
-      ? fevLeversHtml(state) + tr("ui.fev.link", {v0: FANLAB_CALC_URL}, `<a class="out-link" href="{v0}" target="_blank" rel="noopener">Estimez la Fan Equity Value® de votre vrai club — Fan Lab</a>`)
+      ? fevLeversHtml(state) + tr("ui.fev.link", {v0: FANLAB_CALC_URL}, `<a class="out-link" href="{v0}" target="_blank" rel="noopener">Estimez la Fan Equity Value de votre vrai club — Fan Lab</a>`)
       : insight
         ? tr("ui.9ff7ad", null, `<span style="font-size:12px; color:var(--accent)"><i class=ic-lock></i> Passez à <b>Fan Lab Pro</b> (onglet <i class=ic-launch></i> C'mon Sports) pour chiffrer la valeur de votre audience et convaincre les sponsors.</span>`)
         : tr("ui.4c2a6d", null, `<span style="font-size:12px; color:var(--accent)"><i class=ic-lock></i> Commandez <b>Fan Lab Insight</b> ou <b>Pro</b> (onglet <i class=ic-launch></i> C'mon Sports) pour mesurer et valoriser votre fanbase.</span>`));
@@ -2644,7 +2644,7 @@ function feiChart(hist, color) {
 function feiBlock(s) {
   const title = tr("ui.fei.title", null, "Fan Equity Index — la preuve que votre actif fans se capitalise");
   if (!s.services.fanlabPro || !s.fevHistory || !s.fevHistory.length)
-    return `<div class="fei-block"><b style="color:var(--ink)">${title}</b><br><span style="color:var(--ink-3); font-size:12px">${tr("ui.fei.none", null, "Pas encore mesuré : l'Index démarre à 100 le jour où Fan Lab Pro chiffre votre Fan Equity Value®.")}</span></div>`;
+    return `<div class="fei-block"><b style="color:var(--ink)">${title}</b><br><span style="color:var(--ink-3); font-size:12px">${tr("ui.fei.none", null, "Pas encore mesuré : l'Index démarre à 100 le jour où Fan Lab Pro chiffre votre Fan Equity Value.")}</span></div>`;
   return `<div class="fei-block"><b style="color:var(--ink)">${title}</b>${feiChart(s.fevHistory, clubOf(s).color)}
     <span style="color:var(--ink-3); font-size:12px">${tr("ui.fei.legend", null, "Un point à l'activation, puis aux semaines 7, 13, 20 et 26 de chaque saison.")}</span></div>`;
 }
@@ -2853,7 +2853,7 @@ function shareStats(s) {
     { k: tr("lbl.44ea9b", null, "Score DMOS"), v: audited ? `${dmosTotal(s)}/60` : tr("lbl.0f0395", null, "non audité"), on: audited },
     { k: tr("lbl.73d38d", null, "Fans"), v: fmt(s.fans), on: true },
     { k: tr("lbl.641538", null, "Contacts CRM"), v: fmt(s.contacts), on: true },
-    { k: tr("lbl.c784fc", null, "Fan Equity Value®"), v: s.services.fanlabPro ? fmtCHF(Math.round(fanEquityValue(s))) : tr("lbl.38fc59", null, "non mesurée"), on: s.services.fanlabPro },
+    { k: tr("lbl.c784fc", null, "Fan Equity Value"), v: s.services.fanlabPro ? fmtCHF(Math.round(fanEquityValue(s))) : tr("lbl.38fc59", null, "non mesurée"), on: s.services.fanlabPro },
   ];
 }
 
@@ -3025,7 +3025,7 @@ function showGameOver() {
       <div style="font-size:13px; font-weight:600; line-height:1.8; color:var(--muted)">
         <i class=ic-shield></i> {v2} · {v3}<br>
         <i class=ic-gauge></i> Score DMOS : <b style="color:var(--text)">{v4}</b> · <span class="badge {v5}">{v6}</span><br>
-        <i class=ic-beaker></i> Fan Equity Value® : <b style="color:var(--text)">{v7}</b><br>
+        <i class=ic-beaker></i> Fan Equity Value : <b style="color:var(--text)">{v7}</b><br>
         <i class=ic-layers></i> {v8} fans · <i class=ic-layers></i> {v9} contacts CRM<br>
         <i class=ic-launch></i> Accompagnement : {v10}
       </div>
@@ -4091,7 +4091,7 @@ const BRIEFING = [
     icon: "layers",
     title: `Ce que vaut votre public`,
     body: `<p>Vos fans sont un actif, au même titre que vos installations. Sa valeur s'appelle la
-      <b>Fan Equity Value®</b> : ce que rapporte votre public sur la durée, en francs.</p>
+      <b>Fan Equity Value</b> : ce que rapporte votre public sur la durée, en francs.</p>
       <p>Elle dépend de trois choses : <b>combien de fans vous connaissez vraiment</b> (un fan anonyme
       vaut zéro), <b>la profondeur de leur relation au club</b> (votre fandom, du curieux à
       l'ambassadeur), et <b>la qualité de vos données</b>.</p>
@@ -4466,7 +4466,7 @@ const KPI_HELP = {
   engagement: { t: `Engagement`,
     g: `Le taux d'interaction moyen de votre communauté, de 0 à 100 %. Il monte avec le contenu et les
       programmes de fidélité, il redescend seul si rien ne l'alimente. Il pèse sur la billetterie, le
-      merchandising et la Fan Equity Value®.`,
+      merchandising et la Fan Equity Value.`,
     r: `C'est le seul indicateur d'audience qu'un sponsor regarde vraiment : il préfère 8 000 personnes
       qui réagissent à 60 000 qui font défiler.` },
   contacts: { t: `Contacts CRM`,
@@ -4678,7 +4678,7 @@ const TX = {
     "action.content.desc": "Social-Media-Posts, Matchstories, Blick hinter die Kulissen. +Engagement, +Fans.",
     "action.content.name": "<i class=ic-broadcast></i> Content publizieren",
     "action.content.real": "Inhalte sind der einzige Kanal, den fast jeder Club bespielt — und der einzige, dessen Wirkung auf die Kontaktbasis niemand misst. Er bringt Publikum; er sammelt von allein gar nichts.",
-    "action.prospect.desc": "Ansprache eines neuen Sponsors. Die Erfolgschancen richten sich nach dem DMOS-Score und dem Wachstum der Fan Equity Value®.",
+    "action.prospect.desc": "Ansprache eines neuen Sponsors. Die Erfolgschancen richten sich nach dem DMOS-Score und dem Wachstum der Fan Equity Value.",
     "action.prospect.name": "<i class=ic-userplus></i> Sponsorenakquise",
     "action.prospect.real": "Einen neuen Sponsor gewinnt man nicht mit einer Präsentationsmappe, sondern mit Zahlen zum Publikum, das man ihm verkauft. Genau das liefert eine Fan-Lab-Analyse.",
     "action.rgpd.desc": "Einwilligungen, Verarbeitungsverzeichnis, Bereinigung der Datenbank. +Compliance, +Datenqualität.",
@@ -4726,7 +4726,7 @@ const TX = {
     "brief.0.title": "Ihre Stelle",
     "brief.1.body": "<p>Das <b>DMOS</b> — <b>Data Marketing Operating System</b> — ist das Betriebssystem von C'mon Sports. Sein Score bewertet den <b>Grad der Datenorchestrierung</b> in Ihrer Organisation auf 60 Punkte, in sechs Säulen zu je 10: Strategie, Content, Fandaten, Tools &amp; CRM, Akquisition, Compliance.</p><p>Zu Beginn erscheint er <b>als Spanne</b>: « ~18–28 ? ». Zwei Ihrer Kennzahlen zeigen sogar nur « ? ». Das ist kein Anzeigefehler: Es ist genau das, was ein Club sieht, der seine Basis nie hat messen lassen. <b>Sie steuern nach Gefühl, ohne es zu merken.</b></p><p>Das Fan Equity Audit und die Fan-Lab-Analysen im Reiter C'mon Sports ersetzen diese Spannen durch Zahlen. Das ist der eigentliche Wendepunkt einer Partie.</p>",
     "brief.1.title": "Ihre Note",
-    "brief.2.body": "<p>Ihre Fans sind ein Vermögenswert, genau wie Ihre Infrastruktur. Sein Wert heisst <b>Fan Equity Value®</b>: was Ihr Publikum über die Zeit einbringt, in Franken.</p><p>Er hängt von drei Dingen ab: <b>wie viele Fans Sie wirklich kennen</b> (ein anonymer Fan ist null wert), <b>wie tief ihre Bindung an den Club ist</b> (Ihr Fandom, vom Neugierigen bis zum Botschafter) und <b>der Qualität Ihrer Daten</b>.</p><p>Der Vorstand wird Sie an seinem Wachstum messen. Dafür muss man ihn allerdings messen.</p>",
+    "brief.2.body": "<p>Ihre Fans sind ein Vermögenswert, genau wie Ihre Infrastruktur. Sein Wert heisst <b>Fan Equity Value</b>: was Ihr Publikum über die Zeit einbringt, in Franken.</p><p>Er hängt von drei Dingen ab: <b>wie viele Fans Sie wirklich kennen</b> (ein anonymer Fan ist null wert), <b>wie tief ihre Bindung an den Club ist</b> (Ihr Fandom, vom Neugierigen bis zum Botschafter) und <b>der Qualität Ihrer Daten</b>.</p><p>Der Vorstand wird Sie an seinem Wachstum messen. Dafür muss man ihn allerdings messen.</p>",
     "brief.2.title": "Was Ihr Publikum wert ist",
     "brief.frame": "<h2><i class=ic-{v0}></i> {v1}</h2>\n    <div class=\"tuto-trail\" style=\"margin:0 0 14px\">{v3}</div>\n    {v2}\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"brief-next\"><i class=ic-arrow></i> {v6}</button>\n      <button id=\"brief-skip\" style=\"text-align:center\">Briefing überspringen ({v4}/{v5})</button>\n    </div>",
     "brief.go": "Meinen Club wählen",
@@ -4837,7 +4837,7 @@ const TX = {
     "kpih.dmos.g": "Die Summe der sechs Säulen, von 60. Als Spanne angezeigt, solange der Club nicht auditiert ist. Er senkt die Kosten Ihrer Aktionen, steigert die Wirksamkeit Ihrer Kampagnen und die Beträge, die Sponsoren zu unterschreiben bereit sind.",
     "kpih.dmos.r": "Dieselbe Diagnose wird bei den Kunden von C'mon Sports gestellt, mit denselben sechs Säulen. Ihr grösster Nutzen ist nicht die Note: Sie macht eine Organisation von Jahr zu Jahr mit sich selbst vergleichbar.",
     "kpih.dmos.t": "DMOS-Score",
-    "kpih.engagement.g": "Die durchschnittliche Interaktionsrate Ihrer Gemeinschaft, von 0 bis 100 %. Sie steigt mit Inhalten und Treueprogrammen und sinkt von allein, wenn nichts nachkommt. Sie wirkt auf Ticketing, Merchandising und die Fan Equity Value®.",
+    "kpih.engagement.g": "Die durchschnittliche Interaktionsrate Ihrer Gemeinschaft, von 0 bis 100 %. Sie steigt mit Inhalten und Treueprogrammen und sinkt von allein, wenn nichts nachkommt. Sie wirkt auf Ticketing, Merchandising und die Fan Equity Value.",
     "kpih.engagement.r": "Es ist die einzige Publikumskennzahl, auf die ein Sponsor wirklich schaut: Ihm sind 8 000 Menschen, die reagieren, lieber als 60 000, die weiterscrollen.",
     "kpih.engagement.t": "Engagement",
     "kpih.fans.g": "Das gesamte Publikum des Clubs über alle Kanäle. Es wächst mit Inhalten, Akquisition, Siegen und Aufstiegen; es schrumpft bei Abstieg oder verkorkster Saison.",
@@ -4903,7 +4903,7 @@ const TX = {
     "lbl.c21603": "<i class=ic-layers></i> Meine Daten exportieren (JSON)",
     "lbl.c2ffca": "NIEDERLAGE",
     "lbl.c518d2": "<b style=\"color:var(--text)\">Saison {v0}</b> — {v1}{v2}/{v3} Ziele · {v4}S-{v5}N · {v6}{v7}",
-    "lbl.c784fc": "Fan Equity Value®",
+    "lbl.c784fc": "Fan Equity Value",
     "lbl.c78646": "auswärts",
     "lbl.ce4a5c": "neutralisiert",
     "lbl.cff84a": "Gebietsdurchdringung",
@@ -5043,9 +5043,9 @@ const TX = {
     "svc.fanlabInsight.real": "Die erste ernsthafte Vermessung einer Kontaktbasis: wie viele Menschen der Club wirklich erreichen könnte und was die Adressen wert sind, die er bereits besitzt.",
     "svc.fanlabInsight.subLabel": "Fan Equity Intelligence · Einmalanalyse",
     "svc.fanlabPro.btnLabel": "Aktivieren · 18 500 CHF + 300 CHF/Woche",
-    "svc.fanlabPro.effect": "Einrichtung bei Aktivierung, danach eine wöchentliche Lizenz über 3 Saisons. Alles aus Insight, plus Ihre Fan Equity Value® in Franken und der laufende Fan Equity Index, deutlich höhere Abschlusschancen bei Sponsoren, Marketinganteil am Ticketing 5 → 6 % und Merchandising +10 %.",
+    "svc.fanlabPro.effect": "Einrichtung bei Aktivierung, danach eine wöchentliche Lizenz über 3 Saisons. Alles aus Insight, plus Ihre Fan Equity Value in Franken und der laufende Fan Equity Index, deutlich höhere Abschlusschancen bei Sponsoren, Marketinganteil am Ticketing 5 → 6 % und Merchandising +10 %.",
     "svc.fanlabPro.name": "Fan Lab Pro",
-    "svc.fanlabPro.pitch": "Die Messung des Werts Ihres Publikums, über die Zeit verfolgt: Fan Equity Value®, Fan Equity Index, Ticketing- und Merchandising-ROI — das bezifferte Argument gegenüber Sponsoren.",
+    "svc.fanlabPro.pitch": "Die Messung des Werts Ihres Publikums, über die Zeit verfolgt: Fan Equity Value, Fan Equity Index, Ticketing- und Merchandising-ROI — das bezifferte Argument gegenüber Sponsoren.",
     "svc.fanlabPro.real": "Die vollständige wirtschaftliche Bewertung des Publikums. Konkret: das Dokument, das man im Sponsorengespräch auf den Tisch legt, wenn ein Betrag begründet statt verhandelt werden soll.",
     "svc.fanlabPro.subLabel": "Fan Equity Intelligence · Verpflichtung über 3 Saisons · inkl. Insight",
     "svc.griddy.btnLabel": "Integrieren · 2 500 CHF + 500 CHF/Woche",
@@ -5105,7 +5105,7 @@ const TX = {
     "ui.4c2a6d": "<span style=\"font-size:12px; color:var(--accent)\"><i class=ic-lock></i> Bestellen Sie <b>Fan Lab Insight</b> oder <b>Pro</b> (Tab <i class=ic-launch></i> C'mon Sports), um Ihre Fanbase zu messen und aufzuwerten.</span>",
     "ui.4fedb1": "zu Hause · {v0} Zuschauer · Marketinganteil +{v1}",
     "ui.509a84": "<i class=ic-arrow></i> Bilanz ungenügend: Der Vorstand beendet Ihren Vertrag.",
-    "ui.51d754": "\n    <h2><i class=ic-arrow></i> Ende des Abenteuers</h2>\n    <p>Der Vorstand hat das Vertrauen verloren und beendet Ihren Vertrag nach {v0} Saison{v1}.</p>\n    <div class=\"result-banner\" style=\"text-align:left\">\n      <div style=\"font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-bottom:6px\">\n        <i class=ic-clipboard></i> Bilanz der Datenorchestrierung — Methodik von C'mon Sports</div>\n      <div style=\"font-size:13px; font-weight:600; line-height:1.8; color:var(--muted)\">\n        <i class=ic-shield></i> {v2} · {v3}<br>\n        <i class=ic-gauge></i> DMOS-Score: <b style=\"color:var(--text)\">{v4}</b> · <span class=\"badge {v5}\">{v6}</span><br>\n        <i class=ic-beaker></i> Fan Equity Value®: <b style=\"color:var(--text)\">{v7}</b><br>\n        <i class=ic-layers></i> {v8} Fans · <i class=ic-layers></i> {v9} CRM-Kontakte<br>\n        <i class=ic-launch></i> Begleitung: {v10}\n      </div>\n    </div>\n    <div class=\"cta-out\">\n      <b>Und für Ihren echten Club?</b> Diese Bilanz ist Fiktion — die DMOS-Diagnose gibt es wirklich.\n      <a href=\"{v11}\" target=\"_blank\" rel=\"noopener\">30-minütiges Gespräch buchen</a>\n    </div>\n    <div class=\"choices\">\n      <button id=\"go-share\"><i class=ic-layers></i> Meine Bilanz teilen</button>\n      <button class=\"primary\" id=\"btn-restart\"><i class=ic-arrow></i> Neue Karriere starten</button>\n    </div>",
+    "ui.51d754": "\n    <h2><i class=ic-arrow></i> Ende des Abenteuers</h2>\n    <p>Der Vorstand hat das Vertrauen verloren und beendet Ihren Vertrag nach {v0} Saison{v1}.</p>\n    <div class=\"result-banner\" style=\"text-align:left\">\n      <div style=\"font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-bottom:6px\">\n        <i class=ic-clipboard></i> Bilanz der Datenorchestrierung — Methodik von C'mon Sports</div>\n      <div style=\"font-size:13px; font-weight:600; line-height:1.8; color:var(--muted)\">\n        <i class=ic-shield></i> {v2} · {v3}<br>\n        <i class=ic-gauge></i> DMOS-Score: <b style=\"color:var(--text)\">{v4}</b> · <span class=\"badge {v5}\">{v6}</span><br>\n        <i class=ic-beaker></i> Fan Equity Value: <b style=\"color:var(--text)\">{v7}</b><br>\n        <i class=ic-layers></i> {v8} Fans · <i class=ic-layers></i> {v9} CRM-Kontakte<br>\n        <i class=ic-launch></i> Begleitung: {v10}\n      </div>\n    </div>\n    <div class=\"cta-out\">\n      <b>Und für Ihren echten Club?</b> Diese Bilanz ist Fiktion — die DMOS-Diagnose gibt es wirklich.\n      <a href=\"{v11}\" target=\"_blank\" rel=\"noopener\">30-minütiges Gespräch buchen</a>\n    </div>\n    <div class=\"choices\">\n      <button id=\"go-share\"><i class=ic-layers></i> Meine Bilanz teilen</button>\n      <button class=\"primary\" id=\"btn-restart\"><i class=ic-arrow></i> Neue Karriere starten</button>\n    </div>",
     "ui.563a2c": "<div class=\"result-banner\" style=\"border-color:var(--bad); color:var(--bad)\"><i class=ic-alert></i> ABSTIEG in {v0}. Enttäuschte Fans, Sponsorenverträge nach unten korrigiert.</div>",
     "ui.57e497": "<i class=ic-launch></i> Fan Equity Audit bei C'mon Sports bestellt ({v0}). Kick-off diese Woche — Bericht in {v1} Wochen.",
     "ui.5927d9": "<i class=ic-flag></i> Ende der Saison {v0}: {v1}. von {v2}, {v3}/{v4} Ziele erreicht.",
@@ -5126,7 +5126,7 @@ const TX = {
     "ui.7f9ac2": "Kampagne abgebrochen: Kontaktbasis zu klein",
     "ui.811ded": "<h2><i class=ic-layers></i> Meine Bilanz teilen</h2>\n    <p style=\"font-size:13px\">Ihre Karte ist bereit. Das Bild wird auf Ihrem Gerät erzeugt —\n    nichts wird irgendwohin gesendet, solange Sie es nicht selbst publizieren.</p>\n    <img class=\"share-preview\" src=\"{v0}\" alt=\"Bilanzkarte {v1}\">\n    <p style=\"font-size:12px;color:var(--muted);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.06em;font-weight:700\">Text zum Einfügen</p>\n    <textarea class=\"share-text\" readonly rows=\"9\">{v2}</textarea>\n    <div class=\"choices\">\n      <a class=\"btn-like primary\" id=\"sc-dl\" href=\"{v3}\" download=\"{v4}\"><i class=ic-save></i> Bild herunterladen</a>\n      <button id=\"sc-copy\"><i class=ic-layers></i> Text kopieren</button>\n      <button id=\"sc-back\">Zurück</button>\n    </div>",
     "ui.913d38": "<i class=ic-alert></i> ABSTIEG in {v0}… −{v1} Fans, Sponsorenverträge nach unten korrigiert (−30 %).",
-    "ui.923517": "<i class=ic-launch></i> Fan Lab Pro aktiviert ({v0}, danach 300 CHF/Woche über 3 Saisons): Ihre Fan Equity Value® ist beziffert, der Fan Equity Index startet bei 100. Ticketing- und Merchandising-ROI optimiert. Ihre Sponsoren werden begeistert sein.",
+    "ui.923517": "<i class=ic-launch></i> Fan Lab Pro aktiviert ({v0}, danach 300 CHF/Woche über 3 Saisons): Ihre Fan Equity Value ist beziffert, der Fan Equity Index startet bei 100. Ticketing- und Merchandising-ROI optimiert. Ihre Sponsoren werden begeistert sein.",
     "ui.94bccc": "<i class=ic-deal></i> {v0} verlängert für {v1}/Saison!",
     "ui.97dade": "<span class=\"badge gold\"><i class=ic-check></i> In Fan Lab Pro enthalten</span>",
     "ui.9a2874": "<i class=ic-chart></i> Durchdringungsrate: <span style=\"color:var(--muted)\">unbekannt</span><br>",
@@ -5156,7 +5156,7 @@ const TX = {
     "ui.cc2671": "Die Saison mit positivem Budget abschliessen",
     "ui.cc6e4f": "<i class=ic-globe></i> Niederlage im Europacup. TV-Rechte +{v0}, Auswärtsreise −3 000 CHF. Die Fans hatten mehr erwartet.",
     "ui.ce6636": "\n    <h2><i class=ic-lock></i> Wie Ihre Daten verarbeitet werden</h2>\n    <p><b style=\"color:var(--text)\">Ihr Spielstand bleibt auf diesem Gerät.</b> C'mon Sports Challenge funktioniert ohne Spielserver,\n    ohne Cookies, ohne Tracker (Schriften sind eingebettet): Spielstände und PIN-Code (gehasht) verlassen diesen Browser nie.</p>\n    <p><b style=\"color:var(--text)\">Wenn Sie ein Konto erstellen</b>, wird Ihre E-Mail-Adresse im CRM von\n    C'mon Corporations (Brevo, Hosting in der EU) gespeichert, um die C'mon-Sports-Challenge-Konten zu verwalten und deren Nutzung\n    nachzuvollziehen — Rechtsgrundlage: berechtigtes Interesse, dem Sie jederzeit widersprechen können.</p>\n    <p><b style=\"color:var(--text)\">News-E-Mails</b> erhalten Sie dagegen nur, wenn Sie das dafür vorgesehene Kästchen\n    ankreuzen (Einwilligung). Ohne dieses meldet C'mon Sports Challenge Sie für keinen Versand an: Eine für unser CRM neue Adresse\n    wird dort als von jedem Marketingversand ausgeschlossen markiert; waren Sie bereits erfasst, bleiben Ihre Einstellungen unverändert.</p>\n    <p>Sie können Ihre sämtlichen Daten jederzeit über die Fusszeile exportieren oder löschen\n    («Datenschutz & Daten»).</p>\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"consent-ok\">Verstanden — weiter</button>\n      <button id=\"consent-privacy\">Datenschutzerklärung lesen</button>\n    </div>",
-    "ui.cmon.intro": "\n          Ein Club kann alles selbst machen — nur eben im Blindflug. C'mon Sports deckt auf, was Sie nicht\n          sehen (exakte DMOS-Scores, Fan Equity Value®, Zustand Ihrer Daten), und\n          strukturiert Ihr Wachstum. Jeder aktivierte Service verändert Ihr Dashboard nachhaltig.\n        ",
+    "ui.cmon.intro": "\n          Ein Club kann alles selbst machen — nur eben im Blindflug. C'mon Sports deckt auf, was Sie nicht\n          sehen (exakte DMOS-Scores, Fan Equity Value, Zustand Ihrer Daten), und\n          strukturiert Ihr Wachstum. Jeder aktivierte Service verändert Ihr Dashboard nachhaltig.\n        ",
     "ui.cmon.qz": "<div class=\"cta-out\">\n    <b><i class=ic-target></i> Und in Ihrer Organisation, wo stehen Sie?</b>\n    Drei freiwillige Fragen — Reife, Priorität, Zeithorizont — und wir wissen, welche dieser sechs\n    Leistungen Sie wirklich betrifft. An Ihrer Partie ändert sich nichts.\n    <div class=\"intro-cta\" style=\"margin-top:11px\">\n      <button id=\"svc-qz\">{v0}</button>\n      <a class=\"btn-like out-link\" href=\"{v1}\" target=\"_blank\" rel=\"noopener\">30 Minuten mit C'mon Sports vereinbaren →</a>\n    </div>\n  </div>",
     "ui.cmon.qz.done": "Meine Antworten ansehen",
     "ui.cmon.qz.go": "Die drei Fragen beantworten",
@@ -5181,9 +5181,9 @@ const TX = {
     "ui.e8b223": "<span class=\"badge silver\"><i class=ic-hourglass></i> Läuft — Bericht in {v0} Wo.</span>",
     "ui.e9b78c": "<i class=ic-alert></i> Budget in den roten Zahlen! Der Vorstand ist ernsthaft besorgt.",
     "ui.f3388d": "<i class=ic-launch></i> Fan Lab Insight geliefert ({v0}): Datenqualität Ihrer CRM-Daten und Durchdringungsrate Ihres Einzugsgebiets endlich gemessen.",
-    "ui.fanlab.caption": "Fan Equity Value® (CHF)",
+    "ui.fanlab.caption": "Fan Equity Value (CHF)",
     "ui.fanlab.intro": "Ihre Fans sind ein Vermögenswert. Sein Wert hängt von vier Hebeln ab: den Fans, die Sie wirklich kennen, der Intensität ihrer Bindung an den Club, ihrer Treue über die Zeit und der Qualität Ihrer Daten. Ein anonymer Fan ist 0 CHF wert.",
-    "ui.fanlab.title": "<span class=\"sig-cap\">F</span>AN EQUITY VALUE® — WAS IHR PUBLIKUM WERT IST.",
+    "ui.fanlab.title": "<span class=\"sig-cap\">F</span>AN EQUITY VALUE — WAS IHR PUBLIKUM WERT IST.",
     "ui.fe0f6b": "<i class=ic-globe></i> Europäischer Sieg! Prämie und TV-Rechte: +{v0} (Auswärtsreise −3 000 CHF). Die Stadt bebt.",
     "ui.footer.delete": "Mein Profil löschen",
     "ui.footer.export": "Meine Daten exportieren",
@@ -5217,7 +5217,7 @@ const TX = {
     "ui.setup.mission.body": "\n        Sie werden als <b style=\"color:var(--text)\">Leiter·in Digital Marketing</b> eines Sportclubs eingestellt.\n        Verteilen Sie Ihre Aktionspunkte Woche für Woche auf Content, Kampagnen, Datensammlung, Sponsoren und Compliance.\n        Treiben Sie den <b style=\"color:var(--text)\">DMOS-Score</b> (Datenorchestrierung, /60) nach oben, steigern Sie den Wert Ihrer Fanbase,\n        halten Sie Ihre Sponsoren bei Laune und erreichen Sie die Ziele des Vorstands … sonst droht die Entlassung.\n      ",
     "ui.setup.mission.title": "<span class=\"sig-cap\">I</span>HRE MISSION.",
     "ui.setup.pick": "<span class=\"sig-cap\">W</span>ÄHLEN SIE IHREN CLUB.",
-    "ui.spons.hint": "\n          <i class=ic-bulb></i> Die Aktion «Sponsoren-Aktivierung» steigert die Zufriedenheit. Am Saisonende verlängern zufriedene Sponsoren (≥ 60 %)\n          — manchmal sogar aufgestockt. Die Aktion «Sponsorenakquise» kann einen neuen Vertrag bringen:\n          Die Chancen hängen vom DMOS-Score und vom Wachstum Ihrer Fan Equity Value® ab.\n        ",
+    "ui.spons.hint": "\n          <i class=ic-bulb></i> Die Aktion «Sponsoren-Aktivierung» steigert die Zufriedenheit. Am Saisonende verlängern zufriedene Sponsoren (≥ 60 %)\n          — manchmal sogar aufgestockt. Die Aktion «Sponsorenakquise» kann einen neuen Vertrag bringen:\n          Die Chancen hängen vom DMOS-Score und vom Wachstum Ihrer Fan Equity Value ab.\n        ",
     "ui.spons.th.amount": "Betrag / Saison",
     "ui.spons.th.contract": "Vertrag",
     "ui.spons.th.name": "Sponsor",
@@ -5229,13 +5229,13 @@ const TX = {
     "ui.tab.history": "<i class=ic-clock></i> Verlauf",
     "ui.tab.sponsors": "<i class=ic-deal></i> Sponsoren",
     "ui.tagline": "Manager-Simulation für das Marketing eines Sportclubs",
-    "obj.fev": "Ihre Fan Equity Value® um +{v0} % steigern",
+    "obj.fev": "Ihre Fan Equity Value um +{v0} % steigern",
     "obj.fev.unmeasured": "ohne Fan Lab Pro nicht messbar",
     "obj.fev.board": "Der Vorstand kann keinen Fortschritt bestätigen, den niemand gemessen hat.",
     "ui.challenge.legacy": "<span style=\"color:var(--warn)\"><i class=ic-alert></i>\n        Challenge aus einer früheren Version: Die Punkteregeln haben sich geändert, die Ergebnisse sind nicht mehr vergleichbar.</span>\n        <button id=\"challenge-legacy-go\">Diese Saison trotzdem spielen</button>",
     "ui.fei.now": "Fan Equity Index: <b style=\"color:var(--ink)\">{v0}</b> <span style=\"color:var(--ink-3)\">(Basis 100 bei Aktivierung von Fan Lab Pro)</span>",
     "ui.fev.anon": "<span style=\"color:var(--ink-3)\">{v0} anonyme Fans · 0 CHF, solange sie unbekannt sind</span>",
-    "ui.fev.link": "<a class=\"out-link\" href=\"{v0}\" target=\"_blank\" rel=\"noopener\">Schätzen Sie die Fan Equity Value® Ihres echten Clubs — Fan Lab</a>",
+    "ui.fev.link": "<a class=\"out-link\" href=\"{v0}\" target=\"_blank\" rel=\"noopener\">Schätzen Sie die Fan Equity Value Ihres echten Clubs — Fan Lab</a>",
     "ui.fev.l1": "Bekannte Fans",
     "ui.fev.l1d": "{v0} % Ihrer Fans sind erreichbar",
     "ui.fev.l2": "Intensität der Bindung",
@@ -5247,7 +5247,7 @@ const TX = {
     "ui.fev.l4d": "unsaubere Daten lassen den Wert schmelzen",
     "ui.fev.levers": "Was Ihren Wert ausmacht",
     "ui.fei.title": "Fan Equity Index — der Beweis, dass Ihr Fan-Vermögen wächst",
-    "ui.fei.none": "Noch nicht gemessen: Der Index startet bei 100 an dem Tag, an dem Fan Lab Pro Ihre Fan Equity Value® beziffert.",
+    "ui.fei.none": "Noch nicht gemessen: Der Index startet bei 100 an dem Tag, an dem Fan Lab Pro Ihre Fan Equity Value beziffert.",
     "ui.fei.legend": "Ein Punkt bei der Aktivierung, dann in den Wochen 7, 13, 20 und 26 jeder Saison.",
     "ui.fandom.title": "<span class=\"sig-cap\">I</span>HR FANDOM.",
     "ui.fandom.note": "Fandom ist die Intensität der Bindung. 100 Zuschauer zu Abonnenten zu machen bringt mehr, als 1 000 neue Neugierige zu gewinnen.",
@@ -5287,7 +5287,7 @@ const TX = {
     "action.content.desc": "Social posts, matchday stories, behind the scenes. +engagement, +fans.",
     "action.content.name": "<i class=ic-broadcast></i> Publish content",
     "action.content.real": "Content is the one channel almost every club feeds — and the only one whose effect on the contact base nobody measures. It brings people in; on its own it collects nothing.",
-    "action.prospect.desc": "Go hunting for a new sponsor. Your odds depend on your DMOS score and how your Fan Equity Value® is growing.",
+    "action.prospect.desc": "Go hunting for a new sponsor. Your odds depend on your DMOS score and how your Fan Equity Value is growing.",
     "action.prospect.name": "<i class=ic-userplus></i> Sponsor prospecting",
     "action.prospect.real": "A new sponsor is not won with a presentation deck, but with figures about the audience you are selling. That is precisely what a Fan Lab analysis produces.",
     "action.rgpd.desc": "Consents, processing register, database clean-up. +compliance, +data quality.",
@@ -5335,7 +5335,7 @@ const TX = {
     "brief.0.title": "Your job",
     "brief.1.body": "<p><b>DMOS</b> — <b>Data Marketing Operating System</b> — is C'mon Sports' operating system. Its score rates the <b>level of data orchestration</b> in your organisation out of 60, across six pillars of 10: strategy, content, fan data, tools &amp; CRM, acquisition, compliance.</p><p>At the start it shows <b>as a range</b>: « ~18–28 ? ». Two of your indicators show nothing but « ? ». That is not an interface flaw: it is exactly what a club sees when it has never had its database measured. <b>You are steering by feel, and you don't know it.</b></p><p>The Fan Equity Audit and the Fan Lab analyses, in the C'mon Sports tab, replace those ranges with figures. That is the real turning point of a game.</p>",
     "brief.1.title": "Your score",
-    "brief.2.body": "<p>Your fans are an asset, just like your facilities. Its value is called the <b>Fan Equity Value®</b>: what your audience brings in over time, in francs.</p><p>It depends on three things: <b>how many fans you actually know</b> (an anonymous fan is worth nothing), <b>how deep their bond with the club runs</b> (your fandom, from curious to ambassador) and <b>the quality of your data</b>.</p><p>The board will judge you on how it grows. Which means someone has to measure it.</p>",
+    "brief.2.body": "<p>Your fans are an asset, just like your facilities. Its value is called the <b>Fan Equity Value</b>: what your audience brings in over time, in francs.</p><p>It depends on three things: <b>how many fans you actually know</b> (an anonymous fan is worth nothing), <b>how deep their bond with the club runs</b> (your fandom, from curious to ambassador) and <b>the quality of your data</b>.</p><p>The board will judge you on how it grows. Which means someone has to measure it.</p>",
     "brief.2.title": "What your audience is worth",
     "brief.frame": "<h2><i class=ic-{v0}></i> {v1}</h2>\n    <div class=\"tuto-trail\" style=\"margin:0 0 14px\">{v3}</div>\n    {v2}\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"brief-next\"><i class=ic-arrow></i> {v6}</button>\n      <button id=\"brief-skip\" style=\"text-align:center\">Skip the briefing ({v4}/{v5})</button>\n    </div>",
     "brief.go": "Choose my club",
@@ -5446,7 +5446,7 @@ const TX = {
     "kpih.dmos.g": "The total of the six pillars, out of 60. Shown as a range for as long as the club has not been audited. It lowers the cost of your actions, raises the effectiveness of your campaigns and the amounts sponsors agree to sign.",
     "kpih.dmos.r": "The same diagnosis is performed for C'mon Sports' clients, with the same six pillars. Its main virtue is not the score: it makes an organisation comparable to itself from one year to the next.",
     "kpih.dmos.t": "DMOS score",
-    "kpih.engagement.g": "Your community's average interaction rate, from 0 to 100 %. It rises with content and loyalty programmes, and falls on its own if nothing feeds it. It weighs on ticketing, merchandising and Fan Equity Value®.",
+    "kpih.engagement.g": "Your community's average interaction rate, from 0 to 100 %. It rises with content and loyalty programmes, and falls on its own if nothing feeds it. It weighs on ticketing, merchandising and Fan Equity Value.",
     "kpih.engagement.r": "It is the only audience indicator a sponsor really looks at: they would rather have 8,000 people who react than 60,000 who scroll past.",
     "kpih.engagement.t": "Engagement",
     "kpih.fans.g": "The club's total audience, across all channels. It grows with content, acquisition, wins and promotions; it erodes after relegation or a wasted season.",
@@ -5512,7 +5512,7 @@ const TX = {
     "lbl.c21603": "<i class=ic-layers></i> Export my data (JSON)",
     "lbl.c2ffca": "DEFEAT",
     "lbl.c518d2": "<b style=\"color:var(--text)\">Season {v0}</b> — {v1}{v2}/{v3} objectives · {v4}W-{v5}L · {v6}{v7}",
-    "lbl.c784fc": "Fan Equity Value®",
+    "lbl.c784fc": "Fan Equity Value",
     "lbl.c78646": "away",
     "lbl.ce4a5c": "neutralised",
     "lbl.cff84a": "Catchment penetration",
@@ -5652,9 +5652,9 @@ const TX = {
     "svc.fanlabInsight.real": "The first serious measurement of a contact database: how many people the club could genuinely reach, and what the addresses it already holds are worth.",
     "svc.fanlabInsight.subLabel": "Fan Equity Intelligence · one-off analysis",
     "svc.fanlabPro.btnLabel": "Activate · 18 500 CHF + 300 CHF/week",
-    "svc.fanlabPro.effect": "Setup on activation, then a weekly licence for 3 seasons. Everything in Insight, plus your Fan Equity Value® in francs and an ongoing Fan Equity Index, far better odds of signing sponsors, ticketing marketing share 5 → 6% and merchandising +10%.",
+    "svc.fanlabPro.effect": "Setup on activation, then a weekly licence for 3 seasons. Everything in Insight, plus your Fan Equity Value in francs and an ongoing Fan Equity Index, far better odds of signing sponsors, ticketing marketing share 5 → 6% and merchandising +10%.",
     "svc.fanlabPro.name": "Fan Lab Pro",
-    "svc.fanlabPro.pitch": "Measuring what your audience is worth, tracked over time: Fan Equity Value®, Fan Equity Index, ticketing and merchandising ROI — the hard argument in front of sponsors.",
+    "svc.fanlabPro.pitch": "Measuring what your audience is worth, tracked over time: Fan Equity Value, Fan Equity Index, ticketing and merchandising ROI — the hard argument in front of sponsors.",
     "svc.fanlabPro.real": "The full economic valuation of the audience. In practice: the document you put on the table in a sponsor meeting, when an amount has to be justified rather than negotiated.",
     "svc.fanlabPro.subLabel": "Fan Equity Intelligence · 3-season commitment · includes Insight",
     "svc.griddy.btnLabel": "Integrate · 2 500 CHF + 500 CHF/week",
@@ -5714,7 +5714,7 @@ const TX = {
     "ui.4c2a6d": "<span style=\"font-size:12px; color:var(--accent)\"><i class=ic-lock></i> Order <b>Fan Lab Insight</b> or <b>Pro</b> (<i class=ic-launch></i> C'mon Sports tab) to measure your fanbase and put a value on it.</span>",
     "ui.4fedb1": "at home · {v0} spectators · marketing share +{v1}",
     "ui.509a84": "<i class=ic-arrow></i> Not good enough: the board terminates your contract.",
-    "ui.51d754": "\n    <h2><i class=ic-arrow></i> End of the road</h2>\n    <p>The board has lost confidence and is terminating your contract after {v0} season{v1}.</p>\n    <div class=\"result-banner\" style=\"text-align:left\">\n      <div style=\"font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-bottom:6px\">\n        <i class=ic-clipboard></i> Data orchestration review — C'mon Sports methodology</div>\n      <div style=\"font-size:13px; font-weight:600; line-height:1.8; color:var(--muted)\">\n        <i class=ic-shield></i> {v2} · {v3}<br>\n        <i class=ic-gauge></i> DMOS score: <b style=\"color:var(--text)\">{v4}</b> · <span class=\"badge {v5}\">{v6}</span><br>\n        <i class=ic-beaker></i> Fan Equity Value®: <b style=\"color:var(--text)\">{v7}</b><br>\n        <i class=ic-layers></i> {v8} fans · <i class=ic-layers></i> {v9} CRM contacts<br>\n        <i class=ic-launch></i> Support engaged: {v10}\n      </div>\n    </div>\n    <div class=\"cta-out\">\n      <b>And for your real club?</b> This review is fiction — the DMOS diagnostic is not.\n      <a href=\"{v11}\" target=\"_blank\" rel=\"noopener\">Book a 30-minute conversation</a>\n    </div>\n    <div class=\"choices\">\n      <button id=\"go-share\"><i class=ic-layers></i> Share my review</button>\n      <button class=\"primary\" id=\"btn-restart\"><i class=ic-arrow></i> Start a new career</button>\n    </div>",
+    "ui.51d754": "\n    <h2><i class=ic-arrow></i> End of the road</h2>\n    <p>The board has lost confidence and is terminating your contract after {v0} season{v1}.</p>\n    <div class=\"result-banner\" style=\"text-align:left\">\n      <div style=\"font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-bottom:6px\">\n        <i class=ic-clipboard></i> Data orchestration review — C'mon Sports methodology</div>\n      <div style=\"font-size:13px; font-weight:600; line-height:1.8; color:var(--muted)\">\n        <i class=ic-shield></i> {v2} · {v3}<br>\n        <i class=ic-gauge></i> DMOS score: <b style=\"color:var(--text)\">{v4}</b> · <span class=\"badge {v5}\">{v6}</span><br>\n        <i class=ic-beaker></i> Fan Equity Value: <b style=\"color:var(--text)\">{v7}</b><br>\n        <i class=ic-layers></i> {v8} fans · <i class=ic-layers></i> {v9} CRM contacts<br>\n        <i class=ic-launch></i> Support engaged: {v10}\n      </div>\n    </div>\n    <div class=\"cta-out\">\n      <b>And for your real club?</b> This review is fiction — the DMOS diagnostic is not.\n      <a href=\"{v11}\" target=\"_blank\" rel=\"noopener\">Book a 30-minute conversation</a>\n    </div>\n    <div class=\"choices\">\n      <button id=\"go-share\"><i class=ic-layers></i> Share my review</button>\n      <button class=\"primary\" id=\"btn-restart\"><i class=ic-arrow></i> Start a new career</button>\n    </div>",
     "ui.563a2c": "<div class=\"result-banner\" style=\"border-color:var(--bad); color:var(--bad)\"><i class=ic-alert></i> RELEGATION to {v0}. Fans let down, sponsor contracts revised down.</div>",
     "ui.57e497": "<i class=ic-launch></i> Fan Equity Audit ordered from C'mon Sports ({v0}). Kick-off this week — report in {v1} weeks.",
     "ui.5927d9": "<i class=ic-flag></i> End of season {v0}: finished {v1} of {v2}, {v3}/{v4} objectives met.",
@@ -5735,7 +5735,7 @@ const TX = {
     "ui.7f9ac2": "Campaign cancelled: contact base too small",
     "ui.811ded": "<h2><i class=ic-layers></i> Share my review</h2>\n    <p style=\"font-size:13px\">Your card is ready. The image is generated on your own device —\n    nothing is sent anywhere unless you publish it yourself.</p>\n    <img class=\"share-preview\" src=\"{v0}\" alt=\"Review card {v1}\">\n    <p style=\"font-size:12px;color:var(--muted);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.06em;font-weight:700\">Text ready to paste</p>\n    <textarea class=\"share-text\" readonly rows=\"9\">{v2}</textarea>\n    <div class=\"choices\">\n      <a class=\"btn-like primary\" id=\"sc-dl\" href=\"{v3}\" download=\"{v4}\"><i class=ic-save></i> Download the image</a>\n      <button id=\"sc-copy\"><i class=ic-layers></i> Copy the text</button>\n      <button id=\"sc-back\">Back</button>\n    </div>",
     "ui.913d38": "<i class=ic-alert></i> RELEGATION to {v0}… −{v1} fans, sponsor contracts revised down (−30%).",
-    "ui.923517": "<i class=ic-launch></i> Fan Lab Pro switched on ({v0}, then 300 CHF/week for 3 seasons): your Fan Equity Value® now has a number and the Fan Equity Index starts at 100. Ticketing and merchandising ROI optimised. Your sponsors are going to love this.",
+    "ui.923517": "<i class=ic-launch></i> Fan Lab Pro switched on ({v0}, then 300 CHF/week for 3 seasons): your Fan Equity Value now has a number and the Fan Equity Index starts at 100. Ticketing and merchandising ROI optimised. Your sponsors are going to love this.",
     "ui.94bccc": "<i class=ic-deal></i> {v0} renews for {v1}/season!",
     "ui.97dade": "<span class=\"badge gold\"><i class=ic-check></i> Included in Fan Lab Pro</span>",
     "ui.9a2874": "<i class=ic-chart></i> Penetration rate: <span style=\"color:var(--muted)\">unknown</span><br>",
@@ -5765,7 +5765,7 @@ const TX = {
     "ui.cc2671": "Finish the season in the black",
     "ui.cc6e4f": "<i class=ic-globe></i> Beaten in Europe. TV rights +{v0}, away trip −3 000 CHF. The fans expected better.",
     "ui.ce6636": "\n    <h2><i class=ic-lock></i> How your data is handled</h2>\n    <p><b style=\"color:var(--text)\">Your progress stays on this device.</b> C'mon Sports Challenge runs with no game server,\n    no cookies and no trackers (fonts are embedded): saves and PIN code (hashed) never leave this browser.</p>\n    <p><b style=\"color:var(--text)\">If you create an account</b>, your email address is recorded in the CRM of\n    C'mon Corporations (Brevo, EU hosting) in order to manage C'mon Sports Challenge accounts and monitor their use —\n    legal basis: legitimate interest, which you may object to at any time.</p>\n    <p><b style=\"color:var(--text)\">News emails</b>, for their part, will only be sent to you if you tick the box\n    provided for that purpose (consent). Without it, C'mon Sports Challenge signs you up for nothing: an address new to our CRM\n    is flagged there as excluded from all marketing sends, and if you were already in it, your preferences stay unchanged.</p>\n    <p>You can export or erase all of your data at any time from the footer\n    (“Privacy & data”).</p>\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"consent-ok\">Understood — continue</button>\n      <button id=\"consent-privacy\">Read the privacy policy</button>\n    </div>",
-    "ui.cmon.intro": "\n          A club can do everything on its own — but it moves blind. C'mon Sports reveals what you do\n          not see (exact DMOS scores, your Fan Equity Value®, the health of your data) and\n          gives your growth a structure. Every service you activate changes your dashboard for good.\n        ",
+    "ui.cmon.intro": "\n          A club can do everything on its own — but it moves blind. C'mon Sports reveals what you do\n          not see (exact DMOS scores, your Fan Equity Value, the health of your data) and\n          gives your growth a structure. Every service you activate changes your dashboard for good.\n        ",
     "ui.cmon.qz": "<div class=\"cta-out\">\n    <b><i class=ic-target></i> And in your organisation, where do you stand?</b>\n    Three optional questions — maturity, priority, timing — and we will know which of these six\n    services actually concerns you. Nothing changes in your game.\n    <div class=\"intro-cta\" style=\"margin-top:11px\">\n      <button id=\"svc-qz\">{v0}</button>\n      <a class=\"btn-like out-link\" href=\"{v1}\" target=\"_blank\" rel=\"noopener\">Book 30 minutes with C'mon Sports →</a>\n    </div>\n  </div>",
     "ui.cmon.qz.done": "Review my answers",
     "ui.cmon.qz.go": "Answer the three questions",
@@ -5790,9 +5790,9 @@ const TX = {
     "ui.e8b223": "<span class=\"badge silver\"><i class=ic-hourglass></i> Under way — report in {v0} wks</span>",
     "ui.e9b78c": "<i class=ic-alert></i> Budget in the red! The board is seriously worried.",
     "ui.f3388d": "<i class=ic-launch></i> Fan Lab Insight delivered ({v0}): your CRM data quality and your catchment penetration are finally measured.",
-    "ui.fanlab.caption": "Fan Equity Value® (CHF)",
+    "ui.fanlab.caption": "Fan Equity Value (CHF)",
     "ui.fanlab.intro": "Your fans are an asset. Its value rests on four levers: the fans you actually know, how strong their bond with the club is, how long they stay loyal and the quality of your data. An anonymous fan is worth CHF 0.",
-    "ui.fanlab.title": "<span class=\"sig-cap\">F</span>AN EQUITY VALUE® — WHAT YOUR AUDIENCE IS WORTH.",
+    "ui.fanlab.title": "<span class=\"sig-cap\">F</span>AN EQUITY VALUE — WHAT YOUR AUDIENCE IS WORTH.",
     "ui.fe0f6b": "<i class=ic-globe></i> European win! Prize money and TV rights: +{v0} (away trip −3 000 CHF). The whole town is buzzing.",
     "ui.footer.delete": "Delete my profile",
     "ui.footer.export": "Export my data",
@@ -5826,7 +5826,7 @@ const TX = {
     "ui.setup.mission.body": "\n        You have been hired as <b style=\"color:var(--text)\">Head of Digital Marketing</b> at a sports club.\n        Every week, split your action points between content, campaigns, data capture, sponsors and compliance.\n        Push up the <b style=\"color:var(--text)\">DMOS score</b> (data orchestration, /60), put a value on your fanbase,\n        keep your sponsors happy and hit the board's objectives… or you are out.\n      ",
     "ui.setup.mission.title": "<span class=\"sig-cap\">Y</span>OUR MISSION.",
     "ui.setup.pick": "<span class=\"sig-cap\">P</span>ICK YOUR CLUB.",
-    "ui.spons.hint": "\n          <i class=ic-bulb></i> The “Sponsor activation” action raises satisfaction. At the end of the season, satisfied sponsors (≥ 60%)\n          renew — sometimes for more. The “Sponsor prospecting” action can land a new contract:\n          the odds depend on your DMOS score and how your Fan Equity Value® is growing.\n        ",
+    "ui.spons.hint": "\n          <i class=ic-bulb></i> The “Sponsor activation” action raises satisfaction. At the end of the season, satisfied sponsors (≥ 60%)\n          renew — sometimes for more. The “Sponsor prospecting” action can land a new contract:\n          the odds depend on your DMOS score and how your Fan Equity Value is growing.\n        ",
     "ui.spons.th.amount": "Amount / season",
     "ui.spons.th.contract": "Contract",
     "ui.spons.th.name": "Sponsor",
@@ -5838,13 +5838,13 @@ const TX = {
     "ui.tab.history": "<i class=ic-clock></i> History",
     "ui.tab.sponsors": "<i class=ic-deal></i> Sponsors",
     "ui.tagline": "A sports club marketing management sim",
-    "obj.fev": "Grow your Fan Equity Value® by +{v0}%",
+    "obj.fev": "Grow your Fan Equity Value by +{v0}%",
     "obj.fev.unmeasured": "not measurable without Fan Lab Pro",
     "obj.fev.board": "The board cannot sign off on growth that nobody measured.",
     "ui.challenge.legacy": "<span style=\"color:var(--warn)\"><i class=ic-alert></i>\n        Challenge from an earlier version: the scoring rules have changed, so results can no longer be compared.</span>\n        <button id=\"challenge-legacy-go\">Replay this season anyway</button>",
     "ui.fei.now": "Fan Equity Index: <b style=\"color:var(--ink)\">{v0}</b> <span style=\"color:var(--ink-3)\">(base 100 when Fan Lab Pro was switched on)</span>",
     "ui.fev.anon": "<span style=\"color:var(--ink-3)\">{v0} anonymous fans · CHF 0 until you know who they are</span>",
-    "ui.fev.link": "<a class=\"out-link\" href=\"{v0}\" target=\"_blank\" rel=\"noopener\">Estimate the Fan Equity Value® of your real club — Fan Lab</a>",
+    "ui.fev.link": "<a class=\"out-link\" href=\"{v0}\" target=\"_blank\" rel=\"noopener\">Estimate the Fan Equity Value of your real club — Fan Lab</a>",
     "ui.fev.l1": "Known fans",
     "ui.fev.l1d": "{v0}% of your fans can be reached",
     "ui.fev.l2": "Strength of the bond",
@@ -5856,7 +5856,7 @@ const TX = {
     "ui.fev.l4d": "dirty data melts the value away",
     "ui.fev.levers": "What drives your value",
     "ui.fei.title": "Fan Equity Index — proof that your fan asset is compounding",
-    "ui.fei.none": "Not measured yet: the Index starts at 100 on the day Fan Lab Pro puts a number on your Fan Equity Value®.",
+    "ui.fei.none": "Not measured yet: the Index starts at 100 on the day Fan Lab Pro puts a number on your Fan Equity Value.",
     "ui.fei.legend": "One point at activation, then in weeks 7, 13, 20 and 26 of every season.",
     "ui.fandom.title": "<span class=\"sig-cap\">Y</span>OUR FANDOM.",
     "ui.fandom.note": "Fandom is the strength of the bond. Turning 100 spectators into season-ticket holders is worth more than signing up 1,000 new curious fans.",
