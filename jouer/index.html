@@ -1119,11 +1119,11 @@ const CLUBS = [
     dmos:{strategie:2, contenu:3, donnees:1, outils:2, acquisition:2, conformite:2} },
   { id:"fc",  color:"#E0BC6A", code:"RRV", icon:"shield", name:"Real Riviera", sport:"Football", city:"Port-Riviera", division:2,
     desc:"Un nom de géant pour un club de 2e division qui rêve de promotion. Belle présence sociale, mais données fans éparpillées et sponsors impatients.",
-    fans:32000, contacts:5200, engagement:45, budget:95000, strength:58, capacity:8600, ticket:19,
+    fans:32000, contacts:5200, engagement:45, budget:65000, strength:58, capacity:7500, ticket:16,
     dmos:{strategie:4, contenu:5, donnees:2, outils:3, acquisition:4, conformite:3} },
   { id:"bb",  color:"#9B7CF5", code:"LSK", icon:"shield", name:"Lakeside Kings", sport:"Basketball", city:"Rive-Dorée", division:2,
     desc:"Petit budget, grosse énergie, 2e division. Un public jeune qui fait trembler la salle, mais zéro CRM et une conformité RGPD douteuse.",
-    fans:9500, contacts:900, engagement:56, budget:42000, strength:60, capacity:3100, ticket:16,
+    fans:9500, contacts:900, engagement:56, budget:50000, strength:60, capacity:3100, ticket:16,
     dmos:{strategie:3, contenu:4, donnees:1, outils:1, acquisition:3, conformite:1} },
   { id:"vb", color:"#2BC4BE", code:"OLY", icon:"shield", name:"Olympia Léman", sport:"Volleyball", city:"Saint-Aurèle", division:1,
     desc:"Champion en titre de l'élite, l'Europe en ligne de mire. Le sportif tourne, le marketing dort : le comité veut monétiser, vite.",
@@ -1386,37 +1386,37 @@ const SPONSOR_POOL = [
    en silence). Chaque service révèle et/ou protège. */
 const SERVICES = [
   { id:"audit", name:"Fan Equity Audit", setup:5000, duration:3,
-    subLabel:"Audit · one-shot", btnLabel:"Commander · 5 000 CHF",
+    subLabel:"Audit · one-shot", btnLabel:"Commander",
     range:"4 000 – 6 000 CHF",
     pitch:"Diagnostic complet de l'orchestration de vos données : kick-off, analyse des 6 piliers, workshop avec le comité, rapport et roadmap. L'audit ne chiffre pas encore vos fans : il mesure la capacité de votre club à faire fructifier sa fan equity. La valeur en francs, c'est Fan Lab Pro.",
     effect:"Révèle vos scores DMOS exacts (fini les fourchettes), débloque la certification Silver/Gold, formations guidées par la roadmap (−20 %). Confiance du comité +8 à la livraison.",
     real:"L'audit que C'mon Sports conduit réellement : kick-off, analyse des six piliers, atelier avec la direction, rapport et feuille de route chiffrée. Il transforme une intuition sur vos données en note comparable d'une année sur l'autre." },
   { id:"fanlabInsight", name:"Fan Lab Insight", setup:6500,
-    subLabel:"Fan Equity Intelligence · analyse one-shot", btnLabel:"Commander · 6 500 CHF",
+    subLabel:"Fan Equity Intelligence · analyse one-shot", btnLabel:"Commander",
     range:"5 000 – 8 000 CHF",
     pitch:"L'analyse fondamentale de votre base CRM : qualité des données, pénétration de votre bassin de fans et répartition de votre fandom.",
     effect:"Révèle la qualité des données CRM, le bassin atteignable, le taux de pénétration et les étages de votre fandom — vous savez enfin où creuser. Débloque les modules d'engagement.",
     real:"La première mesure sérieuse d'une base de contacts : combien de personnes le club pourrait réellement atteindre, et ce que valent les adresses qu'il possède déjà." },
-  { id:"fanlabPro", name:"Fan Lab Pro", setup:18500, weekly:300, commit:3,
-    subLabel:"Fan Equity Intelligence · engagement 3 saisons · inclut Insight", btnLabel:"Activer · 18 500 CHF + 300 CHF/sem.",
+  { id:"fanlabPro", name:"Fan Lab Pro", setup:18500, setupRange:[15000, 22000], weekly:300, commit:3,
+    subLabel:"Fan Equity Intelligence · engagement 3 saisons · inclut Insight", btnLabel:"Activer",
     range:"15 000 – 22 000 CHF / an",
     pitch:"La mesure de la valeur de votre audience, suivie dans la durée : Fan Equity Value, Fan Equity Index, ROI ticketing et merchandising, l'argument chiffré face aux sponsors.",
-    effect:"Mise en place à l'activation, puis licence hebdomadaire pendant 3 saisons. Tout Insight + révèle votre Fan Equity Value en francs et suit le Fan Equity Index, chances de signature sponsor nettement accrues, part marketing billetterie 5 → 6 % et merchandising +10 %.",
+    effect:"Mise en place à l'activation, puis licence hebdomadaire pendant 3 saisons. Tout Insight + révèle votre Fan Equity Value en francs et suit le Fan Equity Index, chances de signature sponsor nettement accrues, part marketing billetterie 5 → 7 % et merchandising +10 %.",
     real:"La valorisation économique complète de l'audience. Concrètement : le document qu'on pose sur la table en rendez-vous sponsor, quand il faut justifier un montant plutôt que le négocier." },
   { id:"datafactory", name:"Fan Data Factory", weekly:920, commit:3,
-    subLabel:"Fan Equity Management · engagement 3 saisons", btnLabel:"Activer · 920 CHF/sem.",
+    subLabel:"Fan Equity Management · engagement 3 saisons", btnLabel:"Activer",
     range:"1 500 – 2 500 CHF / mois",
     pitch:"Le service opérationnel qui structure et entretient vos données fans : nettoyage, déduplication, procédures de collecte et de maintenance.",
-    effect:"Engagement 3 saisons, sans résiliation anticipée. +1 de qualité de données à l'activation, stoppe leur vieillissement, immunise contre les purges de contacts obsolètes, divise par deux la fatigue emailing et l'érosion de votre fandom, et prolonge la relation avec vos fans.",
+    effect:"Engagement 3 saisons, sans résiliation anticipée. +1 de qualité de données à l'activation, stoppe leur vieillissement, immunise contre les purges de contacts obsolètes, rend l'emailing plus rentable (+25 %), divise par deux la fatigue emailing et l'érosion de votre fandom, et prolonge la relation avec vos fans.",
     real:"Le service opérationnel qui tient la base dans la durée — nettoyage, déduplication, procédures de collecte. Sans lui, une base perd environ un cinquième de sa valeur par an." },
   { id:"bluepenguin", name:"Blue Penguin", setup:12500, weekly:690, module:true,
-    subLabel:"Module d'engagement", btnLabel:"Intégrer · 12 500 CHF + 690 CHF/sem.",
+    subLabel:"Module d'engagement", btnLabel:"Intégrer",
     range:"10 000 – 15 000 CHF de mise en place + 1 000 – 2 000 CHF / mois",
     pitch:"Programme de fidélité tokenisé : les fans gagnent des récompenses à chaque interaction avec le club.",
     effect:"Fait monter vos fans vers l'abonnement et le rang d'ambassadeur chaque semaine, +15 % de revenus merchandising.",
     real:"Le programme de fidélité tokenisé de C'mon Sports : chaque interaction du fan avec le club lui rapporte quelque chose, et rapporte au club une donnée de plus." },
   { id:"griddy", name:"Griddy Picks", setup:2500, weekly:500, module:true,
-    subLabel:"Module d'engagement", btnLabel:"Intégrer · 2 500 CHF + 500 CHF/sem.",
+    subLabel:"Module d'engagement", btnLabel:"Intégrer",
     range:"2 000 – 3 000 CHF de mise en place + 400 – 600 CHF / jour de compétition",
     pitch:"Jeu de pronostics aux couleurs du club : les fans jouent chaque journée de championnat et laissent leurs données.",
     effect:"Collecte passive de contacts qualifiés chaque semaine de compétition (selon la pénétration du bassin) — le jeu concours qui tourne tout seul.",
@@ -1432,25 +1432,44 @@ function serviceActive(s, id) {
   return !!s.services[id];
 }
 function anyServiceActive(s) { return SERVICES.some(sv => serviceActive(s, sv.id)); }
+/* Les tarifs réels varient « selon la taille et les besoins du club » : en jeu,
+   le prix suit l'audience du club, du bas (petit club) au haut de la fourchette. */
+function priceFactor(s) {
+  const fans = clubOf(s).fans;
+  return clamp(0.8 + (fans - 9500) / 22500 * 0.4, 0.8, 1.2);
+}
+function svcSetup(s, sv) {
+  if (!sv.setup) return 0;
+  const v = Math.round(sv.setup * priceFactor(s) / 100) * 100;
+  return sv.setupRange ? clamp(v, sv.setupRange[0], sv.setupRange[1]) : v;
+}
+function svcWeekly(s, sv) { return sv.weekly ? Math.round(sv.weekly * priceFactor(s) / 10) * 10 : 0; }
+function svcPriceText(s, sv) {
+  const parts = [];
+  if (sv.setup) parts.push(fmtCHF(svcSetup(s, sv)));
+  if (sv.weekly) parts.push(fmtCHF(svcWeekly(s, sv)) + tr("ui.svc.perweek", null, "/sem."));
+  return parts.join(" + ");
+}
 function weeklyServicesCost(s) {
-  return SERVICES.reduce((t, sv) => t + (sv.weekly && s.services[sv.id] && !s.services[sv.id + "Paid"] ? sv.weekly : 0), 0);
+  return SERVICES.reduce((t, sv) => t + (sv.weekly && s.services[sv.id] && !s.services[sv.id + "Paid"] ? svcWeekly(s, sv) : 0), 0);
 }
 
 function buyService(id) {
   const svc = SERVICES.find(x=>x.id===id);
   const st = state.services;
   if (serviceActive(state, id)) return;
-  const upfront = svc.setup || 0;
+  const upfront = svcSetup(state, svc);
+  const weekly = fmtCHF(svcWeekly(state, svc));
   if (state.budget < upfront) return;
   if (svc.module && !insightActive(state)) return;   // on mesure d'abord, on engage ensuite
   state.budget -= upfront;
   const MSG = {
     audit: tr("ui.57e497", {v0: fmtCHF(upfront), v1: svc.duration}, `<i class=ic-launch></i> Fan Equity Audit commandé auprès de C'mon Sports ({v0}). Kick-off cette semaine — rapport dans {v1} semaines.`),
     fanlabInsight: tr("ui.f3388d", {v0: fmtCHF(upfront)}, `<i class=ic-launch></i> Fan Lab Insight livré ({v0}) : qualité de vos données CRM et pénétration du bassin enfin mesurées.`),
-    fanlabPro: tr("ui.923517", {v0: fmtCHF(upfront)}, `<i class=ic-launch></i> Fan Lab Pro activé ({v0}, puis 300 CHF/sem. sur 3 saisons) : votre Fan Equity Value est chiffrée et le Fan Equity Index démarre à 100. ROI ticketing et merchandising optimisés. Vos sponsors vont adorer.`),
-    datafactory: tr("ui.35c35b", null, `<i class=ic-launch></i> Fan Data Factory activé (920 CHF/sem., engagement 3 saisons) : base nettoyée, procédures en place. Qualité +1, dégradation stoppée.`),
-    bluepenguin: tr("ui.35d2d7", {v0: fmtCHF(upfront)}, `<i class=ic-launch></i> Blue Penguin intégré ({v0} + 690 CHF/sem.) : le programme de fidélité tokenisé est en ligne.`),
-    griddy: tr("ui.b5410e", {v0: fmtCHF(upfront)}, `<i class=ic-launch></i> Griddy Picks intégré ({v0} + 500 CHF/jour de match) : le jeu de pronostics collecte ses premiers contacts.`),
+    fanlabPro: tr("ui.923517", {v0: fmtCHF(upfront), v1: weekly}, `<i class=ic-launch></i> Fan Lab Pro activé ({v0}, puis {v1}/sem. sur 3 saisons) : votre Fan Equity Value est chiffrée et le Fan Equity Index démarre à 100. ROI ticketing et merchandising optimisés. Vos sponsors vont adorer.`),
+    datafactory: tr("ui.35c35b", {v1: weekly}, `<i class=ic-launch></i> Fan Data Factory activé ({v1}/sem., engagement 3 saisons) : base nettoyée, procédures en place. Qualité +1, dégradation stoppée.`),
+    bluepenguin: tr("ui.35d2d7", {v0: fmtCHF(upfront), v1: weekly}, `<i class=ic-launch></i> Blue Penguin intégré ({v0} + {v1}/sem.) : le programme de fidélité tokenisé est en ligne.`),
+    griddy: tr("ui.b5410e", {v0: fmtCHF(upfront), v1: weekly}, `<i class=ic-launch></i> Griddy Picks intégré ({v0} + {v1}/jour de match) : le jeu de pronostics collecte ses premiers contacts.`),
   };
   if (id === "audit") {
     st.auditIn = svc.duration;
@@ -1978,7 +1997,7 @@ function resolveActions(s) {
           // Fan Data Factory : segmentation fine → on ne sollicite que les bons segments,
           // la base fatigue deux fois moins vite
           const fatigueGain = s.services.datafactory ? 0.5 : 1;
-          const rev = Math.round(effContacts * (0.15 + s.dataQuality*0.06) * fatigueMult);
+          const rev = Math.round(effContacts * (0.30 + s.dataQuality*0.08) * fatigueMult * (s.services.datafactory ? 1.25 : 1));
           s.budget += rev;
           s.seasonStats.ticketRevenue += rev; s.seasonStats.revenue += rev;
           // emailing ciblé : des curieux deviennent spectateurs ; avec une base
@@ -2095,8 +2114,8 @@ function advanceWeek() {
   const match = playMatch(s);
   let ticketShare = 0;
   if (match.home) {
-    // Fan Lab Pro optimise le ROI billetterie : part marketing 5 % → 6 %
-    ticketShare = Math.round(match.ticketRev * (s.services.fanlabPro ? 0.06 : 0.05));
+    // Fan Lab Pro optimise le ROI billetterie : part marketing 5 % → 7 %
+    ticketShare = Math.round(match.ticketRev * (s.services.fanlabPro ? 0.07 : 0.05));
     s.budget += ticketShare;
     s.seasonStats.ticketRevenue += match.ticketRev;
     s.seasonStats.revenue += match.ticketRev;
@@ -2207,9 +2226,12 @@ function advanceWeek() {
 function endSeason(s) {
   const results = s.objectives.map(o => ({ label: objectiveLabel(o), ok:checkObjective(s,o),
     note: o.id === "fev" && !s.services.fanlabPro
-      ? tr("obj.fev.board", null, "Le comité ne peut pas valider une progression que personne n'a mesurée.") : "" }));
+      ? tr("obj.fev.board", null, "Le comité ne peut pas valider une progression que personne n'a mesurée.")
+        + (diff(s).id === 0 ? " " + tr("obj.fev.lenient", null, "Comité patient : demi-pénalité.") : "") : "" }));
   const okCount = results.filter(r=>r.ok).length;
-  const confDelta = (okCount - diff(s).reqOk) * 8;
+  // un comité patient ne compte qu'une demi-pénalité pour une progression non mesurée
+  const lenient = diff(s).id === 0 && results.some(r => r.note) ? 0.5 : 0;
+  const confDelta = Math.round((okCount + lenient - diff(s).reqOk) * 8);
   s.boardConfidence = clamp(s.boardConfidence + confDelta, 0, 100);
 
   // Classement final (12 équipes) : le bilan sportif + un peu de hasard
@@ -2691,7 +2713,7 @@ function renderServices() {
     if (svc.id === "audit") {
       if (st.audited) status = tr("ui.a3d5df", null, `<span class="badge gold"><i class=ic-check></i> Audit livré</span>`);
       else if (st.auditIn > 0) status = tr("ui.e8b223", {v0: st.auditIn}, `<span class="badge silver"><i class=ic-hourglass></i> En cours — rapport dans {v0} sem.</span>`);
-      else btn = `<button class="primary" data-svc="audit">${svc.btnLabel}</button>`;
+      else btn = `<button class="primary" data-svc="audit">${svc.btnLabel} · ${svcPriceText(state, svc)}</button>`;
     } else if (svc.id === "fanlabInsight" && st.fanlabPro) {
       status = tr("ui.97dade", null, `<span class="badge gold"><i class=ic-check></i> Inclus dans Fan Lab Pro</span>`);
     } else if (st[svc.id]) {
@@ -2700,13 +2722,13 @@ function renderServices() {
         ? tr("ui.svc.until", {v0: until}, "Actif · engagé jusqu'à la fin de la saison {v0}")
         : tr("ui.svc.active", null, "Actif")}</span>`;
     } else if (svc.module && !insightActive(state)) {
-      btn = `<button class="primary" disabled>${svc.btnLabel}</button>`;
+      btn = `<button class="primary" disabled>${svc.btnLabel} · ${svcPriceText(state, svc)}</button>`;
       status = `<span class="badge none"><i class=ic-lock></i> ${tr("ui.svc.needInsight", null, "Après Fan Lab Insight : on mesure d'abord, on engage ensuite")}</span>`;
     } else {
-      btn = `<button class="primary" data-svc="${svc.id}">${svc.btnLabel}</button>`;
+      btn = `<button class="primary" data-svc="${svc.id}">${svc.btnLabel} · ${svcPriceText(state, svc)}</button>`;
     }
-    const affordable = state.budget >= (svc.setup || 0);
-    const range = `<div class="desc" style="color:var(--ink-3)">${tr("ui.svc.range", {v0: svc.range}, "Prix indicatif : {v0}. En jeu, un montant arrondi de simulation (1 saison = 1 an).")}</div>`;
+    const affordable = state.budget >= svcSetup(state, svc);
+    const range = `<div class="desc" style="color:var(--ink-3)">${tr("ui.svc.range", {v0: svc.range}, "Prix indicatif : {v0}. En jeu, un montant de simulation adapté à la taille du club (1 saison = 1 an).")}</div>`;
     return `<div class="action${svc.module ? " svc-module" : ""}" style="align-items:flex-start">
       <div class="info">
         <div class="name"><span class="sig-cap">${svc.name[0]}</span>${svc.name.slice(1)} <span style="font-weight:600;color:var(--ink-3);font-size:11px">· ${svc.subLabel}</span> ${status}</div>
@@ -4329,7 +4351,7 @@ function helpRegles() {
       division, et les abonnements aux services actifs.</span></div>
     <h4>La saison</h4>
     <div class="help-row"><b>{v0} semaines, 12 équipes</b><span class="g">
-      Un match par semaine, à domicile ou à l'extérieur. Seule une part de la billetterie (5 %, 6 % avec
+      Un match par semaine, à domicile ou à l'extérieur. Seule une part de la billetterie (5 %, 7 % avec
       Fan Lab Pro) revient au marketing. En fin de saison : classement, promotion ou relégation,
       qualification européenne.</span></div>
     <div class="help-row"><b>Le comité directeur</b><span class="g">
@@ -4818,7 +4840,7 @@ const TX = {
     "help.ap": "— {v0} AP",
     "help.frame": "\n    <h2><i class=ic-bulb></i> <span class=\"sig-cap\">H</span>ilfe &amp; Regeln<span class=\"sig-cap\">.</span></h2>\n    <div class=\"help-nav\">{v0}</div>\n    <div class=\"help-sec\">{v1}</div>\n    <p class=\"cta-line\">Diese Mechanik ist die einer echten Diagnose —\n      <a href=\"{v2}\" target=\"_blank\" rel=\"noopener\">sprechen Sie 30 Minuten mit C'mon Sports</a>.</p>\n    <div class=\"choices\">\n      <button id=\"help-tuto\"><i class=ic-play></i> Einführungsleitfaden erneut durchgehen</button>\n      <button id=\"help-qz\"><i class=ic-target></i> Der Standortfragebogen</button>\n      <button class=\"primary\" id=\"help-close\">Schliessen</button>\n    </div>",
     "help.real": "In einem echten Club",
-    "help.regles": "\n    <h4>Der Spielzug</h4>\n    <div class=\"help-row\"><b>Eine Woche, der Reihe nach</b><span class=\"g\">\n      Sie wählen Ihre Aktionen → Sie klicken « Woche spielen » → die Aktionen werden ausgewertet →\n      Fixkosten und Abonnements werden abgebucht → Sponsoren- und Merchandising-Einnahmen fliessen →\n      das Spiel wird ausgetragen → ein Ereignis oder eine Entscheidung kann eintreten → die Woche wird gespeichert.</span></div>\n    <div class=\"help-row\"><b>Drei Aktionspunkte, nicht übertragbar</b><span class=\"g\">\n      Jede Woche: 3 Punkte. Sechs Aktionen kosten 1 Punkt, die Sponsorenakquise kostet 2.\n      Nicht genutzte Punkte verfallen; Geld dagegen wird übertragen.</span>\n      <span class=\"r\"><i class=\"tagr\">In einem echten Club</i>Das ist die Zeitgrenze eines kleinen\n      Teams. Budget wird von Monat zu Monat übertragen, Arbeitswochen niemals.</span></div>\n    <div class=\"help-row\"><b>Das Geld</b><span class=\"g\">\n      Jede Aktion hat Kosten, die sinken, wenn die Säule « Tools &amp; CRM » steigt. Dazu kommen\n      wöchentliche Fixkosten, die mit der Grösse des Clubs wachsen und in der ersten Liga\n      explodieren, sowie die Abonnements der aktiven Leistungen.</span></div>\n    <h4>Die Saison</h4>\n    <div class=\"help-row\"><b>{v0} Wochen, 12 Mannschaften</b><span class=\"g\">\n      Ein Spiel pro Woche, zu Hause oder auswärts. Nur ein Teil des Ticketings (5 %, 6 % mit\n      Fan Lab Pro) fliesst ins Marketing. Am Saisonende: Tabelle, Auf- oder Abstieg,\n      europäische Qualifikation.</span></div>\n    <div class=\"help-row\"><b>Der Vorstand</b><span class=\"g\">\n      Er setzt zu Saisonbeginn Ziele und rechnet am Ende ab: Jedes Ziel über der Quote bringt +8\n      Vertrauen, jedes fehlende −8. Sein Vertrauen sinkt auch während der Saison, wenn die sportlichen\n      Ergebnisse enttäuschen. Unter seiner Geduldsschwelle werden Sie freigestellt.</span>\n      <span class=\"r\"><i class=\"tagr\">In einem echten Club</i>Der Vorstand urteilt über das, was er\n      sieht. Eine Marketingverantwortung ohne vorzeigbare Zahlen wird an den sportlichen Ergebnissen\n      gemessen — die sie nicht steuert.</span></div>\n    <div class=\"help-row\"><b>Drei mögliche Vorstände</b><span class=\"g\">\n      Nachsichtig, anspruchsvoll, unerbittlich. Die Wahl erfolgt mit dem Club und gilt für die ganze\n      Laufbahn: Sie verändert das Startvertrauen, die Entlassungsschwelle, die Zahl der geforderten\n      Ziele und die Häufigkeit der Ego-Entscheidungen.</span></div>\n    <h4>Der Datennebel</h4>\n    <div class=\"help-row\"><b>Warum « ? » und Spannen</b><span class=\"g\">\n      Solange der Club nicht analysiert wurde, zeigen Durchdringung und Datenqualität « ? », und der\n      DMOS-Score erscheint als Spanne. Das Fan Equity Audit zeigt die exakten Werte;\n      Fan Lab Insight zeigt Potenzial und Qualität; Fan Lab Pro ergänzt den Wert in Franken.</span>\n      <span class=\"r\"><i class=\"tagr\">In einem echten Club</i>Das ist die Ausgangslage der meisten\n      Clubs: Zuschauerzahlen ja, Messung der Basis nein. Der Nebel ist keine Spielstrafe, er ist der\n      reale Startpunkt.</span></div>\n    <h4>Speicherung, Sprachen, Duelle</h4>\n    <div class=\"help-row\"><b>Alles bleibt in Ihrem Browser</b><span class=\"g\">\n      Die Partie wird am Ende jeder Woche automatisch im lokalen Speicher dieses Geräts gesichert.\n      « Meine Daten exportieren » am Seitenende gibt Ihnen alles heraus, was Sie betrifft.</span></div>\n    <div class=\"help-row\"><b>Französisch, Deutsch, Englisch</b><span class=\"g\">\n      Die Auswahl steht am Seitenende. Ein Sprachwechsel lädt die laufende Partie neu, ohne sie zu verlieren.</span></div>\n    <div class=\"help-row\"><b>Duell-Modus</b><span class=\"g\">\n      Ein Code wie HC-1-A7K9F2-v8 legt Club, Vorstand und die gesamte Ereignisfolge der Saison fest.\n      Zwei Spielende mit demselben Code treffen auf exakt dieselben Zufälle — der einzige Unterschied\n      sind ihre Entscheidungen.</span></div>",
+    "help.regles": "\n    <h4>Der Spielzug</h4>\n    <div class=\"help-row\"><b>Eine Woche, der Reihe nach</b><span class=\"g\">\n      Sie wählen Ihre Aktionen → Sie klicken « Woche spielen » → die Aktionen werden ausgewertet →\n      Fixkosten und Abonnements werden abgebucht → Sponsoren- und Merchandising-Einnahmen fliessen →\n      das Spiel wird ausgetragen → ein Ereignis oder eine Entscheidung kann eintreten → die Woche wird gespeichert.</span></div>\n    <div class=\"help-row\"><b>Drei Aktionspunkte, nicht übertragbar</b><span class=\"g\">\n      Jede Woche: 3 Punkte. Sechs Aktionen kosten 1 Punkt, die Sponsorenakquise kostet 2.\n      Nicht genutzte Punkte verfallen; Geld dagegen wird übertragen.</span>\n      <span class=\"r\"><i class=\"tagr\">In einem echten Club</i>Das ist die Zeitgrenze eines kleinen\n      Teams. Budget wird von Monat zu Monat übertragen, Arbeitswochen niemals.</span></div>\n    <div class=\"help-row\"><b>Das Geld</b><span class=\"g\">\n      Jede Aktion hat Kosten, die sinken, wenn die Säule « Tools &amp; CRM » steigt. Dazu kommen\n      wöchentliche Fixkosten, die mit der Grösse des Clubs wachsen und in der ersten Liga\n      explodieren, sowie die Abonnements der aktiven Leistungen.</span></div>\n    <h4>Die Saison</h4>\n    <div class=\"help-row\"><b>{v0} Wochen, 12 Mannschaften</b><span class=\"g\">\n      Ein Spiel pro Woche, zu Hause oder auswärts. Nur ein Teil des Ticketings (5 %, 7 % mit\n      Fan Lab Pro) fliesst ins Marketing. Am Saisonende: Tabelle, Auf- oder Abstieg,\n      europäische Qualifikation.</span></div>\n    <div class=\"help-row\"><b>Der Vorstand</b><span class=\"g\">\n      Er setzt zu Saisonbeginn Ziele und rechnet am Ende ab: Jedes Ziel über der Quote bringt +8\n      Vertrauen, jedes fehlende −8. Sein Vertrauen sinkt auch während der Saison, wenn die sportlichen\n      Ergebnisse enttäuschen. Unter seiner Geduldsschwelle werden Sie freigestellt.</span>\n      <span class=\"r\"><i class=\"tagr\">In einem echten Club</i>Der Vorstand urteilt über das, was er\n      sieht. Eine Marketingverantwortung ohne vorzeigbare Zahlen wird an den sportlichen Ergebnissen\n      gemessen — die sie nicht steuert.</span></div>\n    <div class=\"help-row\"><b>Drei mögliche Vorstände</b><span class=\"g\">\n      Nachsichtig, anspruchsvoll, unerbittlich. Die Wahl erfolgt mit dem Club und gilt für die ganze\n      Laufbahn: Sie verändert das Startvertrauen, die Entlassungsschwelle, die Zahl der geforderten\n      Ziele und die Häufigkeit der Ego-Entscheidungen.</span></div>\n    <h4>Der Datennebel</h4>\n    <div class=\"help-row\"><b>Warum « ? » und Spannen</b><span class=\"g\">\n      Solange der Club nicht analysiert wurde, zeigen Durchdringung und Datenqualität « ? », und der\n      DMOS-Score erscheint als Spanne. Das Fan Equity Audit zeigt die exakten Werte;\n      Fan Lab Insight zeigt Potenzial und Qualität; Fan Lab Pro ergänzt den Wert in Franken.</span>\n      <span class=\"r\"><i class=\"tagr\">In einem echten Club</i>Das ist die Ausgangslage der meisten\n      Clubs: Zuschauerzahlen ja, Messung der Basis nein. Der Nebel ist keine Spielstrafe, er ist der\n      reale Startpunkt.</span></div>\n    <h4>Speicherung, Sprachen, Duelle</h4>\n    <div class=\"help-row\"><b>Alles bleibt in Ihrem Browser</b><span class=\"g\">\n      Die Partie wird am Ende jeder Woche automatisch im lokalen Speicher dieses Geräts gesichert.\n      « Meine Daten exportieren » am Seitenende gibt Ihnen alles heraus, was Sie betrifft.</span></div>\n    <div class=\"help-row\"><b>Französisch, Deutsch, Englisch</b><span class=\"g\">\n      Die Auswahl steht am Seitenende. Ein Sprachwechsel lädt die laufende Partie neu, ohne sie zu verlieren.</span></div>\n    <div class=\"help-row\"><b>Duell-Modus</b><span class=\"g\">\n      Ein Code wie HC-1-A7K9F2-v8 legt Club, Vorstand und die gesamte Ereignisfolge der Saison fest.\n      Zwei Spielende mit demselben Code treffen auf exakt dieselben Zufälle — der einzige Unterschied\n      sind ihre Entscheidungen.</span></div>",
     "helpnav.actions": "Aktionen",
     "helpnav.glossaire": "Glossar",
     "helpnav.kpi": "Kennzahlen",
@@ -5018,37 +5040,37 @@ const TX = {
     "reco.4.d": "Hier gibt es nichts zu verkaufen: ein öffentliches Werkzeug, das den Wert einer Fanbase aus wenigen Zahlen schätzt. Genug, um den Abstand zwischen Ihrer Ahnung und der Realität zu messen.",
     "reco.4.s": "Der Fan-Lab-Rechner",
     "setup.rules": "<div class=\"card\">\n    <h3><i class=ic-bulb></i> <span><span class=\"sig-cap\">V</span>OR DEM START<span class=\"sig-cap\">.</span></span>\n      <span class=\"tag\">3 Minuten Lesezeit</span></h3>\n    <div class=\"steps\">\n      <div class=\"step\"><div class=\"n\">1</div><div>\n        <b>Drei Aktionspunkte pro Woche</b>\n        <span>Nicht mehr, nicht übertragbar. Jede Aktion kostet zusätzlich Geld —\n        und Geld wird sehr wohl übertragen.</span></div></div>\n      <div class=\"step\"><div class=\"n\">2</div><div>\n        <b>Ein Score der Datenorchestrierung, 60 Punkte in sechs Säulen</b>\n        <span>Der DMOS. Er bestimmt die Kosten Ihrer Aktionen, die Wirksamkeit Ihrer Kampagnen\n        und das, was Sponsoren zu unterschreiben bereit sind.</span></div></div>\n      <div class=\"step\"><div class=\"n\">3</div><div>\n        <b>Sie sehen nicht alles</b>\n        <span>Bestimmte Zahlen bleiben verdeckt, solange Ihr Club nicht analysiert wurde.\n        Das ist die wichtigste Regel des Spiels.</span></div></div>\n    </div>\n    <div class=\"intro-cta\">\n      <button id=\"setup-help\"><i class=ic-bulb></i> Hilfe &amp; vollständige Regeln</button>\n      <button id=\"setup-briefing\"><i class=ic-clipboard></i> Briefing erneut ansehen</button>\n    </div>\n  </div>",
-    "svc.audit.btnLabel": "Bestellen · 5 000 CHF",
+    "svc.audit.btnLabel": "Bestellen",
     "svc.audit.effect": "Deckt Ihre exakten DMOS-Scores auf (Schluss mit Schätzbereichen), schaltet die Silver-/Gold-Zertifizierung frei, Schulungen entlang der Roadmap (−20 %). Vertrauen des Vorstands +8 bei Lieferung.",
     "svc.audit.name": "Fan Equity Audit",
     "svc.audit.pitch": "Die vollständige Diagnose Ihrer Datenorchestrierung: Kick-off, Analyse der 6 Säulen, Workshop mit dem Vorstand, Bericht und Roadmap. Das Audit beziffert Ihre Fans noch nicht: Es misst, wie gut Ihr Club seine Fan Equity zur Entfaltung bringen kann. Den Wert in Franken liefert Fan Lab Pro.",
     "svc.audit.real": "Das Audit, das C'mon Sports tatsächlich durchführt: Kick-off, Analyse der sechs Säulen, Workshop mit der Geschäftsleitung, Bericht und bezifferte Roadmap. Es macht aus einem Bauchgefühl über Ihre Daten eine Note, die sich von Jahr zu Jahr vergleichen lässt.",
     "svc.audit.subLabel": "Audit · einmalig",
-    "svc.bluepenguin.btnLabel": "Integrieren · 12 500 CHF + 690 CHF/Woche",
+    "svc.bluepenguin.btnLabel": "Integrieren",
     "svc.bluepenguin.effect": "Bringt Ihre Fans jede Woche Richtung Abo und Botschafter-Status, +15 % Merchandising-Einnahmen.",
     "svc.bluepenguin.name": "Blue Penguin",
     "svc.bluepenguin.pitch": "Tokenisiertes Treueprogramm: Die Fans sammeln bei jeder Interaktion mit dem Club Belohnungen.",
     "svc.bluepenguin.real": "Das tokenisierte Treueprogramm von C'mon Sports: jede Interaktion des Fans mit dem Club bringt ihm etwas ein — und dem Club ein Datum mehr.",
     "svc.bluepenguin.subLabel": "Engagement-Modul",
-    "svc.datafactory.btnLabel": "Aktivieren · 920 CHF/Woche",
-    "svc.datafactory.effect": "Verpflichtung über 3 Saisons, ohne vorzeitige Kündigung. +1 Datenqualität bei Aktivierung, stoppt deren Alterung, schützt vor Bereinigungsverlusten, halbiert die E-Mail-Ermüdung und die Erosion Ihres Fandoms und verlängert die Beziehung zu Ihren Fans.",
+    "svc.datafactory.btnLabel": "Aktivieren",
+    "svc.datafactory.effect": "Verpflichtung über 3 Saisons, ohne vorzeitige Kündigung. +1 Datenqualität bei Aktivierung, stoppt deren Alterung, schützt vor Bereinigungsverlusten, macht E-Mailings rentabler (+25 %), halbiert die E-Mail-Ermüdung und die Erosion Ihres Fandoms und verlängert die Beziehung zu Ihren Fans.",
     "svc.datafactory.name": "Fan Data Factory",
     "svc.datafactory.pitch": "Der operative Service, der Ihre Fandaten strukturiert und pflegt: Bereinigung, Deduplizierung, Prozesse für Erfassung und Unterhalt.",
     "svc.datafactory.real": "Der operative Dienst, der die Basis dauerhaft in Form hält — Bereinigung, Dublettenabgleich, Erfassungsprozesse. Ohne ihn verliert eine Basis rund ein Fünftel ihres Werts pro Jahr.",
     "svc.datafactory.subLabel": "Fan Equity Management · Verpflichtung über 3 Saisons",
-    "svc.fanlabInsight.btnLabel": "Bestellen · 6 500 CHF",
+    "svc.fanlabInsight.btnLabel": "Bestellen",
     "svc.fanlabInsight.effect": "Deckt CRM-Datenqualität, erreichbares Einzugsgebiet, Durchdringungsrate und die Stufen Ihres Fandoms auf — Sie wissen endlich, wo Sie ansetzen müssen. Schaltet die Engagement-Module frei.",
     "svc.fanlabInsight.name": "Fan Lab Insight",
     "svc.fanlabInsight.pitch": "Die Grundanalyse Ihrer CRM-Basis: Datenqualität, Durchdringung Ihres Fan-Einzugsgebiets und Aufteilung Ihres Fandoms.",
     "svc.fanlabInsight.real": "Die erste ernsthafte Vermessung einer Kontaktbasis: wie viele Menschen der Club wirklich erreichen könnte und was die Adressen wert sind, die er bereits besitzt.",
     "svc.fanlabInsight.subLabel": "Fan Equity Intelligence · Einmalanalyse",
-    "svc.fanlabPro.btnLabel": "Aktivieren · 18 500 CHF + 300 CHF/Woche",
-    "svc.fanlabPro.effect": "Einrichtung bei Aktivierung, danach eine wöchentliche Lizenz über 3 Saisons. Alles aus Insight, plus Ihre Fan Equity Value in Franken und der laufende Fan Equity Index, deutlich höhere Abschlusschancen bei Sponsoren, Marketinganteil am Ticketing 5 → 6 % und Merchandising +10 %.",
+    "svc.fanlabPro.btnLabel": "Aktivieren",
+    "svc.fanlabPro.effect": "Einrichtung bei Aktivierung, danach eine wöchentliche Lizenz über 3 Saisons. Alles aus Insight, plus Ihre Fan Equity Value in Franken und der laufende Fan Equity Index, deutlich höhere Abschlusschancen bei Sponsoren, Marketinganteil am Ticketing 5 → 7 % und Merchandising +10 %.",
     "svc.fanlabPro.name": "Fan Lab Pro",
     "svc.fanlabPro.pitch": "Die Messung des Werts Ihres Publikums, über die Zeit verfolgt: Fan Equity Value, Fan Equity Index, Ticketing- und Merchandising-ROI — das bezifferte Argument gegenüber Sponsoren.",
     "svc.fanlabPro.real": "Die vollständige wirtschaftliche Bewertung des Publikums. Konkret: das Dokument, das man im Sponsorengespräch auf den Tisch legt, wenn ein Betrag begründet statt verhandelt werden soll.",
     "svc.fanlabPro.subLabel": "Fan Equity Intelligence · Verpflichtung über 3 Saisons · inkl. Insight",
-    "svc.griddy.btnLabel": "Integrieren · 2 500 CHF + 500 CHF/Woche",
+    "svc.griddy.btnLabel": "Integrieren",
     "svc.griddy.effect": "Passive Gewinnung qualifizierter Kontakte in jeder Spielwoche (je nach Durchdringungsrate des Einzugsgebiets) — der Wettbewerb, der ganz von allein läuft.",
     "svc.griddy.name": "Griddy Picks",
     "svc.griddy.pitch": "Tippspiel in den Clubfarben: Die Fans tippen an jedem Meisterschaftsspieltag und hinterlassen dabei ihre Daten.",
@@ -5095,8 +5117,8 @@ const TX = {
     "ui.21275c": "DSGVO-Projekt: Compliance {v0}/10",
     "ui.227cd1": "Was mir das Spiel in Erinnerung gerufen hat: Ohne Messung bleibt der Wert einer Fanbase eine Intuition — und eine Intuition überzeugt keinen Sponsor.",
     "ui.285490": "<div class=\"card challenge-card\">\n    <div>\n      <b><i class=ic-target></i> Challenge-Modus</b>\n      <span>Gleicher Club, gleicher Vorstand, exakt dieselben Ereignisse — der einzige Unterschied sind Sie.\n      Erstellen Sie eine Challenge oder nehmen Sie jene an, die man Ihnen geschickt hat.</span>\n    </div>\n    <div class=\"challenge-actions\">\n      <input type=\"text\" id=\"challenge-code\" maxlength=\"16\" placeholder=\"HC-1-A7K9F2-v8\" autocomplete=\"off\" spellcheck=\"false\">\n      <button class=\"primary\" id=\"challenge-go\">Challenge annehmen</button>\n      <button id=\"challenge-new\">Challenge erstellen</button>\n    </div>\n    <div id=\"challenge-msg\"></div>\n  </div>",
-    "ui.35c35b": "<i class=ic-launch></i> Fan Data Factory aktiviert (920 CHF/Woche, Verpflichtung über 3 Saisons): Datenbank bereinigt, Prozesse stehen. Qualität +1, Alterung gestoppt.",
-    "ui.35d2d7": "<i class=ic-launch></i> Blue Penguin integriert ({v0} + 690 CHF/Woche): Das tokenisierte Treueprogramm ist online.",
+    "ui.35c35b": "<i class=ic-launch></i> Fan Data Factory aktiviert ({v1}/Woche, Verpflichtung über 3 Saisons): Datenbank bereinigt, Prozesse stehen. Qualität +1, Alterung gestoppt.",
+    "ui.35d2d7": "<i class=ic-launch></i> Blue Penguin integriert ({v0} + {v1}/Woche): Das tokenisierte Treueprogramm ist online.",
     "ui.3905e5": "<i class=ic-clipboard></i> Fan Equity Audit läuft — Ihr Partner Manager von C'mon Sports analysiert Ihre Säulen (Bericht in {v0} Wo.).",
     "ui.416fc7": "<span style=\"font-size:12px\">Formel: Kontakte × (1,5 + Qualität×0,6) × (0,5 + Engagement/100) · Ticketing- und Merch-ROI optimiert</span><br>\n         <a class=\"out-link\" href=\"{v0}\" target=\"_blank\" rel=\"noopener\">Berechnen Sie den realen Wert Ihrer Fanbase — Fan Lab</a>",
     "ui.43c829": "<div class=\"entry\">Das Journal ist leer.</div>",
@@ -5126,7 +5148,7 @@ const TX = {
     "ui.7f9ac2": "Kampagne abgebrochen: Kontaktbasis zu klein",
     "ui.811ded": "<h2><i class=ic-layers></i> Meine Bilanz teilen</h2>\n    <p style=\"font-size:13px\">Ihre Karte ist bereit. Das Bild wird auf Ihrem Gerät erzeugt —\n    nichts wird irgendwohin gesendet, solange Sie es nicht selbst publizieren.</p>\n    <img class=\"share-preview\" src=\"{v0}\" alt=\"Bilanzkarte {v1}\">\n    <p style=\"font-size:12px;color:var(--muted);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.06em;font-weight:700\">Text zum Einfügen</p>\n    <textarea class=\"share-text\" readonly rows=\"9\">{v2}</textarea>\n    <div class=\"choices\">\n      <a class=\"btn-like primary\" id=\"sc-dl\" href=\"{v3}\" download=\"{v4}\"><i class=ic-save></i> Bild herunterladen</a>\n      <button id=\"sc-copy\"><i class=ic-layers></i> Text kopieren</button>\n      <button id=\"sc-back\">Zurück</button>\n    </div>",
     "ui.913d38": "<i class=ic-alert></i> ABSTIEG in {v0}… −{v1} Fans, Sponsorenverträge nach unten korrigiert (−30 %).",
-    "ui.923517": "<i class=ic-launch></i> Fan Lab Pro aktiviert ({v0}, danach 300 CHF/Woche über 3 Saisons): Ihre Fan Equity Value ist beziffert, der Fan Equity Index startet bei 100. Ticketing- und Merchandising-ROI optimiert. Ihre Sponsoren werden begeistert sein.",
+    "ui.923517": "<i class=ic-launch></i> Fan Lab Pro aktiviert ({v0}, danach {v1}/Woche über 3 Saisons): Ihre Fan Equity Value ist beziffert, der Fan Equity Index startet bei 100. Ticketing- und Merchandising-ROI optimiert. Ihre Sponsoren werden begeistert sein.",
     "ui.94bccc": "<i class=ic-deal></i> {v0} verlängert für {v1}/Saison!",
     "ui.97dade": "<span class=\"badge gold\"><i class=ic-check></i> In Fan Lab Pro enthalten</span>",
     "ui.9a2874": "<i class=ic-chart></i> Durchdringungsrate: <span style=\"color:var(--muted)\">unbekannt</span><br>",
@@ -5137,7 +5159,7 @@ const TX = {
     "ui.act.info": "Diese Aktion verstehen",
     "ui.b02d9d": "<div class=\"result-banner\" style=\"border-color:var(--good); color:var(--good)\"><i class=ic-launch></i> AUFSTIEG in {v0}! Sponsoren aufgewertet… aber Kosten und Erwartungen werden explodieren.</div>",
     "ui.b0a94f": "Datensammlung: +{v0} qualifizierte Kontakte{v1}",
-    "ui.b5410e": "<i class=ic-launch></i> Griddy Picks integriert ({v0} + 500 CHF/Spieltag): Das Tippspiel sammelt seine ersten Kontakte.",
+    "ui.b5410e": "<i class=ic-launch></i> Griddy Picks integriert ({v0} + {v1}/Spieltag): Das Tippspiel sammelt seine ersten Kontakte.",
     "ui.b6dadd": "\n    <div class=\"profile-row\" data-uid=\"{v0}\">\n      <div class=\"avatar\">{v1}</div>\n      <div class=\"pname\">{v2}{v3}</div>\n      <div class=\"pmeta\">{v4}erstellt am {v5}</div>\n    </div>",
     "ui.b736bb": "Herausforderung {v0} — {v1} Punkte",
     "ui.b7f79f": "{v0} Saison{v1} an der Spitze des Digitalmarketings",
@@ -5267,12 +5289,14 @@ const TX = {
     "ui.svc.until": "Aktiv · verpflichtet bis Ende Saison {v0}",
     "ui.svc.active": "Aktiv",
     "ui.svc.needInsight": "Nach Fan Lab Insight: erst messen, dann binden",
-    "ui.svc.range": "Richtpreis: {v0}. Im Spiel ein gerundeter Simulationsbetrag (1 Saison = 1 Jahr).",
+    "ui.svc.range": "Richtpreis: {v0}. Im Spiel ein Simulationsbetrag je nach Grösse des Clubs (1 Saison = 1 Jahr).",
     "ui.svc.modules": "Engagement-Module — als Ergänzung",
     "brief.3.title": "Ihr Vorstand",
     "brief.3.body": "<p>Der Vorstand setzt Ihnen <b>zu Saisonbeginn Ziele</b> und rechnet am Ende ab. Jedes verfehlte Ziel kostet Vertrauen; unter der Geduldsschwelle Ihres Vorstands <b>werden Sie freigestellt</b> und die Partie endet.</p><p>Sein Temperament wählen Sie direkt nach Ihrem Club: nachsichtig, anspruchsvoll oder unerbittlich. Diese Wahl gilt für die gesamte Laufbahn.</p><p>Ein <b>Einführungsleitfaden</b> begleitet Sie in den ersten Wochen, oben im Dashboard. Er lässt sich mit einem Klick ausblenden und über « Hilfe &amp; Regeln » wieder aufrufen.</p>",
     "ui.login.role.league": "Liga / Verband",
     "ui.login.role.school": "Schule / Hochschule (Studierende, Lehrende)",
+    "ui.svc.perweek": "/Woche",
+    "obj.fev.lenient": "Geduldiger Vorstand: halbe Strafe.",
   },  /* TX-DE */
   en: {
     "action.activation.desc": "A visibility operation for your sponsors (LED boards, social, hospitality). +sponsor satisfaction, plus a small revenue bonus.",
@@ -5427,7 +5451,7 @@ const TX = {
     "help.ap": "— {v0} AP",
     "help.frame": "\n    <h2><i class=ic-bulb></i> <span class=\"sig-cap\">H</span>elp &amp; rules<span class=\"sig-cap\">.</span></h2>\n    <div class=\"help-nav\">{v0}</div>\n    <div class=\"help-sec\">{v1}</div>\n    <p class=\"cta-line\">These mechanics are those of a real diagnosis —\n      <a href=\"{v2}\" target=\"_blank\" rel=\"noopener\">spend 30 minutes with C'mon Sports</a>.</p>\n    <div class=\"choices\">\n      <button id=\"help-tuto\"><i class=ic-play></i> Replay the onboarding guide</button>\n      <button id=\"help-qz\"><i class=ic-target></i> The positioning questionnaire</button>\n      <button class=\"primary\" id=\"help-close\">Close</button>\n    </div>",
     "help.real": "In a real club",
-    "help.regles": "\n    <h4>The turn</h4>\n    <div class=\"help-row\"><b>One week, in order</b><span class=\"g\">\n      You choose your actions → you click « Play the week » → the actions resolve →\n      fixed costs and subscriptions are deducted → sponsor and merchandising revenue comes in →\n      the match is played → an event or a decision may occur → the week is saved.</span></div>\n    <div class=\"help-row\"><b>Three action points, never carried over</b><span class=\"g\">\n      Every week: 3 points. Six actions cost 1, sponsor prospecting costs 2.\n      Unspent points are lost; money, on the other hand, carries over.</span>\n      <span class=\"r\"><i class=\"tagr\">In a real club</i>This is the time constraint of a small\n      team. Budget carries from one month to the next; weeks of work never do.</span></div>\n    <div class=\"help-row\"><b>The money</b><span class=\"g\">\n      Every action has a cost, which falls as the « Tools &amp; CRM » pillar rises. On top come\n      weekly fixed costs, which grow with the size of the club and explode in the first division,\n      plus the subscriptions to any active services.</span></div>\n    <h4>The season</h4>\n    <div class=\"help-row\"><b>{v0} weeks, 12 teams</b><span class=\"g\">\n      One match a week, home or away. Only a share of ticketing (5 %, 6 % with Fan Lab Pro) comes back\n      to marketing. At the end of the season: standings, promotion or relegation,\n      European qualification.</span></div>\n    <div class=\"help-row\"><b>The board</b><span class=\"g\">\n      It sets objectives at the start of the season and settles up at the end: each objective above\n      quota is worth +8 confidence, each one missing −8. Its confidence also erodes mid-season if\n      results on the pitch disappoint. Below its patience threshold, you are let go.</span>\n      <span class=\"r\"><i class=\"tagr\">In a real club</i>A board judges on what it sees. A marketing\n      lead with no figures to show ends up judged on sporting results — which they do not\n      control.</span></div>\n    <div class=\"help-row\"><b>Three possible boards</b><span class=\"g\">\n      Lenient, demanding, ruthless. The choice is made with the club and holds for the whole career:\n      it changes starting confidence, the dismissal threshold, the number of objectives required and\n      how often ego decisions come up.</span></div>\n    <h4>The data fog</h4>\n    <div class=\"help-row\"><b>Why « ? » and ranges</b><span class=\"g\">\n      Until the club has been analysed, catchment penetration and data quality show « ? », and the\n      DMOS score appears as a range. The Fan Equity Audit reveals the exact scores;\n      Fan Lab Insight reveals catchment and quality; Fan Lab Pro adds the value in francs.</span>\n      <span class=\"r\"><i class=\"tagr\">In a real club</i>This is where most clubs start: attendance\n      figures, no measurement of the database. The fog is not a game penalty, it is the real starting\n      point.</span></div>\n    <h4>Saving, languages, challenges</h4>\n    <div class=\"help-row\"><b>Everything stays in your browser</b><span class=\"g\">\n      The game is saved automatically at the end of each week, in this device's local storage.\n      « Export my data » at the foot of the page hands you back everything that concerns you.</span></div>\n    <div class=\"help-row\"><b>French, German, English</b><span class=\"g\">\n      The switch is at the foot of the page. Changing language reloads the current game without losing it.</span></div>\n    <div class=\"help-row\"><b>Challenge mode</b><span class=\"g\">\n      A code such as HC-1-A7K9F2-v8 fixes the club, the board and the entire sequence of events for the\n      season. Two players sharing a code face exactly the same chance — the only difference is\n      their decisions.</span></div>",
+    "help.regles": "\n    <h4>The turn</h4>\n    <div class=\"help-row\"><b>One week, in order</b><span class=\"g\">\n      You choose your actions → you click « Play the week » → the actions resolve →\n      fixed costs and subscriptions are deducted → sponsor and merchandising revenue comes in →\n      the match is played → an event or a decision may occur → the week is saved.</span></div>\n    <div class=\"help-row\"><b>Three action points, never carried over</b><span class=\"g\">\n      Every week: 3 points. Six actions cost 1, sponsor prospecting costs 2.\n      Unspent points are lost; money, on the other hand, carries over.</span>\n      <span class=\"r\"><i class=\"tagr\">In a real club</i>This is the time constraint of a small\n      team. Budget carries from one month to the next; weeks of work never do.</span></div>\n    <div class=\"help-row\"><b>The money</b><span class=\"g\">\n      Every action has a cost, which falls as the « Tools &amp; CRM » pillar rises. On top come\n      weekly fixed costs, which grow with the size of the club and explode in the first division,\n      plus the subscriptions to any active services.</span></div>\n    <h4>The season</h4>\n    <div class=\"help-row\"><b>{v0} weeks, 12 teams</b><span class=\"g\">\n      One match a week, home or away. Only a share of ticketing (5 %, 7 % with Fan Lab Pro) comes back\n      to marketing. At the end of the season: standings, promotion or relegation,\n      European qualification.</span></div>\n    <div class=\"help-row\"><b>The board</b><span class=\"g\">\n      It sets objectives at the start of the season and settles up at the end: each objective above\n      quota is worth +8 confidence, each one missing −8. Its confidence also erodes mid-season if\n      results on the pitch disappoint. Below its patience threshold, you are let go.</span>\n      <span class=\"r\"><i class=\"tagr\">In a real club</i>A board judges on what it sees. A marketing\n      lead with no figures to show ends up judged on sporting results — which they do not\n      control.</span></div>\n    <div class=\"help-row\"><b>Three possible boards</b><span class=\"g\">\n      Lenient, demanding, ruthless. The choice is made with the club and holds for the whole career:\n      it changes starting confidence, the dismissal threshold, the number of objectives required and\n      how often ego decisions come up.</span></div>\n    <h4>The data fog</h4>\n    <div class=\"help-row\"><b>Why « ? » and ranges</b><span class=\"g\">\n      Until the club has been analysed, catchment penetration and data quality show « ? », and the\n      DMOS score appears as a range. The Fan Equity Audit reveals the exact scores;\n      Fan Lab Insight reveals catchment and quality; Fan Lab Pro adds the value in francs.</span>\n      <span class=\"r\"><i class=\"tagr\">In a real club</i>This is where most clubs start: attendance\n      figures, no measurement of the database. The fog is not a game penalty, it is the real starting\n      point.</span></div>\n    <h4>Saving, languages, challenges</h4>\n    <div class=\"help-row\"><b>Everything stays in your browser</b><span class=\"g\">\n      The game is saved automatically at the end of each week, in this device's local storage.\n      « Export my data » at the foot of the page hands you back everything that concerns you.</span></div>\n    <div class=\"help-row\"><b>French, German, English</b><span class=\"g\">\n      The switch is at the foot of the page. Changing language reloads the current game without losing it.</span></div>\n    <div class=\"help-row\"><b>Challenge mode</b><span class=\"g\">\n      A code such as HC-1-A7K9F2-v8 fixes the club, the board and the entire sequence of events for the\n      season. Two players sharing a code face exactly the same chance — the only difference is\n      their decisions.</span></div>",
     "helpnav.actions": "Actions",
     "helpnav.glossaire": "Glossary",
     "helpnav.kpi": "Indicators",
@@ -5627,37 +5651,37 @@ const TX = {
     "reco.4.d": "Nothing to sell here: a public tool that estimates the value of a fanbase from a handful of figures. Enough to measure the gap between your hunch and reality.",
     "reco.4.s": "The Fan Lab calculator",
     "setup.rules": "<div class=\"card\">\n    <h3><i class=ic-bulb></i> <span><span class=\"sig-cap\">B</span>EFORE YOU START<span class=\"sig-cap\">.</span></span>\n      <span class=\"tag\">3 minutes' reading</span></h3>\n    <div class=\"steps\">\n      <div class=\"step\"><div class=\"n\">1</div><div>\n        <b>Three action points a week</b>\n        <span>No more, and never carried over. Every action also costs money —\n        and money, unlike time, does carry over.</span></div></div>\n      <div class=\"step\"><div class=\"n\">2</div><div>\n        <b>A data orchestration score out of 60, across six pillars</b>\n        <span>The DMOS. It governs the cost of your actions, the effectiveness of your campaigns\n        and what sponsors agree to sign.</span></div></div>\n      <div class=\"step\"><div class=\"n\">3</div><div>\n        <b>You do not see everything</b>\n        <span>Some figures stay hidden until your club has been analysed.\n        It is the most important rule in the game.</span></div></div>\n    </div>\n    <div class=\"intro-cta\">\n      <button id=\"setup-help\"><i class=ic-bulb></i> Help &amp; full rules</button>\n      <button id=\"setup-briefing\"><i class=ic-clipboard></i> Replay the briefing</button>\n    </div>\n  </div>",
-    "svc.audit.btnLabel": "Order · 5 000 CHF",
+    "svc.audit.btnLabel": "Order",
     "svc.audit.effect": "Reveals your exact DMOS scores (no more vague ranges), unlocks Silver/Gold certification, and makes training roadmap-guided (−20%). Board confidence +8 on delivery.",
     "svc.audit.name": "Fan Equity Audit",
     "svc.audit.pitch": "A full diagnosis of how your data is orchestrated: kick-off, analysis of the 6 pillars, workshop with the board, report and roadmap. The audit doesn't put a number on your fans yet: it measures how well your club can make its fan equity grow. The value in francs is Fan Lab Pro's job.",
     "svc.audit.real": "The audit C'mon Sports actually runs: kick-off, analysis of the six pillars, workshop with management, report and costed roadmap. It turns a hunch about your data into a score comparable from one year to the next.",
     "svc.audit.subLabel": "Audit · one-off",
-    "svc.bluepenguin.btnLabel": "Integrate · 12 500 CHF + 690 CHF/week",
+    "svc.bluepenguin.btnLabel": "Integrate",
     "svc.bluepenguin.effect": "Moves your fans towards season tickets and ambassador status every week, +15% merchandising revenue.",
     "svc.bluepenguin.name": "Blue Penguin",
     "svc.bluepenguin.pitch": "A tokenised loyalty programme: fans earn rewards every time they interact with the club.",
     "svc.bluepenguin.real": "C'mon Sports' tokenised loyalty programme: every interaction between fan and club earns the fan something — and earns the club one more piece of data.",
     "svc.bluepenguin.subLabel": "Engagement module",
-    "svc.datafactory.btnLabel": "Activate · 920 CHF/week",
-    "svc.datafactory.effect": "3-season commitment, no early cancellation. +1 data quality on activation, stops data ageing, protects against contact purges, halves email fatigue and the erosion of your fandom, and makes your fans' relationship with the club last longer.",
+    "svc.datafactory.btnLabel": "Activate",
+    "svc.datafactory.effect": "3-season commitment, no early cancellation. +1 data quality on activation, stops data ageing, protects against contact purges, makes email campaigns more profitable (+25%), halves email fatigue and the erosion of your fandom, and makes your fans' relationship with the club last longer.",
     "svc.datafactory.name": "Fan Data Factory",
     "svc.datafactory.pitch": "The operational service that structures and maintains your fan data: cleaning, deduplication, collection and maintenance procedures.",
     "svc.datafactory.real": "The operational service that keeps a database in shape over time — cleaning, deduplication, collection procedures. Without it, a database loses roughly a fifth of its value each year.",
     "svc.datafactory.subLabel": "Fan Equity Management · 3-season commitment",
-    "svc.fanlabInsight.btnLabel": "Order · 6 500 CHF",
+    "svc.fanlabInsight.btnLabel": "Order",
     "svc.fanlabInsight.effect": "Reveals CRM data quality, the reachable catchment, penetration rate and the tiers of your fandom — you finally know where to dig. Unlocks the engagement modules.",
     "svc.fanlabInsight.name": "Fan Lab Insight",
     "svc.fanlabInsight.pitch": "The fundamental analysis of your CRM base: data quality, penetration of your fan catchment and how your fandom breaks down.",
     "svc.fanlabInsight.real": "The first serious measurement of a contact database: how many people the club could genuinely reach, and what the addresses it already holds are worth.",
     "svc.fanlabInsight.subLabel": "Fan Equity Intelligence · one-off analysis",
-    "svc.fanlabPro.btnLabel": "Activate · 18 500 CHF + 300 CHF/week",
-    "svc.fanlabPro.effect": "Setup on activation, then a weekly licence for 3 seasons. Everything in Insight, plus your Fan Equity Value in francs and an ongoing Fan Equity Index, far better odds of signing sponsors, ticketing marketing share 5 → 6% and merchandising +10%.",
+    "svc.fanlabPro.btnLabel": "Activate",
+    "svc.fanlabPro.effect": "Setup on activation, then a weekly licence for 3 seasons. Everything in Insight, plus your Fan Equity Value in francs and an ongoing Fan Equity Index, far better odds of signing sponsors, ticketing marketing share 5 → 7% and merchandising +10%.",
     "svc.fanlabPro.name": "Fan Lab Pro",
     "svc.fanlabPro.pitch": "Measuring what your audience is worth, tracked over time: Fan Equity Value, Fan Equity Index, ticketing and merchandising ROI — the hard argument in front of sponsors.",
     "svc.fanlabPro.real": "The full economic valuation of the audience. In practice: the document you put on the table in a sponsor meeting, when an amount has to be justified rather than negotiated.",
     "svc.fanlabPro.subLabel": "Fan Equity Intelligence · 3-season commitment · includes Insight",
-    "svc.griddy.btnLabel": "Integrate · 2 500 CHF + 500 CHF/week",
+    "svc.griddy.btnLabel": "Integrate",
     "svc.griddy.effect": "Passive collection of qualified contacts every competition week (depending on catchment penetration) — the prize draw that runs itself.",
     "svc.griddy.name": "Griddy Picks",
     "svc.griddy.pitch": "A prediction game in club colours: fans play every league matchday and hand over their data.",
@@ -5704,8 +5728,8 @@ const TX = {
     "ui.21275c": "GDPR compliance drive: compliance {v0}/10",
     "ui.227cd1": "What the game reminded me: without measurement, the value of a fanbase is only a hunch — and no sponsor ever signed for a hunch.",
     "ui.285490": "<div class=\"card challenge-card\">\n    <div>\n      <b><i class=ic-target></i> Challenge mode</b>\n      <span>Same club, same board, exactly the same events — the only variable is you.\n      Create a challenge, or take on the one you were sent.</span>\n    </div>\n    <div class=\"challenge-actions\">\n      <input type=\"text\" id=\"challenge-code\" maxlength=\"16\" placeholder=\"HC-1-A7K9F2-v8\" autocomplete=\"off\" spellcheck=\"false\">\n      <button class=\"primary\" id=\"challenge-go\">Take the challenge</button>\n      <button id=\"challenge-new\">Create a challenge</button>\n    </div>\n    <div id=\"challenge-msg\"></div>\n  </div>",
-    "ui.35c35b": "<i class=ic-launch></i> Fan Data Factory activated (920 CHF/week, 3-season commitment): base cleaned, procedures in place. Quality +1, decay stopped.",
-    "ui.35d2d7": "<i class=ic-launch></i> Blue Penguin integrated ({v0} + 690 CHF/week): the tokenised loyalty programme is live.",
+    "ui.35c35b": "<i class=ic-launch></i> Fan Data Factory activated ({v1}/week, 3-season commitment): base cleaned, procedures in place. Quality +1, decay stopped.",
+    "ui.35d2d7": "<i class=ic-launch></i> Blue Penguin integrated ({v0} + {v1}/week): the tokenised loyalty programme is live.",
     "ui.3905e5": "<i class=ic-clipboard></i> Fan Equity Audit under way — your C'mon Sports partner manager is going through your pillars (report in {v0} wks).",
     "ui.416fc7": "<span style=\"font-size:12px\">Formula: contacts × (1,5 + quality×0,6) × (0,5 + engagement/100) · ticketing & merch ROI optimised</span><br>\n         <a class=\"out-link\" href=\"{v0}\" target=\"_blank\" rel=\"noopener\">Work out what your fanbase is really worth — Fan Lab</a>",
     "ui.43c829": "<div class=\"entry\">The log is empty.</div>",
@@ -5735,7 +5759,7 @@ const TX = {
     "ui.7f9ac2": "Campaign cancelled: contact base too small",
     "ui.811ded": "<h2><i class=ic-layers></i> Share my review</h2>\n    <p style=\"font-size:13px\">Your card is ready. The image is generated on your own device —\n    nothing is sent anywhere unless you publish it yourself.</p>\n    <img class=\"share-preview\" src=\"{v0}\" alt=\"Review card {v1}\">\n    <p style=\"font-size:12px;color:var(--muted);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.06em;font-weight:700\">Text ready to paste</p>\n    <textarea class=\"share-text\" readonly rows=\"9\">{v2}</textarea>\n    <div class=\"choices\">\n      <a class=\"btn-like primary\" id=\"sc-dl\" href=\"{v3}\" download=\"{v4}\"><i class=ic-save></i> Download the image</a>\n      <button id=\"sc-copy\"><i class=ic-layers></i> Copy the text</button>\n      <button id=\"sc-back\">Back</button>\n    </div>",
     "ui.913d38": "<i class=ic-alert></i> RELEGATION to {v0}… −{v1} fans, sponsor contracts revised down (−30%).",
-    "ui.923517": "<i class=ic-launch></i> Fan Lab Pro switched on ({v0}, then 300 CHF/week for 3 seasons): your Fan Equity Value now has a number and the Fan Equity Index starts at 100. Ticketing and merchandising ROI optimised. Your sponsors are going to love this.",
+    "ui.923517": "<i class=ic-launch></i> Fan Lab Pro switched on ({v0}, then {v1}/week for 3 seasons): your Fan Equity Value now has a number and the Fan Equity Index starts at 100. Ticketing and merchandising ROI optimised. Your sponsors are going to love this.",
     "ui.94bccc": "<i class=ic-deal></i> {v0} renews for {v1}/season!",
     "ui.97dade": "<span class=\"badge gold\"><i class=ic-check></i> Included in Fan Lab Pro</span>",
     "ui.9a2874": "<i class=ic-chart></i> Penetration rate: <span style=\"color:var(--muted)\">unknown</span><br>",
@@ -5746,7 +5770,7 @@ const TX = {
     "ui.act.info": "Understand this action",
     "ui.b02d9d": "<div class=\"result-banner\" style=\"border-color:var(--good); color:var(--good)\"><i class=ic-launch></i> PROMOTION to {v0}! Sponsors revalued… but costs and expectations are about to explode.</div>",
     "ui.b0a94f": "Data capture: +{v0} qualified contacts{v1}",
-    "ui.b5410e": "<i class=ic-launch></i> Griddy Picks integrated ({v0} + 500 CHF/matchday): the prediction game is bringing in its first contacts.",
+    "ui.b5410e": "<i class=ic-launch></i> Griddy Picks integrated ({v0} + {v1}/matchday): the prediction game is bringing in its first contacts.",
     "ui.b6dadd": "\n    <div class=\"profile-row\" data-uid=\"{v0}\">\n      <div class=\"avatar\">{v1}</div>\n      <div class=\"pname\">{v2}{v3}</div>\n      <div class=\"pmeta\">{v4}created on {v5}</div>\n    </div>",
     "ui.b736bb": "Challenge {v0} — {v1} points",
     "ui.b7f79f": "{v0} season{v1} running digital marketing",
@@ -5876,12 +5900,14 @@ const TX = {
     "ui.svc.until": "Active · committed until the end of season {v0}",
     "ui.svc.active": "Active",
     "ui.svc.needInsight": "After Fan Lab Insight: measure first, engage second",
-    "ui.svc.range": "Indicative price: {v0}. In the game, a rounded simulation amount (1 season = 1 year).",
+    "ui.svc.range": "Indicative price: {v0}. In the game, a simulation amount scaled to the size of the club (1 season = 1 year).",
     "ui.svc.modules": "Engagement modules — on top",
     "brief.3.title": "Your board",
     "brief.3.body": "<p>The board sets you <b>objectives at the start of the season</b> and settles up at the end. Every missed objective costs confidence; below your board's patience threshold, <b>you are let go</b> and the game ends.</p><p>You will choose its temperament right after your club: lenient, demanding or ruthless. That choice holds for your entire career.</p><p>An <b>onboarding guide</b> will walk with you through the first weeks, at the top of the dashboard. One click hides it, and « Help &amp; rules » brings it back.</p>",
     "ui.login.role.league": "League / federation",
     "ui.login.role.school": "School / university (student, teacher)",
+    "ui.svc.perweek": "/week",
+    "obj.fev.lenient": "Patient board: half penalty.",
   },  /* TX-EN */
 };
 

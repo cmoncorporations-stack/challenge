@@ -65,6 +65,8 @@ Site statique en JavaScript vanilla : aucun build, aucune dépendance, aucun fra
 - `outils/simulation.js` — simulation automatique (quatre clubs, plusieurs saisons, trois stratégies)
   qui vérifie l'absence d'erreur console et la cohérence du fandom :
   `npm i playwright && node outils/simulation.js 3`. Outil de développement : aucune page du site ne le charge.
+- `outils/equilibrage.js` — taux de licenciement par comité, club et stratégie, sur plusieurs centaines
+  de parties : `node outils/equilibrage.js 200`. Outil de développement, lui aussi.
 
 ```bash
 # lancer en local
