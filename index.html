@@ -828,7 +828,7 @@ const FAMILIES = {
   engage:{fr:"Engagement",de:"Engagement",en:"Engagement"},
 };
 const SERVICES = [
-  { id:"audit", fam:"audit", name:"Fan Equity Audit", price:{fr:"4 000 – 6 000 CHF · one-shot",de:"CHF 4 000 – 6 000 · einmalig",en:"CHF 4,000 – 6,000 · one-off"},
+  { id:"audit", fam:"audit", name:"Fan Equity Audit", format:{fr:"one-shot",de:"einmalig",en:"one-off"},
     pitch:{fr:"Le bilan complet de la manière dont le club collecte et utilise ses données : lancement, analyse, atelier avec le comité, rapport et feuille de route. L'audit ne chiffre pas encore vos fans : il mesure la capacité de votre club à faire fructifier sa fan equity. La valeur en francs, c'est Fan Lab Pro.",
            de:"Die vollständige Bilanz, wie der Club seine Daten sammelt und nutzt: Kick-off, Analyse, Workshop mit dem Vorstand, Bericht und Roadmap. Das Audit beziffert Ihre Fans noch nicht: Es misst, wie gut Ihr Club seine Fan Equity zur Entfaltung bringen kann. Den Wert in Franken liefert Fan Lab Pro.",
            en:"The full picture of how the club collects and uses its data: kick-off, analysis, a workshop with the board, report and roadmap. The audit doesn't put a number on your fans yet: it measures how well your club can make its fan equity grow. The value in francs is Fan Lab Pro's job."},
@@ -838,7 +838,7 @@ const SERVICES = [
     real:{fr:"Il transforme une intuition sur vos données en note comparable d'une année sur l'autre, avec une feuille de route chiffrée.",
           de:"Es verwandelt ein Bauchgefühl über Ihre Daten in eine Note, die von Jahr zu Jahr vergleichbar ist — mit einer bezifferten Roadmap.",
           en:"It turns a hunch about your data into a score you can compare year on year, with a costed roadmap."} },
-  { id:"insight", fam:"intel", name:"Fan Lab Insight", price:{fr:"5 000 – 8 000 CHF · analyse",de:"CHF 5 000 – 8 000 · Analyse",en:"CHF 5,000 – 8,000 · analysis"},
+  { id:"insight", fam:"intel", name:"Fan Lab Insight", format:{fr:"analyse one-shot",de:"Einmalanalyse",en:"one-off analysis"},
     pitch:{fr:"L'analyse fondamentale de votre base CRM : qualité des données et indice de pénétration de votre bassin de fans.",
            de:"Die Grundanalyse Ihrer CRM-Basis: Datenqualität und Durchdringungsindex Ihres Fan-Einzugsgebiets.",
            en:"The fundamental analysis of your CRM base: data quality and the penetration index of your fan catchment."},
@@ -848,7 +848,7 @@ const SERVICES = [
     real:{fr:"La première mesure sérieuse d'une base : combien de personnes le club pourrait réellement atteindre, et ce que valent les adresses qu'il possède déjà.",
           de:"Die erste ernsthafte Messung einer Basis: Wie viele Personen der Club tatsächlich erreichen könnte und was die vorhandenen Adressen wert sind.",
           en:"The first serious measurement of a base: how many people the club could actually reach, and what the addresses it already holds are worth."} },
-  { id:"pro", fam:"intel", name:"Fan Lab Pro", price:{fr:"15 000 – 22 000 CHF / an · engagement 3 ans",de:"CHF 15 000 – 22 000 / Jahr · 3 Jahre",en:"CHF 15,000 – 22,000 / year · 3-year commitment"},
+  { id:"pro", fam:"intel", name:"Fan Lab Pro", format:{fr:"abonnement annuel",de:"Jahresabonnement",en:"annual subscription"},
     pitch:{fr:"La mesure de la valeur de votre audience, suivie dans la durée : Fan Equity Value, Fan Equity Index, ROI ticketing et merchandising.",
            de:"Die Messung des Werts Ihres Publikums, über die Zeit verfolgt: Fan Equity Value, Fan Equity Index, Ticketing- und Merchandising-ROI.",
            en:"Measuring what your audience is worth, tracked over time: Fan Equity Value, Fan Equity Index, ticketing and merchandising ROI."},
@@ -858,7 +858,7 @@ const SERVICES = [
     real:{fr:"Le document qu'on pose sur la table en rendez-vous sponsor, quand il faut justifier un montant plutôt que le négocier.",
           de:"Das Dokument, das man beim Sponsorentermin auf den Tisch legt, wenn ein Betrag begründet statt verhandelt werden muss.",
           en:"The document you put on the table in a sponsor meeting, when a price has to be justified rather than haggled over."} },
-  { id:"df", fam:"mgmt", name:"Fan Data Factory", price:{fr:"1 500 – 2 500 CHF / mois · engagement 3 ans",de:"CHF 1 500 – 2 500 / Monat · 3 Jahre",en:"CHF 1,500 – 2,500 / month · 3-year commitment"},
+  { id:"df", fam:"mgmt", name:"Fan Data Factory", format:{fr:"abonnement mensuel",de:"Monatsabonnement",en:"monthly subscription"},
     pitch:{fr:"Le service opérationnel qui structure et entretient vos données fans : nettoyage, déduplication, procédures de collecte et de maintenance.",
            de:"Der operative Dienst, der Ihre Fandaten strukturiert und pflegt: Bereinigung, Deduplizierung, Erfassungs- und Wartungsprozesse.",
            en:"The operational service that structures and maintains your fan data: cleaning, de-duplication, collection and maintenance procedures."},
@@ -868,7 +868,7 @@ const SERVICES = [
     real:{fr:"Sans lui, une base perd environ un cinquième de sa valeur par an.",
           de:"Ohne ihn verliert eine Datenbasis rund ein Fünftel ihres Werts pro Jahr.",
           en:"Without it, a database loses about a fifth of its value every year."} },
-  { id:"bp", fam:"engage", name:"Blue Penguin", price:{fr:"10 000 – 15 000 CHF + 1 000 – 2 000 CHF / mois",de:"CHF 10 000 – 15 000 + CHF 1 000 – 2 000 / Monat",en:"CHF 10,000 – 15,000 + CHF 1,000 – 2,000 / month"},
+  { id:"bp", fam:"engage", name:"Blue Penguin", format:{fr:"mise en place + abonnement",de:"Einrichtung + Abonnement",en:"setup + subscription"},
     pitch:{fr:"Programme de fidélité tokenisé : les fans gagnent des récompenses à chaque interaction avec le club.",
            de:"Tokenisiertes Treueprogramm: Fans erhalten bei jeder Interaktion mit dem Club Belohnungen.",
            en:"A tokenised loyalty programme: fans earn rewards with every interaction with the club."},
@@ -878,7 +878,7 @@ const SERVICES = [
     real:{fr:"Chaque interaction du fan avec le club lui rapporte quelque chose — et rapporte au club une donnée de plus.",
           de:"Jede Interaktion des Fans mit dem Club bringt ihm etwas — und dem Club ein weiteres Datum.",
           en:"Every interaction a fan has with the club earns them something — and earns the club one more data point."} },
-  { id:"gp", fam:"engage", name:"Griddy Picks", price:{fr:"2 000 – 3 000 CHF + 400 – 600 CHF / jour de match",de:"CHF 2 000 – 3 000 + CHF 400 – 600 / Spieltag",en:"CHF 2,000 – 3,000 + CHF 400 – 600 / matchday"},
+  { id:"gp", fam:"engage", name:"Griddy Picks", format:{fr:"mise en place + par jour de match",de:"Einrichtung + pro Spieltag",en:"setup + per matchday"},
     pitch:{fr:"Jeu de pronostics aux couleurs du club : les fans jouent chaque journée de championnat et laissent leurs données.",
            de:"Tippspiel in den Clubfarben: Die Fans spielen an jedem Meisterschaftsspieltag mit und hinterlassen ihre Daten.",
            en:"A prediction game in the club's colours: fans play every matchday and leave their data."},
@@ -898,7 +898,8 @@ const S = {
   dmosStart:{fr:"Maturité data de départ",de:"Datenreife zu Beginn",en:"Starting data maturity"},
   week:{fr:"Semaine",de:"Woche",en:"Week"}, wk:{fr:"S",de:"W",en:"W"},
   inGame:{fr:"Dans le jeu",de:"Im Spiel",en:"In the game"}, inReal:{fr:"Dans la réalité",de:"In der Realität",en:"In real life"},
-  priceHint:{fr:"Prix indicatif :",de:"Richtpreis:",en:"Indicative price:"},
+  priceHint:{fr:"Format :",de:"Format:",en:"Format:"},
+  priceNote:{fr:"Le tarif se construit avec vous, à la taille du club — parlons-en.",de:"Der Preis entsteht mit Ihnen, passend zur Grösse des Clubs — sprechen wir darüber.",en:"Pricing is built with you, to the size of the club — let's talk."},
   noMeasure:{fr:"Sans mesure",de:"Ohne Messung",en:"Unmeasured"}, measured:{fr:"Avec C'mon Sports",de:"Mit C'mon Sports",en:"With C'mon Sports"},
   board:{fr:"Tableau de bord",de:"Dashboard",en:"Dashboard"},
   fogDmos0:{fr:"Fourchette estimée",de:"Geschätzte Spanne",en:"Estimated range"}, fogDmos1:{fr:"Note exacte · Fan Equity Audit",de:"Exakte Note · Fan Equity Audit",en:"Exact score · Fan Equity Audit"},
@@ -1200,7 +1201,7 @@ function renderSvc() {
   document.querySelectorAll(".svc-tab").forEach(b => b.onclick = () => { svcSel = +b.dataset.s; renderSvc(); });
   const s = SERVICES[svcSel];
   $("#svc-panel").innerHTML = `
-    <div class="fade-swap"><div class="fam">${esc(L(FAMILIES[s.fam]))}</div><h3>${esc(s.name)}</h3><div class="price">${esc(L(S.priceHint))} ${esc(L(s.price))}</div><p class="pitch">${esc(L(s.pitch))}</p></div>
+    <div class="fade-swap"><div class="fam">${esc(L(FAMILIES[s.fam]))}</div><h3>${esc(s.name)}</h3><div class="price">${esc(L(S.priceHint))} ${esc(L(s.format))}</div><p class="pitch">${esc(L(s.pitch))}</p><p class="pitch" style="color:var(--ink-3);font-size:13px">${esc(L(S.priceNote))}</p></div>
     <div class="fade-swap">
       <div class="svc-col game"><h4>${esc(L(S.inGame))}</h4><p>${esc(L(s.game))}</p></div>
       <div class="svc-col real"><h4>${esc(L(S.inReal))}</h4><p>${esc(L(s.real))}</p></div>

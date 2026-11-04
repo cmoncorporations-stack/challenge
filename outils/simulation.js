@@ -41,7 +41,7 @@ const server = http.createServer((req, res) => {
 
   const result = await page.evaluate(seasons => {
     const problems = [];
-    const proPrice = SERVICES.find(x => x.id === "fanlabPro").setup;
+    const proPrice = svcSetup(state, SERVICES.find(x => x.id === "fanlabPro"));
     const start = CLUBS.map(c => {
       newGame(c, 1);
       const fev = fanEquityValue(state);
