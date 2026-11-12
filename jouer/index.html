@@ -460,6 +460,8 @@ tbody tr:hover{background:var(--brand-soft)}
 .kpi .lbl .info-btn{width:16px;height:16px;font-size:10.5px;vertical-align:-.18em;margin-left:5px}
 
 /* Sélecteur de langue */
+.cur-pick{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 9px;
+  font-size:var(--t1);color:var(--ink-3)}
 .lang-switch{display:inline-flex;gap:3px;margin-top:12px;padding:3px;border-radius:99px;
   border:1px solid var(--edge);background:var(--sunken)}
 .lang-btn{padding:4px 13px;border-radius:99px;border:1px solid transparent;background:none;
@@ -765,6 +767,10 @@ input[type="text"]:focus,input[type="password"]:focus{border-color:var(--brand-l
             <option value="École / université" data-i18n="ui.login.role.school">École / université (étudiant·e, enseignant·e)</option>
             <option value="Autre" data-i18n="ui.login.role.other">Autre</option>
           </select>
+          <div class="cur-pick" role="group" aria-label="Devise d'affichage des montants" data-i18n-aria="ui.login.cur">
+            <span data-i18n="ui.login.cur">Devise d'affichage des montants</span>
+            <div id="new-currency" class="lang-switch" style="margin:0"></div>
+          </div>
           <input type="password" id="new-pin" maxlength="8" inputmode="numeric" placeholder="Code PIN 4-8 chiffres (optionnel)" data-i18n-ph="ui.login.ph.pin">
           <label style="display:flex; gap:8px; align-items:flex-start; font-size:12px; color:var(--muted); line-height:1.5; cursor:pointer">
             <input type="checkbox" id="new-optin" style="margin-top:2px; accent-color:#62BEF5">
@@ -964,6 +970,7 @@ input[type="text"]:focus,input[type="password"]:focus{border-color:var(--brand-l
 
   <!-- prototype v7 --><div class="footer-note"><svg class="cmon-icon" viewBox="210 210 545 465" fill="#62bdf4" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="C’mon Sports"><polygon class="cls-1" points="397.1 586.91 371.5 543.31 311.66 441.39 324.56 419.15 278.89 341.37 220.93 442.04 352.01 665.28 469.15 665.41 423.07 586.93 397.1 586.91"/><polygon class="cls-1" points="537.9 295.62 563.77 295.63 648.63 440.05 635.72 462.4 681.35 540.11 739.25 439.74 608.59 217.18 466.77 217.28 421.28 296.14 577.81 562.8 563.95 586.83 539.86 586.87 382.42 318.72 440.9 217.33 350.43 217.35 291.76 319.07 495 665.23 609.34 665.27 668.48 562.52 525 318.04 537.9 295.62"/></svg><div style="margin-top:8px" data-i18n="ui.footer.note">C'mon Sports Challenge · l'écosystème C'mon Sports en jeu · sauvegarde locale automatique en fin de semaine</div>
     <div id="lang-switch" class="lang-switch" role="group" aria-label="Langue / Sprache / Language"></div>
+    <div id="currency-switch" class="lang-switch" role="group" aria-label="Devise / Währung / Currency" style="margin-left:8px"></div>
     <div class="footer-links">
       <a href="../" data-i18n="ui.footer.home">Découvrir le C'mon Sports Challenge</a> ·
       <a id="link-help" data-i18n="ui.footer.help"><i class=ic-bulb></i> Aide &amp; règles</a> ·
@@ -1009,6 +1016,68 @@ function detectLang() {
   return "fr";
 }
 let lang = detectLang();
+
+/* ---------------- Devise d'affichage ----------------
+   Le jeu raisonne en unités internes ; la devise n'est qu'une étiquette,
+   portée par le profil — jamais par la sauvegarde de partie. Aucun taux de
+   change : un même défi se lit en francs chez l'un et en euros chez
+   l'autre, aux mêmes nombres. */
+const CURRENCIES = [
+  { id:"CHF", sym:"CHF" },
+  { id:"EUR", sym:"€" },
+  { id:"GBP", sym:"£" },
+  { id:"USD", sym:"$" },
+];
+const CURRENCY_KEY = "mktclubgm_currency";
+const EURO_REGIONS = ["FR","DE","AT","BE","IT","ES","NL","LU","PT","IE","FI","GR"];
+function currencyFromRegion() {
+  try {
+    const r = (String(navigator.language || "").split("-")[1] || "").toUpperCase();
+    if (r === "CH" || r === "LI") return "CHF";
+    if (EURO_REGIONS.includes(r)) return "EUR";
+    if (r === "GB") return "GBP";
+    if (r === "US" || r === "CA") return "USD";
+  } catch (e) {}
+  return "CHF";
+}
+function detectCurrency() {
+  try {
+    const saved = localStorage.getItem(CURRENCY_KEY);
+    if (saved && CURRENCIES.some(c => c.id === saved)) return saved;
+  } catch (e) {}
+  return currencyFromRegion();
+}
+let currency = detectCurrency();
+function currencySym(id) { const c = CURRENCIES.find(x => x.id === (id || currency)); return c ? c.sym : "CHF"; }
+
+/* Change l'étiquette sans recharger : aucun nombre ne bouge. */
+function setCurrency(id) {
+  if (!CURRENCIES.some(c => c.id === id) || id === currency) return;
+  currency = id;
+  try { localStorage.setItem(CURRENCY_KEY, id); } catch (e) {}
+  if (currentUser) {
+    currentUser.currency = id;
+    const users = loadUsers();
+    const u = users.find(x => x.id === currentUser.id);
+    if (u) { u.currency = id; saveUsers(users); }
+  }
+  renderCurrencySwitch();
+  const game = document.getElementById("screen-game");
+  if (state && game && !game.classList.contains("hidden")) { prevKpis = null; renderAll(); }
+}
+
+/* Pastilles CHF · € · £ · $ — même dessin que les langues. */
+function currencyPickHtml(selected) {
+  return CURRENCIES.map(c =>
+    `<button type="button" class="lang-btn${c.id === selected ? " on" : ""}" data-cur="${c.id}"
+       aria-label="${c.id}"${c.id === selected ? ' aria-current="true"' : ""}>${c.sym}</button>`).join("");
+}
+function renderCurrencySwitch() {
+  const box = document.getElementById("currency-switch");
+  if (!box) return;
+  box.innerHTML = currencyPickHtml(currency);
+  box.querySelectorAll("button").forEach(b => { b.onclick = () => setCurrency(b.dataset.cur); });
+}
 
 /* tr(clé, variables, texteFrançais)
    Le troisième argument porte la version française : elle sert de source
@@ -1436,8 +1505,8 @@ function svcSetup(s, sv) {
 function svcWeekly(s, sv) { return sv.weeklyShare ? Math.round(sv.weeklyShare * s.budget0 / 10) * 10 : 0; }
 function svcPriceText(s, sv) {
   const parts = [];
-  if (sv.setupShare) parts.push(fmtCHF(svcSetup(s, sv)));
-  if (sv.weeklyShare) parts.push(fmtCHF(svcWeekly(s, sv)) + tr("ui.svc.perweek", null, "/sem."));
+  if (sv.setupShare) parts.push(fmtMoney(svcSetup(s, sv)));
+  if (sv.weeklyShare) parts.push(fmtMoney(svcWeekly(s, sv)) + tr("ui.svc.perweek", null, "/sem."));
   return parts.join(" + ");
 }
 function weeklyServicesCost(s) {
@@ -1449,17 +1518,17 @@ function buyService(id) {
   const st = state.services;
   if (serviceActive(state, id)) return;
   const upfront = svcSetup(state, svc);
-  const weekly = fmtCHF(svcWeekly(state, svc));
+  const weekly = fmtMoney(svcWeekly(state, svc));
   if (state.budget < upfront) return;
   if (svc.module && !insightActive(state)) return;   // on mesure d'abord, on engage ensuite
   state.budget -= upfront;
   const MSG = {
-    audit: tr("ui.57e497", {v0: fmtCHF(upfront), v1: svc.duration}, `<i class=ic-launch></i> Fan Equity Audit commandé auprès de C'mon Sports ({v0}). Kick-off cette semaine — rapport dans {v1} semaines.`),
-    fanlabInsight: tr("ui.f3388d", {v0: fmtCHF(upfront)}, `<i class=ic-launch></i> Fan Lab Insight livré ({v0}) : qualité de vos données CRM et pénétration du bassin enfin mesurées.`),
-    fanlabPro: tr("ui.923517", {v0: fmtCHF(upfront), v1: weekly}, `<i class=ic-launch></i> Fan Lab Pro activé ({v0}, puis {v1}/sem. sur 3 saisons) : votre Fan Equity Value est chiffrée et le Fan Equity Index démarre à 100. ROI ticketing et merchandising optimisés. Vos sponsors vont adorer.`),
+    audit: tr("ui.57e497", {v0: fmtMoney(upfront), v1: svc.duration}, `<i class=ic-launch></i> Fan Equity Audit commandé auprès de C'mon Sports ({v0}). Kick-off cette semaine — rapport dans {v1} semaines.`),
+    fanlabInsight: tr("ui.f3388d", {v0: fmtMoney(upfront)}, `<i class=ic-launch></i> Fan Lab Insight livré ({v0}) : qualité de vos données CRM et pénétration du bassin enfin mesurées.`),
+    fanlabPro: tr("ui.923517", {v0: fmtMoney(upfront), v1: weekly}, `<i class=ic-launch></i> Fan Lab Pro activé ({v0}, puis {v1}/sem. sur 3 saisons) : votre Fan Equity Value est chiffrée et le Fan Equity Index démarre à 100. ROI ticketing et merchandising optimisés. Vos sponsors vont adorer.`),
     datafactory: tr("ui.35c35b", {v1: weekly}, `<i class=ic-launch></i> Fan Data Factory activé ({v1}/sem., engagement 3 saisons) : base nettoyée, procédures en place. Qualité +1, dégradation stoppée.`),
-    bluepenguin: tr("ui.35d2d7", {v0: fmtCHF(upfront), v1: weekly}, `<i class=ic-launch></i> Blue Penguin intégré ({v0} + {v1}/sem.) : le programme de fidélité tokenisé est en ligne.`),
-    griddy: tr("ui.b5410e", {v0: fmtCHF(upfront), v1: weekly}, `<i class=ic-launch></i> Griddy Picks intégré ({v0} + {v1}/jour de match) : le jeu de pronostics collecte ses premiers contacts.`),
+    bluepenguin: tr("ui.35d2d7", {v0: fmtMoney(upfront), v1: weekly}, `<i class=ic-launch></i> Blue Penguin intégré ({v0} + {v1}/sem.) : le programme de fidélité tokenisé est en ligne.`),
+    griddy: tr("ui.b5410e", {v0: fmtMoney(upfront), v1: weekly}, `<i class=ic-launch></i> Griddy Picks intégré ({v0} + {v1}/jour de match) : le jeu de pronostics collecte ses premiers contacts.`),
   };
   if (id === "audit") {
     st.auditIn = svc.duration;
@@ -1530,8 +1599,20 @@ function challengeScore(s) {
     (s.season - 1) * 500
   ));
 }
-const fmt = n => Math.round(n).toLocaleString("fr-CH");
-const fmtCHF = n => fmt(n) + " CHF";
+/* Les nombres se lisent à la suisse en français et en allemand, à l'anglaise
+   en anglais. La devise suit le profil : symbole après le nombre en FR/DE,
+   avant en EN (« CHF 60,000 », « €60,000 »). */
+const NUM_LOCALE = { fr: "fr-CH", de: "fr-CH", en: "en-GB" };
+const fmt = n => Math.round(n).toLocaleString(NUM_LOCALE[lang] || "fr-CH");
+function fmtMoney(n, decimals) {
+  if (n < 0) return "−" + fmtMoney(-n, decimals);
+  const num = decimals
+    ? Number(n).toLocaleString(NUM_LOCALE[lang] || "fr-CH", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+    : fmt(n);
+  const sym = currencySym();
+  if (lang === "en") return sym === "CHF" ? "CHF " + num : sym + num;
+  return num + " " + sym;
+}
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 
 function log(s, msg, cls) {
@@ -2002,7 +2083,7 @@ function resolveActions(s) {
           if (s.services.datafactory) { shiftFandom(s, 0.75*fatigueMult, 0); shiftFandom(s, 0.75*fatigueMult, 1); }
           else shiftFandom(s, 1.5*fatigueMult, 0);
           s.emailFatigue = clamp(s.emailFatigue + fatigueGain, 0, 4);
-          summary.push(`Campagne emailing : +${fmtCHF(rev)}${fatigueMult<1 ? tr("lbl.ef3c28", null, " (fatigue de la base)") : ""}`);
+          summary.push(`Campagne emailing : +${fmtMoney(rev)}${fatigueMult<1 ? tr("lbl.ef3c28", null, " (fatigue de la base)") : ""}`);
           break;
         }
         case "collect": {
@@ -2019,7 +2100,7 @@ function resolveActions(s) {
           s.sponsors.forEach(sp => { sp.satisfaction = clamp(sp.satisfaction + 8, 0, 100); bonus += Math.round(sp.amount*0.01); });
           shiftFandom(s, 0.4, 2);   // activations exclusives : des abonnés deviennent ambassadeurs
           s.budget += bonus;
-          summary.push(`Activation sponsor : satisfaction +8 %${bonus?`, bonus ${fmtCHF(bonus)}`:""}`);
+          summary.push(`Activation sponsor : satisfaction +8 %${bonus?`, bonus ${fmtMoney(bonus)}`:""}`);
           break;
         }
         case "prospect": {
@@ -2041,7 +2122,7 @@ function resolveActions(s) {
             s.sponsors.push({ name: base.name, sector: base.sector, amount, satisfaction: 70, seasons: 2 });
             s.usedSponsors.push(base.name);
             s.boardConfidence = clamp(s.boardConfidence + 6, 0, 100);
-            log(s, tr("msg.da086d", {v0: base.name, v1: base.sector, v2: fmtCHF(amount)}, tr("ui.da086d", null, `<i class=ic-deal></i> Nouveau sponsor signé : {v0} ({v1}) pour {v2}/saison !`)), "good");
+            log(s, tr("msg.da086d", {v0: base.name, v1: base.sector, v2: fmtMoney(amount)}, tr("ui.da086d", null, `<i class=ic-deal></i> Nouveau sponsor signé : {v0} ({v1}) pour {v2}/saison !`)), "good");
             summary.push(tr("msg.735c4c", {v0: base.name}, tr("ui.735c4c", null, `Prospection réussie : {v0} signe !`)));
           } else {
             summary.push(`Prospection : pas de signature cette fois (chances : ${Math.round(p*100)} %)`);
@@ -2131,11 +2212,11 @@ function advanceWeek() {
       s.seasonStats.euroWins++;
       s.engagement = clamp(s.engagement + 4, 0, 100);
       s.boardConfidence = clamp(s.boardConfidence + 3, 0, 100);
-      euroMsg = { msg: tr("ui.fe0f6b", {v0: fmtCHF(gain)}, `<i class=ic-globe></i> Victoire européenne ! Prime et droits TV : +{v0} (déplacement −3 000 CHF). La ville vibre.`), cls: "good" };
+      euroMsg = { msg: tr("ui.fe0f6b", {v0: fmtMoney(gain)}, `<i class=ic-globe></i> Victoire européenne ! Prime et droits TV : +{v0} (déplacement −3 000 CHF). La ville vibre.`), cls: "good" };
     } else {
       s.seasonStats.euroLosses++;
       s.engagement = clamp(s.engagement - 3, 0, 100);
-      euroMsg = { msg: tr("ui.cc6e4f", {v0: fmtCHF(gain)}, `<i class=ic-globe></i> Défaite en coupe d'Europe. Droits TV +{v0}, déplacement −3 000 CHF. Les fans attendaient mieux.`), cls: "bad" };
+      euroMsg = { msg: tr("ui.cc6e4f", {v0: fmtMoney(gain)}, `<i class=ic-globe></i> Défaite en coupe d'Europe. Droits TV +{v0}, déplacement −3 000 CHF. Les fans attendaient mieux.`), cls: "bad" };
     }
     s.budget += gain;
     s.seasonStats.revenue += gain;
@@ -2167,12 +2248,12 @@ function advanceWeek() {
   s.lastMatch = { win: match.win, home: match.home, att: match.att, share: ticketShare,
                   week: s.week, season: s.season, pos: projectedPos(s) };
   const resTxt = match.win ? tr("lbl.505e81", null, "Victoire") : tr("lbl.97b5d0", null, "Défaite");
-  const where = match.home ? tr("ui.c73e34", {v0: fmt(match.att), v1: fmtCHF(match.ticketRev), v2: fmtCHF(ticketShare)}, `à domicile ({v0} spect., billetterie {v1}, part marketing +{v2})`) : tr("lbl.c78646", null, "à l'extérieur");
+  const where = match.home ? tr("ui.c73e34", {v0: fmt(match.att), v1: fmtMoney(match.ticketRev), v2: fmtMoney(ticketShare)}, `à domicile ({v0} spect., billetterie {v1}, part marketing +{v2})`) : tr("lbl.c78646", null, "à l'extérieur");
   log(s, tr("msg.3fc3f8", {v0: resTxt, v1: where, v2: projectedPos(s), v3: divisionName(s.division)},
     `<i class=ic-trophy></i> {v0} {v1} · {v2}e du championnat ({v3}).`), match.win ? "good" : "bad");
   if (euroMsg) log(s, euroMsg.msg, euroMsg.cls);
   actionSummary.forEach(m => log(s, `• ${m}`));
-  log(s, `<i class=ic-money></i> Sponsors +${fmtCHF(sponsorWeekly)} · Merch +${fmtCHF(merch)} · Frais fixes −${fmtCHF(weekCost())}${svcCost ? ` · Services C'mon Sports −${fmtCHF(svcCost)}` : ""}`);
+  log(s, `<i class=ic-money></i> Sponsors +${fmtMoney(sponsorWeekly)} · Merch +${fmtMoney(merch)} · Frais fixes −${fmtMoney(weekCost())}${svcCost ? ` · Services C'mon Sports −${fmtMoney(svcCost)}` : ""}`);
 
   // 6. Budget négatif ?
   if (s.budget < 0) {
@@ -2309,7 +2390,7 @@ function endSeason(s) {
   s.history.unshift(bilan);
   log(s, tr("msg.5927d9", {v0: s.season, v1: pos, v2: divisionName(playedDivision), v3: okCount, v4: results.length}, tr("ui.5927d9", null, `<i class=ic-flag></i> Fin de la saison {v0} : {v1}e de {v2}, {v3}/{v4} objectifs atteints.`)), okCount>=3?"good":okCount>=2?"warn":"bad");
   renewals.forEach(r => log(s, r.renewed
-    ? tr("ui.94bccc", {v0: r.name, v1: fmtCHF(r.amount)}, `<i class=ic-deal></i> {v0} renouvelle pour {v1}/saison !`)
+    ? tr("ui.94bccc", {v0: r.name, v1: fmtMoney(r.amount)}, `<i class=ic-deal></i> {v0} renouvelle pour {v1}/saison !`)
     : `<i class=ic-user></i> ${r.name} ne renouvelle pas son contrat (satisfaction insuffisante).`, r.renewed?"good":"bad"));
 
   if (s.boardConfidence <= diff(s).fireAt) {
@@ -2328,7 +2409,7 @@ let prevKpis = null;
 
 function kpiList(s) {
   return [
-    { lbl:tr("lbl.7aeba4", null, "Budget"), info:"budget", val: fmtCHF(s.budget), raw: s.budget, color: s.budget<0 ? "var(--bad)" : "" },
+    { lbl:tr("lbl.7aeba4", null, "Budget"), info:"budget", val: fmtMoney(s.budget), raw: s.budget, color: s.budget<0 ? "var(--bad)" : "" },
     { lbl:tr("lbl.73d38d", null, "Fans"), info:"fans", val: fmt(s.fans), raw: s.fans },
     { lbl:tr("lbl.4b1f1c", null, "Engagement"), info:"engagement", val: Math.round(s.engagement)+" %", raw: s.engagement },
     { lbl:tr("lbl.641538", null, "Contacts CRM"), info:"contacts", val: fmt(s.contacts), raw: s.contacts },
@@ -2406,7 +2487,7 @@ function renderActions() {
     const cost = actionCost(state, a);
     const canAdd = used + a.ap <= 3;
     const aide = ` <button class="info-btn info-act" data-act-info="${a.id}" aria-label="${esc(tr("ui.act.info", null, "Comprendre cette action"))}" title="${esc(tr("ui.act.info", null, "Comprendre cette action"))}">i</button>`;
-    return tr("ui.06a572", {v0: n?'selected':'', v1: a.name + aide, v2: a.ap, v3: a.desc, v4: fmtCHF(cost), v5: a.id, v6: n?'':'disabled', v7: n, v8: a.id, v9: canAdd?'':'disabled'}, `<div class="action {v0}">
+    return tr("ui.06a572", {v0: n?'selected':'', v1: a.name + aide, v2: a.ap, v3: a.desc, v4: fmtMoney(cost), v5: a.id, v6: n?'':'disabled', v7: n, v8: a.id, v9: canAdd?'':'disabled'}, `<div class="action {v0}">
       <div class="info">
         <div class="name">{v1} <span style="font-weight:400;color:var(--muted);font-size:11px">({v2} PA)</span></div>
         <div class="desc">{v3}</div>
@@ -2440,7 +2521,7 @@ function renderLastResult() {
   const m = state.lastMatch;
   if (!m) { el.innerHTML = ""; return; }
   const detail = m.home
-    ? tr("ui.4fedb1", {v0: fmt(m.att), v1: fmtCHF(m.share)}, `à domicile · {v0} spectateurs · part marketing +{v1}`)
+    ? tr("ui.4fedb1", {v0: fmt(m.att), v1: fmtMoney(m.share)}, `à domicile · {v0} spectateurs · part marketing +{v1}`)
     : tr("ui.c78646", null, `à l'extérieur`);
   const issue = m.win ? tr("lbl.07a186", null, `VICTOIRE`) : tr("lbl.c2ffca", null, `DÉFAITE`);
   el.innerHTML = `<div class="hero ${m.win?'hero-win':'hero-loss'}">
@@ -2595,7 +2676,7 @@ function renderDmos() {
   const insight = insightActive(state);
   const pro = state.services.fanlabPro;
   const flv = fanEquityValue(state);
-  $("#fanlab-value").textContent = pro ? fmtCHF(flv) : "? CHF";
+  $("#fanlab-value").textContent = pro ? fmtMoney(flv) : "? CHF";
   $("#fanlab-value").style.color = pro ? "var(--accent)" : "var(--muted)";
   const anonymous = Math.max(0, state.fans - state.contacts);
   const idxNow = fanEquityIndex(state);
@@ -2684,7 +2765,7 @@ function renderFandom() {
   const html = floors.map((f, k) => {
     const width = 62 + k * 9.5;
     const count = insight ? fmt(f.count) : "?";
-    const value = pro ? fmtCHF(f.value) : "? CHF";
+    const value = pro ? fmtMoney(f.value) : "? CHF";
     return `<div class="fandom-floor" style="width:${width}%"><span>${names[k]}</span><b>${count}</b><span class="v">${value}</span></div>`;
   }).join("");
   $("#fandom").innerHTML = `<div class="fandom-head">${tr("ui.fandom.head", {v0: fmt(s.fans), v1: fmt(s.contacts)}, "{v0} fans · {v1} contacts connus")}</div>` + html +
@@ -2696,7 +2777,7 @@ function renderSponsors() {
     const c = sp.satisfaction>=70?'var(--good)':sp.satisfaction>=45?'var(--warn)':'var(--bad)';
     return `<tr>
       <td><b>${sp.name}</b></td><td>${sp.sector}</td>
-      <td>${fmtCHF(sp.amount)}</td>
+      <td>${fmtMoney(sp.amount)}</td>
       <td class="sat" style="color:${c}">${Math.round(sp.satisfaction)} %</td>
       <td>${tr("lbl.aca0ff", {v0: sp.seasons, v1: sp.seasons>1?'s':''}, `{v0} saison{v1} restante{v1}`)}</td>
     </tr>`;
@@ -2777,7 +2858,7 @@ function renderHistory() {
     <div style="border:1px solid var(--border); border-radius:0; padding:12px; margin-bottom:10px; background:var(--panel2)">
       ${tr("lbl.c518d2", {v0: h.season, v1: leagueTxt ? leagueTxt+' · ' : '', v2: h.okCount, v3: h.results.length, v4: h.wins, v5: h.losses, v6: h.cert, v7: badges},
         `<b style="color:var(--text)">Saison {v0}</b> — {v1}{v2}/{v3} objectifs · {v4}V-{v5}D · {v6}{v7}`)}<br>
-      ${tr("lbl.e39781", {v0: fmtCHF(h.revenue), v1: fmtCHF(h.ticketRevenue), v2: fmtCHF(h.sponsorRevenue), v3: fmtCHF(h.merchRevenue)},
+      ${tr("lbl.e39781", {v0: fmtMoney(h.revenue), v1: fmtMoney(h.ticketRevenue), v2: fmtMoney(h.sponsorRevenue), v3: fmtMoney(h.merchRevenue)},
         `Revenus : {v0} (billetterie {v1}, sponsors {v2}, merch {v3})`)}<br>
       ${tr("lbl.6b349f", {v0: (h.fansDelta>=0?'+':'') + fmt(h.fansDelta), v1: (h.dmosDelta>=0?'+':'') + h.dmosDelta},
         `Fans : {v0} · DMOS : {v1}`)}${h.fei != null ? ` · Fan Equity Index ${h.fei}` : ""}
@@ -2811,14 +2892,14 @@ function showDecision(d) {
 function showSeasonModal(b) {
   const rows = b.results.map(r=>`<li style="color:${r.ok?'var(--good)':'var(--bad)'}">${r.ok?'<i class=ic-check></i>':'<i class=ic-cross></i>'} ${r.label}${r.note ? `<br><span style="color:var(--ink-3); font-size:12px">${r.note}</span>` : ""}</li>`).join("");
   const ren = b.renewals.map(r=> r.renewed
-    ? `<li style="color:var(--good)"><i class=ic-deal></i> ${r.name} renouvelle (${fmtCHF(r.amount)}/saison)</li>`
+    ? `<li style="color:var(--good)"><i class=ic-deal></i> ${r.name} renouvelle (${fmtMoney(r.amount)}/saison)</li>`
     : `<li style="color:var(--bad)"><i class=ic-user></i> ${r.name} part</li>`).join("") || tr("lbl.6ff677", null, "<li style='color:var(--muted)'>Aucun contrat n'arrivait à échéance.</li>");
   const euroLine = b.wasEurope ? ` · Coupe d'Europe : ${b.euroWins}V-${b.euroLosses}D` : "";
   let leagueBanner = `<div class="result-banner"><i class=ic-chart></i> ${b.pos}e de ${divisionName(b.playedDivision)} (${b.wins}V-${b.losses}D${euroLine})</div>`;
   if (b.promoted) leagueBanner += tr("ui.b02d9d", {v0: divisionName(1)}, `<div class="result-banner" style="border-color:var(--good); color:var(--good)"><i class=ic-launch></i> PROMOTION en {v0} ! Sponsors revalorisés… mais charges et attentes vont exploser.</div>`);
   if (b.relegated) leagueBanner += tr("ui.563a2c", {v0: divisionName(2)}, `<div class="result-banner" style="border-color:var(--bad); color:var(--bad)"><i class=ic-alert></i> RELÉGATION en {v0}. Fans déçus, contrats sponsors à la baisse.</div>`);
   if (b.euroQualified) leagueBanner += tr("ui.d026bc", null, `<div class="result-banner" style="border-color:var(--gold); color:var(--gold)"><i class=ic-globe></i> QUALIFICATION EUROPÉENNE pour la saison prochaine !</div>`);
-  showModal(tr("ui.66345c", {v0: b.season, v1: leagueBanner, v2: b.okCount, v3: b.results.length, v4: b.confDelta>=0?'+':'', v5: b.confDelta, v6: rows, v7: ren, v8: fmtCHF(b.revenue), v9: b.wins, v10: b.losses, v11: b.cert, v12: b.season+1}, tr("ui.66345c", null, `
+  showModal(tr("ui.66345c", {v0: b.season, v1: leagueBanner, v2: b.okCount, v3: b.results.length, v4: b.confDelta>=0?'+':'', v5: b.confDelta, v6: rows, v7: ren, v8: fmtMoney(b.revenue), v9: b.wins, v10: b.losses, v11: b.cert, v12: b.season+1}, tr("ui.66345c", null, `
     <h2><i class=ic-flag></i> Bilan de la saison {v0}</h2>
     {v1}
     <p><b style="color:var(--text)">{v2}/{v3} objectifs atteints</b> — confiance du comité {v4}{v5} pts</p>
@@ -2873,7 +2954,7 @@ function shareStats(s) {
     { k: tr("lbl.44ea9b", null, "Score DMOS"), v: audited ? `${dmosTotal(s)}/60` : tr("lbl.0f0395", null, "non audité"), on: audited },
     { k: tr("lbl.73d38d", null, "Fans"), v: fmt(s.fans), on: true },
     { k: tr("lbl.641538", null, "Contacts CRM"), v: fmt(s.contacts), on: true },
-    { k: tr("lbl.c784fc", null, "Fan Equity Value"), v: s.services.fanlabPro ? fmtCHF(Math.round(fanEquityValue(s))) : tr("lbl.38fc59", null, "non mesurée"), on: s.services.fanlabPro },
+    { k: tr("lbl.c784fc", null, "Fan Equity Value"), v: s.services.fanlabPro ? fmtMoney(Math.round(fanEquityValue(s))) : tr("lbl.38fc59", null, "non mesurée"), on: s.services.fanlabPro },
   ];
 }
 
@@ -3036,7 +3117,7 @@ function showGameOver() {
   const club = clubOf(state);
   const cert = certification(state);
   const usedServices = SERVICES.filter(sv => serviceActive(state, sv.id)).map(sv=>sv.name);
-  showModal(tr("ui.51d754", {v0: seasons, v1: seasons>1?'s':'', v2: club.name, v3: divisionName(state.division), v4: state.services.audited ? dmosTotal(state)+"/60" : "jamais audité — resté dans le flou", v5: cert.cls, v6: cert.label, v7: state.services.fanlabPro ? fmtCHF(fanEquityValue(state)) : tr("lbl.38fc59", null, "non mesurée"), v8: fmt(state.fans), v9: fmt(state.contacts), v10: usedServices.length ? usedServices.join(", ") : "aucun — le club a piloté à l'aveugle", v11: BOOKING_URL}, `
+  showModal(tr("ui.51d754", {v0: seasons, v1: seasons>1?'s':'', v2: club.name, v3: divisionName(state.division), v4: state.services.audited ? dmosTotal(state)+"/60" : "jamais audité — resté dans le flou", v5: cert.cls, v6: cert.label, v7: state.services.fanlabPro ? fmtMoney(fanEquityValue(state)) : tr("lbl.38fc59", null, "non mesurée"), v8: fmt(state.fans), v9: fmt(state.contacts), v10: usedServices.length ? usedServices.join(", ") : "aucun — le club a piloté à l'aveugle", v11: BOOKING_URL}, `
     <h2><i class=ic-arrow></i> Fin de l'aventure</h2>
     <p>Le comité directeur a perdu confiance et met fin à votre contrat après {v0} saison{v1}.</p>
     <div class="result-banner" style="text-align:left">
@@ -3105,6 +3186,17 @@ window.addEventListener("hashchange", () => {
 
 function renderLogin() {
   showScreen("screen-login");
+  const pick = document.getElementById("new-currency");
+  if (pick) {
+    pick.innerHTML = currencyPickHtml(currency);
+    pick.querySelectorAll("button").forEach(b => { b.onclick = () => {
+      currency = b.dataset.cur;
+      try { localStorage.setItem(CURRENCY_KEY, currency); } catch (e) {}
+      pick.innerHTML = currencyPickHtml(currency);
+      pick.querySelectorAll("button").forEach(x => x.onclick = b.onclick);
+      renderCurrencySwitch();
+    }; });
+  }
   const users = loadUsers();
   $("#profiles-list").innerHTML = users.length ? users.map(u => tr("ui.b6dadd", {v0: u.id, v1: esc(u.pseudo[0].toUpperCase()), v2: esc(u.pseudo), v3: u.email ? `<div style="font-size:11px; font-weight:600; color:var(--muted)">${esc(u.email)}</div>` : "", v4: u.pinHash ? "<i class=ic-lock></i> PIN · " : "", v5: new Date(u.createdAt).toLocaleDateString("fr-CH")}, `
     <div class="profile-row" data-uid="{v0}">
@@ -3144,6 +3236,16 @@ function attemptLogin(uid) {
 function finishLogin(u) {
   currentUser = u;
   try { sessionStorage.setItem(SESSION_KEY, u.id); } catch(e) {}
+  // Profil d'avant la devise : il voyait des francs, il continue d'en voir.
+  if (!u.currency) {
+    u.currency = "CHF";
+    const users = loadUsers();
+    const uu = users.find(x => x.id === u.id);
+    if (uu) { uu.currency = "CHF"; saveUsers(users); }
+  }
+  currency = u.currency;
+  try { localStorage.setItem(CURRENCY_KEY, currency); } catch(e) {}
+  renderCurrencySwitch();
   $("#challenge-zone").innerHTML = tr("ui.285490", null, `<div class="card challenge-card">
     <div>
       <b><i class=ic-target></i> Mode défi</b>
@@ -3204,6 +3306,7 @@ async function createProfile() {
   const pseudo = pseudoInput || firstName;
   const salt = Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2, "0")).join("");
   const u = { id: "u" + Date.now().toString(36) + salt.slice(0, 4), email, pseudo, firstName, lastName, org, role, lang, salt,
+              currency,
               pinHash: pin ? await hashPin(pin, salt) : null,
               optIn, brevo: { code: "pending" },
               createdAt: new Date().toISOString() };
@@ -3802,6 +3905,7 @@ function exportMyData() {
     consentement_information: localStorage.getItem(CONSENT_KEY),
     optin_actualites: !!currentUser.optIn,
     langue_plateforme: currentUser.lang || lang,
+    devise_affichage: currentUser.currency || currency,
     statut_brevo: currentUser.brevo ? brevoStatusText(currentUser) : tr("adm.st.none", null, "non transmis"),
     signaux_usage_transmis: currentUser.cc
       ? { saisons_terminees: currentUser.cc.seasons, services_essayes: currentUser.cc.services,
@@ -4135,8 +4239,11 @@ function showBriefing(i) {
   const dots = BRIEFING.map((_, k) =>
     `<span class="${k === i ? "now" : k < i ? "ok" : ""}">${k + 1}</span>`).join("");
   const last = i === BRIEFING.length - 1;
+  const curLine = i === 0 ? tr("brief.cur", { v0: currencySym() },
+    `<p>Les montants s'affichent en <b>{v0}</b> — vous pouvez en changer à tout moment depuis le pied de page,
+    sans rien perdre : la devise n'est qu'une étiquette, les règles du jeu sont les mêmes partout.</p>`) : "";
   showModal(tr("brief.frame", {
-    v0: b.icon, v1: b.title, v2: b.body,
+    v0: b.icon, v1: b.title, v2: b.body + curLine,
     v3: dots, v4: i + 1, v5: BRIEFING.length,
     v6: last ? tr("brief.go", null, "Choisir mon club") : tr("brief.next", null, "Suivant"),
   }, `<h2><i class=ic-{v0}></i> {v1}</h2>
@@ -4671,7 +4778,7 @@ function showActionInfo(id) {
   if (!a) return;
   tutoMark("kpi");
   showModal(tr("actmodal", {
-    v0: a.name, v1: a.ap, v2: fmtCHF(actionCost(state, a)), v3: a.desc, v4: a.real,
+    v0: a.name, v1: a.ap, v2: fmtMoney(actionCost(state, a)), v3: a.desc, v4: a.real,
   }, `<h2>{v0}</h2>
     <p><b>{v1} point(s) d'action</b> · coût actuel <b>{v2}</b></p>
     <p>{v3}</p>
@@ -4750,6 +4857,7 @@ const TX = {
     "brief.2.title": "Was Ihr Publikum wert ist",
     "brief.3.body": "<p>Der Vorstand setzt Ihnen <b>zu Saisonbeginn Ziele</b> und rechnet am Ende ab. Jedes verfehlte Ziel kostet Vertrauen; unter der Geduldsschwelle Ihres Vorstands <b>werden Sie freigestellt</b> und die Partie endet.</p><p>Sein Temperament wählen Sie direkt nach Ihrem Club: nachsichtig, anspruchsvoll oder unerbittlich. Diese Wahl gilt für die gesamte Laufbahn.</p><p>Ein <b>Einführungsleitfaden</b> begleitet Sie in den ersten Wochen, oben im Dashboard. Er lässt sich mit einem Klick ausblenden und über « Hilfe &amp; Regeln » wieder aufrufen.</p>",
     "brief.3.title": "Ihr Vorstand",
+    "brief.cur": "<p>Die Beträge werden in <b>{v0}</b> angezeigt — Sie können das jederzeit in der Fusszeile ändern, ohne etwas zu verlieren: Die Währung ist nur ein Etikett, die Spielregeln sind überall dieselben.</p>",
     "brief.frame": "<h2><i class=ic-{v0}></i> {v1}</h2>\n    <div class=\"tuto-trail\" style=\"margin:0 0 14px\">{v3}</div>\n    {v2}\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"brief-next\"><i class=ic-arrow></i> {v6}</button>\n      <button id=\"brief-skip\" style=\"text-align:center\">Briefing überspringen ({v4}/{v5})</button>\n    </div>",
     "brief.go": "Meinen Club wählen",
     "brief.next": "Weiter",
@@ -5248,6 +5356,7 @@ const TX = {
     "ui.kpi.info": "Verstehen: {v0}",
     "ui.login.back": "<i class=ic-bulb></i> Was ist die C'mon Sports Challenge?",
     "ui.login.create": "Neues Konto",
+    "ui.login.cur": "Währung der Beträge",
     "ui.login.note": "\n      <i class=ic-lock></i> Ihre Spielstände und Ihr PIN-Code (gehasht) bleiben <b style=\"color:var(--text)\">in diesem Browser</b>.\n      Ihre E-Mail-Adresse wird bei der Kontoerstellung im CRM von C'mon Corporations (Brevo, EU) gespeichert;\n      News-E-Mails gehen nur raus, wenn Sie das Kästchen ankreuzen.\n    ",
     "ui.login.optin": "Ich bin einverstanden, die News von C'mon Sports per E-Mail zu erhalten. <b style=\"color:var(--text)\">Optional</b> —\n            ohne dieses Kästchen meldet mich C'mon Sports Challenge für keinen Versand an.<br>\n            <span style=\"font-size:11px\">In jedem Fall wird bei der Kontoerstellung meine Adresse im CRM\n            von C'mon Corporations (Brevo, Hosting in der EU) für die Verwaltung der C'mon-Sports-Challenge-Konten gespeichert.\n            <a id=\"optin-privacy\" style=\"color:var(--accent);cursor:pointer;text-decoration:underline\">Mehr erfahren</a></span>",
     "ui.login.ph.email": "E-Mail-Adresse",
@@ -5355,6 +5464,7 @@ const TX = {
     "brief.2.title": "What your audience is worth",
     "brief.3.body": "<p>The board sets you <b>objectives at the start of the season</b> and settles up at the end. Every missed objective costs confidence; below your board's patience threshold, <b>you are let go</b> and the game ends.</p><p>You will choose its temperament right after your club: lenient, demanding or ruthless. That choice holds for your entire career.</p><p>An <b>onboarding guide</b> will walk with you through the first weeks, at the top of the dashboard. One click hides it, and « Help &amp; rules » brings it back.</p>",
     "brief.3.title": "Your board",
+    "brief.cur": "<p>Amounts are shown in <b>{v0}</b> — you can change this at any time from the footer, without losing anything: the currency is only a label, the rules of the game are the same everywhere.</p>",
     "brief.frame": "<h2><i class=ic-{v0}></i> {v1}</h2>\n    <div class=\"tuto-trail\" style=\"margin:0 0 14px\">{v3}</div>\n    {v2}\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"brief-next\"><i class=ic-arrow></i> {v6}</button>\n      <button id=\"brief-skip\" style=\"text-align:center\">Skip the briefing ({v4}/{v5})</button>\n    </div>",
     "brief.go": "Choose my club",
     "brief.next": "Next",
@@ -5853,6 +5963,7 @@ const TX = {
     "ui.kpi.info": "Understand: {v0}",
     "ui.login.back": "<i class=ic-bulb></i> What is the C'mon Sports Challenge?",
     "ui.login.create": "Create an account",
+    "ui.login.cur": "Currency for amounts",
     "ui.login.note": "\n      <i class=ic-lock></i> Your saves and your PIN code (hashed) stay <b style=\"color:var(--text)\">in this browser</b>.\n      Your email address is recorded in the CRM of C'mon Corporations (Brevo, EU) when the account is created;\n      news emails only go out if you tick the box.\n    ",
     "ui.login.optin": "I agree to receive C'mon Sports news by email. <b style=\"color:var(--text)\">Optional</b> —\n            without this box ticked, C'mon Sports Challenge signs me up for nothing.<br>\n            <span style=\"font-size:11px\">Either way, creating the account records my address in the CRM\n            of C'mon Corporations (Brevo, EU hosting) for the management of C'mon Sports Challenge accounts.\n            <a id=\"optin-privacy\" style=\"color:var(--accent);cursor:pointer;text-decoration:underline\">Learn more</a></span>",
     "ui.login.ph.email": "Email address",
@@ -5902,6 +6013,7 @@ const TX = {
 localizeContent();
 localizeDom();
 renderLangSwitch();
+renderCurrencySwitch();
 if (!localStorage.getItem(CONSENT_KEY)) showConsent();
 else initAuth();
 // Un rafraîchissement en plein rendez-vous ne doit pas coûter la démo
