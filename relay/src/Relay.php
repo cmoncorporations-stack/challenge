@@ -55,6 +55,8 @@ final class Relay
     // Catégorie Brevo SPORT : basket 1, foot 2, hockey 4, volley 6
     public const SPORTS = [1 => 'Basketball', 2 => 'Football', 4 => 'Hockey', 6 => 'Volleyball'];
     public const LANGS = ['fr', 'de', 'en'];
+    // Devise d'affichage choisie à l'inscription : un signal de marché, pas d'usage
+    public const CURRENCIES = ['CHF', 'EUR', 'GBP', 'USD'];
 
     /* Attributs propres au jeu, créés au besoin. Préfixe CC_ pour ne jamais
        heurter les attributs métier du CRM ; PSEUDO plutôt que PRENOM, réservé
@@ -63,7 +65,7 @@ final class Relay
     public const ATTRIBUTES = [
         ['CMON_SOLUTION_CHALLENGE', 'boolean'], ['PSEUDO', 'text'],
         ['CC_SEASONS', 'float'], ['CC_SERVICES', 'text'], ['CC_CERT', 'text'],
-        ['CC_LAST_PLAYED', 'date'], ['CC_LANG', 'text'],
+        ['CC_LAST_PLAYED', 'date'], ['CC_LANG', 'text'], ['CC_CURRENCY', 'text'],
         ['CC_MATURITY', 'text'], ['CC_PRIORITY', 'text'], ['CC_TIMING', 'text'],
         ['CC_TUTO', 'text'],
         // Date de la première alerte « appel chaud » : une seule alerte par contact
@@ -258,6 +260,7 @@ final class Relay
             'role'   => self::oneOf($b['role'] ?? null, self::ROLES, 'role'),
             'sport'  => $sport,
             'lang'   => self::oneOf($b['lang'] ?? null, self::LANGS, 'lang') ?? 'fr',
+            'currency' => self::oneOf($b['currency'] ?? null, self::CURRENCIES, 'currency'),
             'tuto'   => self::oneOf($b['tuto'] ?? null, self::TUTO, 'tuto'),
             'q'      => [],
             'cc'     => null,
@@ -400,6 +403,7 @@ final class Relay
         // Attributs du jeu : toujours à jour
         $attrs = ['CMON_SOLUTION_CHALLENGE' => true, 'PSEUDO' => $p['pseudo'], 'CC_LANG' => $p['lang']];
         if ($p['tuto']) $attrs['CC_TUTO'] = $p['tuto'];
+        if ($p['currency']) $attrs['CC_CURRENCY'] = $p['currency'];
         $attrs += $p['q'];
         if ($p['cc']) {
             $attrs['CC_SEASONS'] = $p['cc']['seasons'];
