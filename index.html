@@ -360,6 +360,7 @@ footer a{color:var(--ink-2);font-weight:700}
       <button type="button" data-lang="de" aria-pressed="false">DE</button>
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
     </div>
+    <div class="lang cur" role="group" aria-label="Devise / Währung / Currency" id="cur-switch"></div>
     <a class="btn btn-primary btn-nav play-link" href="jouer/" data-i18n="nav.play">Jouer</a>
   </div>
 </nav>
@@ -397,7 +398,7 @@ footer a{color:var(--ink-2);font-weight:700}
           <div class="pv-kpis">
             <div class="kpi"><div class="l" data-i18n="k.fans">Fans</div><div class="v num" id="pv-fans">14 000</div><div class="d up num" id="pv-fans-d">+0</div></div>
             <div class="kpi"><div class="l" data-i18n="k.contacts">Contacts CRM</div><div class="v num" id="pv-contacts">1 800</div><div class="d up num" id="pv-contacts-d">+0</div></div>
-            <div class="kpi"><div class="l" data-i18n="k.budget">Budget</div><div class="v num" id="pv-budget">60 000</div><div class="d num" style="color:var(--ink-3)">CHF</div></div>
+            <div class="kpi"><div class="l" data-i18n="k.budget">Budget</div><div class="v num" id="pv-budget">60 000</div><div class="d num cur-unit" style="color:var(--ink-3)">CHF</div></div>
             <div class="kpi"><div class="l" data-i18n="k.dmos">Maturité data</div><div class="v num" id="pv-dmos">8–16</div><div class="d num" style="color:var(--ink-3)">/60</div></div>
           </div>
           <div class="pv-bar">
@@ -511,7 +512,7 @@ footer a{color:var(--ink-2);font-weight:700}
           <h3 id="fog-title">Tableau de bord · Glacier Royal HC</h3>
           <div class="fog-grid">
             <div class="kpi"><div class="l" data-i18n="fog.dmos">Maturité data</div><div class="v num keep" id="fog-dmos">8–16 /60</div><small id="fog-dmos-s">Fourchette estimée</small></div>
-            <div class="kpi"><div class="l" data-i18n="fog.value">Fan Equity Value</div><div class="v num" id="fog-value">? CHF</div><small id="fog-value-s">Inconnue</small></div>
+            <div class="kpi"><div class="l" data-i18n="fog.value">Fan Equity Value</div><div class="v num" id="fog-value">?</div><small id="fog-value-s">Inconnue</small></div>
             <div class="kpi"><div class="l" data-i18n="fog.quality">Qualité des données</div><div class="v num" id="fog-quality">? /10</div><small id="fog-quality-s">Invisible</small></div>
             <div class="kpi"><div class="l" data-i18n="fog.pen">Pénétration du bassin</div><div class="v num" id="fog-pen">? %</div><small id="fog-pen-s">Non mesurée</small></div>
           </div>
@@ -539,7 +540,7 @@ footer a{color:var(--ink-2);font-weight:700}
           <div class="fe-floor" style="width:60%" data-i18n="fe.f3">Abonnés / membres</div>
           <div class="fe-floor" style="width:74%" data-i18n="fe.f2">Spectateurs</div>
           <div class="fe-floor" style="width:88%" data-i18n="fe.f1">Curieux</div>
-          <div class="fe-floor anon" style="width:100%" data-i18n="fe.f0">Anonymes · 0 CHF</div>
+          <div class="fe-floor anon" style="width:100%" data-i18n="fe.f0">Anonymes · {{0}}</div>
           <small data-i18n="fe.cap">Le fandom : plus on monte, plus un fan rapporte.</small>
         </div>
       </div>
@@ -657,6 +658,65 @@ function detectLang() {
 }
 let lang = detectLang();
 
+/* ---------------- Devise d'affichage ----------------
+   Même table et même clé que le jeu (/jouer/) : le choix fait ici
+   pré-remplit l'inscription. La devise n'est qu'une étiquette — aucun
+   montant ne change, aucun taux. */
+const CURRENCIES = [
+  { id:"CHF", sym:"CHF" },
+  { id:"EUR", sym:"€" },
+  { id:"GBP", sym:"£" },
+  { id:"USD", sym:"$" },
+];
+const CURRENCY_KEY = "mktclubgm_currency";
+const EURO_REGIONS = ["FR","DE","AT","BE","IT","ES","NL","LU","PT","IE","FI","GR"];
+function currencyFromRegion() {
+  try {
+    const r = (String(navigator.language || "").split("-")[1] || "").toUpperCase();
+    if (r === "CH" || r === "LI") return "CHF";
+    if (EURO_REGIONS.includes(r)) return "EUR";
+    if (r === "GB") return "GBP";
+    if (r === "US" || r === "CA") return "USD";
+  } catch (e) {}
+  return "CHF";
+}
+function detectCurrency() {
+  try {
+    const saved = localStorage.getItem(CURRENCY_KEY);
+    if (saved && CURRENCIES.some(c => c.id === saved)) return saved;
+  } catch (e) {}
+  return currencyFromRegion();
+}
+let currency = detectCurrency();
+function currencySym() { const c = CURRENCIES.find(x => x.id === currency); return c ? c.sym : "CHF"; }
+/* Un nombre déjà formaté reçoit son symbole : après en FR/DE, avant en EN. */
+function moneyText(num) {
+  const sym = currencySym();
+  if (lang === "en") return sym === "CHF" ? "CHF " + num : sym + num;
+  return num + " " + sym;
+}
+function money(n) { return n < 0 ? "−" + money(-n) : moneyText(fmt(n)); }
+/* Jetons {{6000}} / {{-2500}} / {{cur}} dans les textes, résolus à l'affichage. */
+function moneyTokens(s) {
+  return String(s)
+    .replace(/\{\{cur\}\}/g, () => currencySym())
+    .replace(/\{\{(-?\d+)\}\}/g, (_, n) => money(+n));
+}
+function setCurrency(id) {
+  if (!CURRENCIES.some(c => c.id === id) || id === currency) return;
+  currency = id;
+  try { localStorage.setItem(CURRENCY_KEY, id); } catch (e) {}
+  applyI18n(); renderAll();
+}
+function renderCurrencySwitch() {
+  const box = document.getElementById("cur-switch");
+  if (!box) return;
+  box.innerHTML = CURRENCIES.map(c =>
+    `<button type="button" data-cur="${c.id}" aria-label="${c.id}" aria-pressed="${c.id === currency}">${c.sym}</button>`).join("");
+  box.querySelectorAll("button").forEach(b => { b.onclick = () => setCurrency(b.dataset.cur); });
+  document.querySelectorAll(".cur-unit").forEach(el => { el.textContent = currencySym(); });
+}
+
 const TX = {
 de: {
   "nav.game":"Das Spiel","nav.clubs":"Die Clubs","nav.try":"Ausprobieren","nav.solutions":"Lösungen","nav.cmon":"C'mon Sports","nav.play":"Spielen",
@@ -682,7 +742,7 @@ de: {
   "fog.p1":"Zu Beginn des Spiels kennen Sie — wie die meisten Clubs — weder die Qualität Ihrer Datenbasis noch Ihre Fan Equity Value. Ihre Datenreife ist nur eine Spanne.",
   "fog.p2":"Die Lösungen von C'mon Sports lichten diesen Nebel — im Spiel wie in der Realität. Probieren Sie es aus:",
   "fog.switch":"Begleitung durch C'mon Sports aktivieren","fog.dmos":"Datenreife","fog.value":"Fan Equity Value","fog.quality":"Datenqualität","fog.pen":"Marktdurchdringung",
-  "fe.k":"Fan Equity, einfach erklärt","fe.t":"Ihre Fans sind ein Vermögenswert. Sein Wert lässt sich messen.","fe.p":"Die Fan Equity Value ist das, was Ihr Publikum über die Zeit einbringt, in Franken. Sie beruht auf drei Hebeln — und das Spiel zeigt Ihnen, wie man sie bewegt.","fe.l1t":"1 · Die Fans, die Sie wirklich kennen","fe.l1p":"Ein anonymer Fan ist null wert: Man kann ihn weder erreichen noch binden noch einem Sponsor vorstellen. Alles beginnt mit der Datensammlung.","fe.l2t":"2 · Die Tiefe ihrer Bindung","fe.l2p":"Das ist Ihr Fandom: vom Neugierigen bis zum Botschafter. 100 Zuschauer zu Abonnenten zu machen bringt mehr, als 1 000 neue Neugierige zu gewinnen.","fe.l3t":"3 · Die Qualität Ihrer Daten","fe.l3p":"Falsche Adressen, Dubletten, unklare Einwilligungen: Eine schlecht gepflegte Basis verliert Jahr für Jahr an Wert.","fe.f4":"Botschafter","fe.f3":"Abonnenten / Mitglieder","fe.f2":"Zuschauer","fe.f1":"Neugierige","fe.f0":"Anonyme · 0 CHF","fe.cap":"Das Fandom: Je höher, desto mehr bringt ein Fan ein.",
+  "fe.k":"Fan Equity, einfach erklärt","fe.t":"Ihre Fans sind ein Vermögenswert. Sein Wert lässt sich messen.","fe.p":"Die Fan Equity Value ist das, was Ihr Publikum über die Zeit einbringt, in Franken. Sie beruht auf drei Hebeln — und das Spiel zeigt Ihnen, wie man sie bewegt.","fe.l1t":"1 · Die Fans, die Sie wirklich kennen","fe.l1p":"Ein anonymer Fan ist null wert: Man kann ihn weder erreichen noch binden noch einem Sponsor vorstellen. Alles beginnt mit der Datensammlung.","fe.l2t":"2 · Die Tiefe ihrer Bindung","fe.l2p":"Das ist Ihr Fandom: vom Neugierigen bis zum Botschafter. 100 Zuschauer zu Abonnenten zu machen bringt mehr, als 1 000 neue Neugierige zu gewinnen.","fe.l3t":"3 · Die Qualität Ihrer Daten","fe.l3p":"Falsche Adressen, Dubletten, unklare Einwilligungen: Eine schlecht gepflegte Basis verliert Jahr für Jahr an Wert.","fe.f4":"Botschafter","fe.f3":"Abonnenten / Mitglieder","fe.f2":"Zuschauer","fe.f1":"Neugierige","fe.f0":"Anonyme · {{0}}","fe.cap":"Das Fandom: Je höher, desto mehr bringt ein Fan ein.",
   "dmos.k":"Datenreife, einfach erklärt","dmos.t":"Weiss Ihr Club, was er an seinen Fans hat? Eine Note von 60 sagt es.",
   "dmos.p":"C'mon Sports misst die Datenreife eines Clubs mit seinem DMOS-Raster (für <i>Data Marketing Operating System</i>, das «Betriebssystem» des datengestützten Marketings). Einfach gesagt: sechs einfache Fragen, jede mit bis zu 10 Punkten bewertet. Zusammen ergibt das eine Note von 60; ab 30 ist der Club Silver-zertifiziert, ab 45 Gold. Klicken Sie auf eine Frage und erhöhen oder senken Sie ihre Note.",
   "dmos.silver":"≥ 30 · Silver","dmos.gold":"≥ 45 · Gold",
@@ -723,7 +783,7 @@ en: {
   "fog.p1":"At the start of the game, like most clubs, you know neither the quality of your database nor your Fan Equity Value. Your data maturity is only a range.",
   "fog.p2":"C'mon Sports' solutions lift that fog — in the game as in real life. Try it:",
   "fog.switch":"Switch on C'mon Sports support","fog.dmos":"Data maturity","fog.value":"Fan Equity Value","fog.quality":"Data quality","fog.pen":"Catchment penetration",
-  "fe.k":"Fan equity, explained simply","fe.t":"Your fans are an asset. Its value can be measured.","fe.p":"The Fan Equity Value is what your audience brings in over time, in francs. It rests on three levers — and the game teaches you how to move them.","fe.l1t":"1 · The fans you actually know","fe.l1p":"An anonymous fan is worth nothing: you can't reach them, keep them or show them to a sponsor. It all starts with data capture.","fe.l2t":"2 · How deep their bond runs","fe.l2p":"That's your fandom: from curious to ambassador. Turning 100 spectators into season-ticket holders is worth more than signing up 1,000 new curious fans.","fe.l3t":"3 · The quality of your data","fe.l3p":"Wrong addresses, duplicates, fuzzy consents: a poorly kept database loses value year after year.","fe.f4":"Ambassadors","fe.f3":"Season ticket holders","fe.f2":"Spectators","fe.f1":"Curious","fe.f0":"Anonymous · CHF 0","fe.cap":"The fandom: the higher up, the more a fan is worth.",
+  "fe.k":"Fan equity, explained simply","fe.t":"Your fans are an asset. Its value can be measured.","fe.p":"The Fan Equity Value is what your audience brings in over time, in francs. It rests on three levers — and the game teaches you how to move them.","fe.l1t":"1 · The fans you actually know","fe.l1p":"An anonymous fan is worth nothing: you can't reach them, keep them or show them to a sponsor. It all starts with data capture.","fe.l2t":"2 · How deep their bond runs","fe.l2p":"That's your fandom: from curious to ambassador. Turning 100 spectators into season-ticket holders is worth more than signing up 1,000 new curious fans.","fe.l3t":"3 · The quality of your data","fe.l3p":"Wrong addresses, duplicates, fuzzy consents: a poorly kept database loses value year after year.","fe.f4":"Ambassadors","fe.f3":"Season ticket holders","fe.f2":"Spectators","fe.f1":"Curious","fe.f0":"Anonymous · {{0}}","fe.cap":"The fandom: the higher up, the more a fan is worth.",
   "dmos.k":"Data maturity, explained simply","dmos.t":"Does your club know how to make the most of its fans? A score out of 60 tells you.",
   "dmos.p":"C'mon Sports measures a club's data maturity with its DMOS grid (short for <i>Data Marketing Operating System</i>, the operating system of data-driven marketing). Put simply: six plain questions, each scored out of 10. Together they make a score out of 60; from 30 the club is certified Silver, from 45 Gold. Click a question, then raise or lower its score.",
   "dmos.silver":"≥ 30 · Silver","dmos.gold":"≥ 45 · Gold",
@@ -913,7 +973,7 @@ const S = {
   win:{fr:"Victoire {a}–{b} ! Le public est ravi.",de:"Sieg {a}:{b}! Das Publikum ist begeistert.",en:"{a}–{b} win! The crowd loves it."},
   draw:{fr:"Match nul {a}–{a}.",de:"Unentschieden {a}:{a}.",en:"{a}–{a} draw."},
   loss:{fr:"Défaite {b}–{a}. Le comité fronce les sourcils.",de:"Niederlage {b}:{a}. Der Vorstand runzelt die Stirn.",en:"{b}–{a} defeat. The board frowns."},
-  fixed:{fr:"Charges fixes : −{v} CHF",de:"Fixkosten: −{v} CHF",en:"Fixed costs: −CHF {v}"},
+  fixed:{fr:"Charges fixes : {v}",de:"Fixkosten: {v}",en:"Fixed costs: {v}"},
   idle:{fr:"Semaine sans action : le comité s'interroge.",de:"Woche ohne Aktion: Der Vorstand wundert sich.",en:"A week with no action: the board wonders."},
   fatigue:{fr:"Deux campagnes d'affilée : vos abonnés saturent.",de:"Zwei Kampagnen in Folge: Ihre Abonnenten sind übersättigt.",en:"Two campaigns in a row: your subscribers are saturated."},
   end:{fr:"Bilan après {w} semaines : {fans} fans, {contacts} contacts, confiance {conf}/100. Il en reste {r} — avec match, imprévus, sponsors et objectifs du comité.",
@@ -933,7 +993,7 @@ const ACTS = [
   { id:"campaign", ap:1, cost:800, name:{fr:"Campagne emailing",de:"E-Mail-Kampagne",en:"Email campaign"},
     desc:{fr:"+billetterie, attention à la fatigue",de:"+Ticketing, Achtung Ermüdung",en:"+ticketing, beware of fatigue"},
     run(s){ const tired = s.lastCampaign; const r = Math.round(s.contacts * (tired ? 0.9 : 1.9) * (0.8 + s.rnd()*0.4)); s.budget += r; s.engagement += tired ? -2 : 1; s.camp = true;
-      return [ tired ? "bad" : "good", tired ? S.fatigue : {fr:`Campagne envoyée : +${fmt(r)} CHF de billetterie`,de:`Kampagne versendet: +${fmt(r)} CHF Ticketing`,en:`Campaign sent: +CHF ${fmt(r)} in ticketing`} ]; } },
+      return [ tired ? "bad" : "good", tired ? S.fatigue : {fr:`Campagne envoyée : +{{${r}}} de billetterie`,de:`Kampagne versendet: +{{${r}}} Ticketing`,en:`Campaign sent: +{{${r}}} in ticketing`} ]; } },
   { id:"collect", ap:1, cost:1500, name:{fr:"Jeu concours / collecte",de:"Gewinnspiel / Datensammlung",en:"Contest / data collection"},
     desc:{fr:"+contacts qualifiés",de:"+qualifizierte Kontakte",en:"+qualified contacts"},
     run(s){ const g = Math.round(s.fans * (0.025 + s.rnd()*0.02)); s.contacts += g;
@@ -945,7 +1005,7 @@ const ACTS = [
   { id:"prospect", ap:2, cost:2000, name:{fr:"Prospection sponsor",de:"Sponsorenakquise",en:"Sponsor prospecting"},
     desc:{fr:"Succès selon vos données fans",de:"Erfolg je nach Ihren Fandaten",en:"Success depends on your fan data"},
     run(s){ const p = 0.25 + s.contacts / (s.fans * 1.2); if (s.rnd() < p) { const v = 6000 + Math.round(s.rnd()*6) * 1000; s.budget += v; s.conf += 6;
-        return [ "good", {fr:`Nouveau sponsor signé : +${fmt(v)} CHF !`,de:`Neuer Sponsor unterschrieben: +${fmt(v)} CHF!`,en:`New sponsor signed: +CHF ${fmt(v)}!`} ]; }
+        return [ "good", {fr:`Nouveau sponsor signé : +{{${v}}} !`,de:`Neuer Sponsor unterschrieben: +{{${v}}}!`,en:`New sponsor signed: +{{${v}}}!`} ]; }
       return [ "bad", {fr:"Le prospect décline : « Vous avez des chiffres sur votre audience ? »",de:"Der Interessent lehnt ab: «Haben Sie Zahlen zu Ihrem Publikum?»",en:"The prospect declines: “Do you have figures on your audience?”"} ]; } },
   { id:"rgpd", ap:1, cost:2000, name:{fr:"Chantier conformité RGPD",de:"Datenschutz-Baustelle",en:"GDPR compliance work"},
     desc:{fr:"+conformité, base plus propre",de:"+Konformität, saubere Basis",en:"+compliance, cleaner base"},
@@ -963,9 +1023,10 @@ function applyI18n() {
   document.documentElement.lang = lang;
   document.querySelectorAll("[data-i18n]").forEach(el => {
     if (!el.dataset.fr) el.dataset.fr = el.innerHTML;
-    el.innerHTML = lang === "fr" ? el.dataset.fr : t(el.dataset.i18n, el.dataset.fr);
+    el.innerHTML = moneyTokens(lang === "fr" ? el.dataset.fr : t(el.dataset.i18n, el.dataset.fr));
   });
-  document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  document.querySelectorAll(".lang:not(.cur) button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  renderCurrencySwitch();
 }
 function setLang(id) {
   if (!LANGS.includes(id)) return;
@@ -1040,7 +1101,7 @@ document.addEventListener("keydown", e => {
 const TOASTS = [
   {fr:"Une vidéo des coulisses devient virale !",de:"Ein Video hinter den Kulissen geht viral!",en:"A behind-the-scenes video goes viral!"},
   {fr:"Le président veut une campagne à son effigie…",de:"Der Präsident will eine Kampagne mit seinem Gesicht…",en:"The chairman wants a campaign starring himself…"},
-  {fr:"Nouveau sponsor signé : +8 000 CHF",de:"Neuer Sponsor unterschrieben: +8 000 CHF",en:"New sponsor signed: +CHF 8,000"},
+  {fr:"Nouveau sponsor signé : +{{8000}}",de:"Neuer Sponsor unterschrieben: +{{8000}}",en:"New sponsor signed: +{{8000}}"},
   {fr:"Fan Equity Audit livré : maturité data révélée",de:"Fan Equity Audit geliefert: Datenreife aufgedeckt",en:"Fan Equity Audit delivered: data maturity revealed"},
   {fr:"Victoire 3–1 à domicile, salle comble",de:"3:1-Heimsieg vor vollem Haus",en:"3–1 home win in front of a full house"},
   {fr:"Contrôle RGPD annoncé la semaine prochaine",de:"Datenschutzkontrolle für nächste Woche angekündigt",en:"GDPR inspection announced for next week"},
@@ -1061,7 +1122,7 @@ function paintPreview(df, dc) {
   $("#pv-fans-d").textContent = "+" + fmt(df); $("#pv-contacts-d").textContent = "+" + fmt(dc);
   $("#pv-conf").style.width = pv.conf + "%"; $("#pv-conf-v").textContent = Math.round(pv.conf);
   $("#pv-toast").querySelector("small").textContent = `${L(S.week)} ${pv.week}`;
-  $("#pv-toast-t").textContent = L(TOASTS[pv.tick % TOASTS.length]);
+  $("#pv-toast-t").textContent = moneyTokens(L(TOASTS[pv.tick % TOASTS.length]));
 }
 function tickPreview() {
   if (document.hidden) return;
@@ -1095,7 +1156,7 @@ function paintSim(delta) {
     const tooBig = !on && (used + a.ap > 3 || costUsed() + a.cost > sim.budget);
     return `<button class="act" type="button" aria-pressed="${on}" data-act="${a.id}" ${tooBig || over ? "disabled" : ""}>
       <b>${esc(L(a.name))}</b><span>${esc(L(a.desc))}</span>
-      <span class="cost">${a.ap} ${esc(L(S.pa))} · ${fmt(a.cost)} CHF</span></button>`;
+      <span class="cost">${a.ap} ${esc(L(S.pa))} · ${money(a.cost)}</span></button>`;
   }).join("");
   document.querySelectorAll(".act").forEach(b => b.onclick = () => {
     picked.has(b.dataset.act) ? picked.delete(b.dataset.act) : picked.add(b.dataset.act);
@@ -1103,12 +1164,12 @@ function paintSim(delta) {
   });
   $("#sim-play").disabled = over;
   $("#sim-hint").textContent = over ? "" : used === 0 ? L(S.apNone) : used >= 3 ? L(S.apFull) : fill(L(S.apLeft), { n: 3 - used });
-  const set = (id, v, d, money) => {
+  const set = (id, v, d, isMoney) => {
     $("#s-" + id).textContent = v;
     const el = $("#s-" + id + "-d");
     if (d) { el.textContent = (d > 0 ? "+" : "−") + fmt(Math.abs(d)); el.className = "d num " + (d > 0 ? "up" : "down");
       $("#s-" + id).classList.remove("bump"); void $("#s-" + id).offsetWidth; $("#s-" + id).classList.add("bump"); }
-    else { el.innerHTML = money ? "CHF" : "&nbsp;"; el.className = "d num"; el.style.color = "var(--ink-3)"; }
+    else { el.innerHTML = isMoney ? currencySym() : "&nbsp;"; el.className = "d num"; el.style.color = "var(--ink-3)"; }
     if (d) el.style.color = "";
   };
   set("fans", fmt(sim.fans), delta.fans);
@@ -1117,7 +1178,7 @@ function paintSim(delta) {
   set("sponsor", Math.round(sim.sponsor) + "/100", delta.sponsor);
   $("#s-conf").style.width = sim.conf + "%"; $("#s-conf-v").textContent = Math.round(sim.conf);
   $("#s-conf").style.background = sim.conf < 35 ? "linear-gradient(90deg,#B8384C,var(--bad))" : "";
-  $("#sim-log").innerHTML = sim.log.slice().reverse().map(([k, m]) => `<p class="${k}">${esc(m)}</p>`).join("");
+  $("#sim-log").innerHTML = sim.log.slice().reverse().map(([k, m]) => `<p class="${k}">${esc(moneyTokens(m))}</p>`).join("");
 }
 function playWeek() {
   if (sim.week > MAX_WEEKS) return;
@@ -1133,7 +1194,7 @@ function playWeek() {
   if (r < 0.45) { sim.conf += 4; sim.fans += Math.round(sim.fans*0.004); lines.push(["good", fill(L(S.win), { a, b })]); }
   else if (r < 0.7) lines.push(["info", fill(L(S.draw), { a })]);
   else { sim.conf -= 5; lines.push(["bad", fill(L(S.loss), { a:b, b:a })]); }
-  const fixed = Math.round(club.budget * 0.045); sim.budget -= fixed; lines.push(["info", fill(L(S.fixed), { v: fmt(fixed) })]);
+  const fixed = Math.round(club.budget * 0.045); sim.budget -= fixed; lines.push(["info", fill(L(S.fixed), { v: "{{-" + fixed + "}}" })]);
   sim.sponsor = Math.max(0, Math.min(100, sim.sponsor - 3));
   sim.engagement = Math.max(0, Math.min(100, sim.engagement));
   sim.conf = Math.max(0, Math.min(100, sim.conf + (picked.has("rgpd") || picked.has("activation") ? 1 : 0)));
@@ -1165,7 +1226,7 @@ function renderFog() {
   const vTxt = value >= 1e5 ? (value/1e6).toFixed(2).replace(".", lang === "en" ? "." : ",") + " M" : fmt(Math.round(value/1000)) + " k";
   const set = (id, off, on, s0, s1) => { $("#fog-" + id).textContent = fogOn ? on : off; $("#fog-" + id + "-s").textContent = L(fogOn ? s1 : s0); };
   set("dmos", `${Math.max(0, d-5)}–${d+4} /60`, `${d} /60`, S.fogDmos0, S.fogDmos1);
-  set("value", "? CHF", `CHF ${vTxt}`, S.fogVal0, S.fogVal1);
+  set("value", "? " + currencySym(), moneyText(vTxt), S.fogVal0, S.fogVal1);
   set("quality", "? /10", `${quality} /10`, S.fogQ0, S.fogQ1);
   set("pen", "? %", `${pen} %`, S.fogP0, S.fogP1);
 }
@@ -1233,7 +1294,7 @@ function setupReveal() {
 }
 
 document.body.classList.remove("no-js");
-document.querySelectorAll(".lang button").forEach(b => b.onclick = () => setLang(b.dataset.lang));
+document.querySelectorAll(".lang:not(.cur) button").forEach(b => b.onclick = () => setLang(b.dataset.lang));
 applyI18n();
 resetSim();
 renderAll();
