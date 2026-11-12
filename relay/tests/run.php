@@ -123,7 +123,7 @@ test("CORS : seule l'origine du jeu est servie", function () {
 test('nouveau joueur sans opt-in : créé dans la liste 63, exclu des campagnes', function () {
     $b = new FakeBrevo();
     $res = post(relay($b), ['email' => 'Joueur@Club.CH', 'pseudo' => 'joueur', 'optIn' => false, 'org' => 'HC Test',
-                            'role' => 'Marketing & communication', 'sport' => 4, 'lang' => 'de']);
+                            'role' => 'Marketing & communication', 'sport' => 4, 'lang' => 'de', 'currency' => 'EUR']);
     eq($res['status'], 200);
     eq($res['body'], ['ok' => true]);
     $c = $b->contacts['joueur@club.ch'];
@@ -135,6 +135,15 @@ test('nouveau joueur sans opt-in : créé dans la liste 63, exclu des campagnes'
     eq($c['attributes']['JOB_TITLE'], 'Marketing & communication');
     eq($c['attributes']['SPORT'], 4);
     eq($c['attributes']['CC_LANG'], 'de');
+    eq($c['attributes']['CC_CURRENCY'], 'EUR');
+});
+
+test('devise : absente = attribut non posé, inconnue = refusée', function () {
+    $b = new FakeBrevo();
+    post(relay($b), ['email' => 'sans@x.ch']);
+    ok(!array_key_exists('CC_CURRENCY', $b->contacts['sans@x.ch']['attributes']), 'pas de devise par défaut');
+    $res = post(relay($b), ['email' => 'faux@x.ch', 'currency' => 'XXX']);
+    eq($res['status'], 400);
 });
 
 test('nouveau joueur avec opt-in : pas sur liste noire', function () {
