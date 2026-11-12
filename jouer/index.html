@@ -917,11 +917,11 @@ input[type="text"]:focus,input[type="password"]:focus{border-color:var(--brand-l
           <p style="font-size:13px;color:var(--muted);line-height:1.5" data-i18n="ui.fanlab.intro">
             Vos fans sont un actif. Sa valeur dépend de quatre leviers : les fans que vous connaissez vraiment,
             l'intensité de leur relation au club, leur fidélité dans la durée et la qualité de vos données.
-            Un fan anonyme vaut 0 CHF.
+            Un fan anonyme vaut {{0}}.
           </p>
           <div style="text-align:center; padding:18px 0">
             <div style="font-size:34px; font-weight:800; color:var(--accent)" id="fanlab-value"></div>
-            <div style="font-size:12px; color:var(--muted)" data-i18n="ui.fanlab.caption">Fan Equity Value (CHF)</div>
+            <div style="font-size:12px; color:var(--muted)" data-i18n="ui.fanlab.caption">Fan Equity Value ({{cur}})</div>
             <div id="fei-now" style="font-size:12px; margin-top:6px"></div>
           </div>
           <div id="fanlab-details" style="font-size:13px; color:var(--muted); line-height:1.8"></div>
@@ -1062,6 +1062,7 @@ function setCurrency(id) {
     if (u) { u.currency = id; saveUsers(users); }
   }
   renderCurrencySwitch();
+  renderMoneyDom();
   const game = document.getElementById("screen-game");
   if (state && game && !game.classList.contains("hidden")) { prevKpis = null; renderAll(); }
 }
@@ -1071,6 +1072,17 @@ function currencyPickHtml(selected) {
   return CURRENCIES.map(c =>
     `<button type="button" class="lang-btn${c.id === selected ? " on" : ""}" data-cur="${c.id}"
        aria-label="${c.id}"${c.id === selected ? ' aria-current="true"' : ""}>${c.sym}</button>`).join("");
+}
+/* Les textes statiques porteurs de jetons gardent leur gabarit pour être
+   réaffichés à chaque changement de devise. */
+function renderMoneyDom() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    if (el.dataset.moneyTpl == null) {
+      if (el.innerHTML.indexOf("{{") < 0) return;
+      el.dataset.moneyTpl = el.innerHTML;
+    }
+    el.innerHTML = moneyTokens(el.dataset.moneyTpl);
+  });
 }
 function renderCurrencySwitch() {
   const box = document.getElementById("currency-switch");
@@ -1312,7 +1324,7 @@ const EVENTS = [
         const fine = 4000 + s.dmos.conformite * -300 + 3000;
         s.budget -= fine;
         s.boardConfidence = clamp(s.boardConfidence - 6, 0, 100);
-        log(s, tr("msg.b8c732", {v0: fmt(fine)}, `<i class=ic-scale></i> Contrôle RGPD : consentements manquants. Amende de {v0} CHF. Investissez dans la conformité !`), "bad");
+        log(s, tr("msg.b8c732", {v0: fmtMoney(fine)}, `<i class=ic-scale></i> Contrôle RGPD : consentements manquants. Amende de {v0}. Investissez dans la conformité !`), "bad");
       }
   }},
   { id:"media", weight:9, cond:s=>s.engagement >= 50, run(s){
@@ -1358,7 +1370,7 @@ const EVENTS = [
   { id:"vipLoge", weight:6, ego:true, cond:s=>s.sponsors.length>0, run(s){
       s.budget -= 2500;
       s.sponsors.forEach(sp=>sp.satisfaction=clamp(sp.satisfaction-3,0,100));
-      log(s, tr("msg.582e73", null, `<i class=ic-glass></i> Le président installe ses amis d'enfance en loge VIP… aux places réservées à vos sponsors. −2 500 CHF et des excuses à présenter.`), "warn");
+      log(s, tr("msg.582e73", null, `<i class=ic-glass></i> Le président installe ses amis d'enfance en loge VIP… aux places réservées à vos sponsors. {{-2500}} et des excuses à présenter.`), "warn");
   }},
 ];
 
@@ -1366,13 +1378,13 @@ const EVENTS = [
 const DECISIONS = [
   { id:"influencer", weight:6, cond:s=>s.budget>8000,
     title:"<i class=ic-broadcast></i> Proposition d'influenceur",
-    text:"Un influenceur sport régional (180k abonnés) propose un partenariat : 6 000 CHF pour une série de contenus autour de vos matchs à domicile.",
+    text:"Un influenceur sport régional (180k abonnés) propose un partenariat : {{6000}} pour une série de contenus autour de vos matchs à domicile.",
     choices:[
-      { label:"Accepter le partenariat", sub:"−6 000 CHF · forte chance de croissance fans/engagement",
+      { label:"Accepter le partenariat", sub:"{{-6000}} · forte chance de croissance fans/engagement",
         run(s){ s.budget-=6000;
           if (rnd()<0.75){ const g=Math.round(s.fans*0.05); s.fans+=g; s.engagement=clamp(s.engagement+6,0,100);
             log(s,tr("msg.8ae278", {v0: fmt(g)}, `<i class=ic-broadcast></i> Le partenariat influenceur cartonne : +{v0} fans !`),"good");}
-          else { log(s,tr("msg.62d2b5", null, `<i class=ic-broadcast></i> Le partenariat influenceur fait un flop. 6 000 CHF envolés.`),"bad"); } } },
+          else { log(s,tr("msg.62d2b5", null, `<i class=ic-broadcast></i> Le partenariat influenceur fait un flop. {{6000}} envolés.`),"bad"); } } },
       { label:"Décliner poliment", sub:"Aucun risque, aucune récompense",
         run(s){ log(s,tr("msg.89382b", null, `Vous déclinez la proposition de l'influenceur.`),""); } },
     ]},
@@ -1380,12 +1392,12 @@ const DECISIONS = [
     title:"<i class=ic-lock></i> Faille de sécurité détectée",
     text:"Votre prestataire billetterie vous informe d'une possible fuite de données touchant vos contacts. Personne d'autre n'est encore au courant.",
     choices:[
-      { label:"Transparence totale : informer les fans", sub:"−2 000 CHF de gestion de crise · protège la confiance à long terme",
+      { label:"Transparence totale : informer les fans", sub:"{{-2000}} de gestion de crise · protège la confiance à long terme",
         run(s){ s.budget-=2000; s.engagement=clamp(s.engagement-2,0,100); s.dmos.conformite=clamp(s.dmos.conformite+1,0,10);
           log(s,tr("msg.75c77d", null, `<i class=ic-lock></i> Vous communiquez sur l'incident avec transparence. Les fans apprécient l'honnêteté (+1 conformité DMOS).`),"good"); } },
       { label:"Étouffer l'affaire", sub:"Gratuit… sauf si ça se sait (risque d'amende et de crise)",
         run(s){ if (rnd()<0.4){ s.budget-=9000; s.boardConfidence=clamp(s.boardConfidence-12,0,100); s.engagement=clamp(s.engagement-8,0,100);
-            log(s,tr("msg.cc59b0", null, `<i class=ic-lock></i> La fuite est révélée par la presse. Amende de 9 000 CHF et crise de confiance majeure.`),"bad"); }
+            log(s,tr("msg.cc59b0", null, `<i class=ic-lock></i> La fuite est révélée par la presse. Amende de {{9000}} et crise de confiance majeure.`),"bad"); }
           else { log(s,tr("msg.8041f6", null, `<i class=ic-lock></i> L'incident passe inaperçu. Cette fois.`),"warn"); } } },
     ]},
   { id:"presiPhoto", weight:7, ego:true, cond:s=>true,
@@ -1401,9 +1413,9 @@ const DECISIONS = [
     ]},
   { id:"starImage", weight:6, ego:true, cond:s=>s.budget>6000,
     title:"<i class=ic-trophy></i> La star réclame",
-    text:"Votre meilleur·e joueur·se exige une prime de droit à l'image de 5 000 CHF pour continuer à apparaître dans vos contenus — son agent a « vu ce qui se fait ailleurs ».",
+    text:"Votre meilleur·e joueur·se exige une prime de droit à l'image de {{5000}} pour continuer à apparaître dans vos contenus — son agent a « vu ce qui se fait ailleurs ».",
     choices:[
-      { label:"Payer la prime", sub:"−5 000 CHF · ses contenus cartonnent (+fans, +engagement)",
+      { label:"Payer la prime", sub:"{{-5000}} · ses contenus cartonnent (+fans, +engagement)",
         run(s){ s.budget-=5000; const g=Math.round(s.fans*0.02); s.fans+=g; s.engagement=clamp(s.engagement+4,0,100);
           log(s,tr("msg.64b5bf", {v0: fmt(g)}, `<i class=ic-trophy></i> La star signe. Ses stories font exploser les compteurs : +{v0} fans.`),"good"); } },
       { label:"Refuser", sub:"Gratuit · risque de clash public (50 %)",
@@ -1426,7 +1438,7 @@ const DECISIONS = [
     title:"<i class=ic-shield></i> Le derby approche",
     text:"Le match le plus attendu de la saison arrive. Le comité vous demande un plan marketing spécial derby.",
     choices:[
-      { label:"Grosse opération 360°", sub:"−4 000 CHF · billetterie et engagement boostés au prochain match à domicile",
+      { label:"Grosse opération 360°", sub:"{{-4000}} · billetterie et engagement boostés au prochain match à domicile",
         run(s){ s.budget-=4000; s.derbyBoost=true;
           log(s,tr("msg.f50ace", null, `<i class=ic-shield></i> Plan derby lancé : affichage, jeu concours, avant-match animé. Le prochain match à domicile sera électrique.`),"good"); } },
       { label:"Communication standard", sub:"Gratuit · le comité espérait mieux",
@@ -1602,6 +1614,15 @@ function challengeScore(s) {
 /* Les nombres se lisent à la suisse en français et en allemand, à l'anglaise
    en anglais. La devise suit le profil : symbole après le nombre en FR/DE,
    avant en EN (« CHF 60,000 », « €60,000 »). */
+/* Jetons de montant dans les textes : {{6000}} s'affiche « 6 000 CHF » ou
+   « €6,000 » selon le profil, {{cur}} donne le symbole seul. Résolus à
+   l'affichage, jamais au stockage : le journal change de devise avec le
+   joueur. */
+function moneyTokens(s) {
+  return String(s)
+    .replace(/\{\{cur\}\}/g, () => currencySym())
+    .replace(/\{\{(-?\d+(?:\.\d+)?)\}\}/g, (_, n) => fmtMoney(+n, n.includes(".") ? 2 : 0));
+}
 const NUM_LOCALE = { fr: "fr-CH", de: "fr-CH", en: "en-GB" };
 const fmt = n => Math.round(n).toLocaleString(NUM_LOCALE[lang] || "fr-CH");
 function fmtMoney(n, decimals) {
@@ -1638,7 +1659,7 @@ function dmosDisplay(s) {
 /* Fan Equity Value — modèle pédagogique propre au jeu. Quatre leviers et
    des coefficients ronds, choisis pour donner des ordres de grandeur
    parlants : ce n'est pas l'outil de mesure de C'mon Sports. Les fans
-   anonymes valent 0 CHF — un fan n'est pas un contact. */
+   anonymes ne valent rien — un fan n'est pas un contact. */
 const FEV = {
   years: 3.2,            // durée de relation (valeur de jeu)
   yearsFactory: 4.3,     // la Fan Data Factory entretient la relation plus longtemps
@@ -1649,7 +1670,7 @@ const FEV = {
    curieux à l'ambassadeur. Chaque palier a sa valeur annuelle (valeurs de
    jeu) et sa profondeur de relation ; l'engagement affiché n'est plus une
    variable à part, c'est la profondeur moyenne du fandom. Les fans hors CRM
-   forment le palier des anonymes, à 0 CHF. */
+   forment le palier des anonymes, sans valeur. */
 const TIERS = [
   { id:"curieux",      value: 20,  depth: 10  },   // contact connu, aucun achat
   { id:"spectateurs",  value: 60,  depth: 45  },   // billets de temps en temps
@@ -2212,11 +2233,11 @@ function advanceWeek() {
       s.seasonStats.euroWins++;
       s.engagement = clamp(s.engagement + 4, 0, 100);
       s.boardConfidence = clamp(s.boardConfidence + 3, 0, 100);
-      euroMsg = { msg: tr("ui.fe0f6b", {v0: fmtMoney(gain)}, `<i class=ic-globe></i> Victoire européenne ! Prime et droits TV : +{v0} (déplacement −3 000 CHF). La ville vibre.`), cls: "good" };
+      euroMsg = { msg: tr("ui.fe0f6b", {v0: fmtMoney(gain)}, `<i class=ic-globe></i> Victoire européenne ! Prime et droits TV : +{v0} (déplacement {{-3000}}). La ville vibre.`), cls: "good" };
     } else {
       s.seasonStats.euroLosses++;
       s.engagement = clamp(s.engagement - 3, 0, 100);
-      euroMsg = { msg: tr("ui.cc6e4f", {v0: fmtMoney(gain)}, `<i class=ic-globe></i> Défaite en coupe d'Europe. Droits TV +{v0}, déplacement −3 000 CHF. Les fans attendaient mieux.`), cls: "bad" };
+      euroMsg = { msg: tr("ui.cc6e4f", {v0: fmtMoney(gain)}, `<i class=ic-globe></i> Défaite en coupe d'Europe. Droits TV +{v0}, déplacement {{-3000}}. Les fans attendaient mieux.`), cls: "bad" };
     }
     s.budget += gain;
     s.seasonStats.revenue += gain;
@@ -2547,7 +2568,7 @@ function renderObjectives() {
 
 function renderLog() {
   $("#log").innerHTML = state.log.map(e =>
-    `<div class="entry"><span class="wk">S${e.season}·Sem${e.w}</span><span class="${e.cls}">${e.msg}</span></div>`
+    `<div class="entry"><span class="wk">S${e.season}·Sem${e.w}</span><span class="${e.cls}">${moneyTokens(e.msg)}</span></div>`
   ).join("") || tr("ui.43c829", null, `<div class="entry">Le journal est vide.</div>`);
 }
 
@@ -2590,7 +2611,7 @@ function showQualityInfo() {
   const parContact = Math.round((0.15 + q * 0.06) * 100) / 100;
   showModal(tr("ui.7152b0", {v0: df ? "var(--good)" : "var(--bad)", v1: df ? tr("lbl.ce4a5c", null, "neutralisée") : tr("lbl.1317a2", null, "−0,05 / semaine"), v2: df
         ? tr("lbl.fb7315", null, "Fan Data Factory entretient la base en continu : elle ne se dégrade plus.")
-        : tr("lbl.a7e971", null, "Sans entretien, les adresses vieillissent et les doublons s'accumulent."), v3: su ? "0,15 + qualité × 0,06 = " + parContact.toFixed(2) + " CHF" : "?", v4: su ? "" : tr("lbl.d20782", null, `<p class="lock"><i class=ic-lock></i> Note masquée : seule une analyse
+        : tr("lbl.a7e971", null, "Sans entretien, les adresses vieillissent et les doublons s'accumulent."), v3: su ? "0,15 + qualité × 0,06 = " + fmtMoney(parContact, 2) : "?", v4: su ? "" : tr("lbl.d20782", null, `<p class="lock"><i class=ic-lock></i> Note masquée : seule une analyse
       <b>Fan Lab Insight</b> ou <b>Pro</b> évalue la santé de votre base.</p>`)}, `
     <h2><span class="sig-cap">L</span>a qualité des données<span class="sig-cap">.</span></h2>
     <p>Une note sur 10 qui résume la <b>fiabilité de votre base</b> : adresses valides, doublons
@@ -2682,7 +2703,7 @@ function renderDmos() {
   const idxNow = fanEquityIndex(state);
   $("#fei-now").innerHTML = pro
     ? tr("ui.fei.now", {v0: idxNow}, `Fan Equity Index : <b style="color:var(--ink)">{v0}</b> <span style="color:var(--ink-3)">(base 100 à l'activation de Fan Lab Pro)</span>`)
-    : tr("ui.fev.anon", {v0: fmt(anonymous)}, `<span style="color:var(--ink-3)">{v0} fans anonymes · 0 CHF tant qu'ils ne sont pas connus</span>`);
+    : tr("ui.fev.anon", {v0: fmt(anonymous), v1: fmtMoney(0)}, `<span style="color:var(--ink-3)">{v0} fans anonymes · {v1} tant qu'ils ne sont pas connus</span>`);
   const pen = penetration(state);
   $("#fanlab-details").innerHTML =
     tr("ui.487e6b", {v0: fmt(state.contacts)}, tr("ui.487e6b", null, `<i class=ic-layers></i> {v0} contacts qualifiés<br>`)) +
@@ -2879,11 +2900,11 @@ function showModal(html) {
 function closeModal() { $("#modal-root").innerHTML = ""; }
 
 function showDecision(d) {
-  showModal(`<h2>${d.title}</h2><p>${d.text}</p><div class="choices" id="dec-choices"></div>`);
+  showModal(`<h2>${moneyTokens(d.title)}</h2><p>${moneyTokens(d.text)}</p><div class="choices" id="dec-choices"></div>`);
   const box = $("#dec-choices");
   d.choices.forEach(c => {
     const b = document.createElement("button");
-    b.innerHTML = `<b>${c.label}</b><span style="font-size:12px;color:var(--muted)">${c.sub}</span>`;
+    b.innerHTML = `<b>${moneyTokens(c.label)}</b><span style="font-size:12px;color:var(--muted)">${moneyTokens(c.sub)}</span>`;
     b.onclick = () => { c.run(state); closeModal(); save(); renderAll(); if (state.boardConfidence<=diff(state).fireAt && !state.gameOver){ state.gameOver=true; showGameOver(); } };
     box.appendChild(b);
   });
@@ -4874,22 +4895,22 @@ const TX = {
     "club.vb.name": "Olympia Léman",
     "club.vb.sport": "Volleyball",
     "dec.dataleak.c0.label": "Volle Transparenz: Fans informieren",
-    "dec.dataleak.c0.sub": "−2 000 CHF Krisenkommunikation · schützt langfristig das Vertrauen",
+    "dec.dataleak.c0.sub": "{{-2000}} Krisenkommunikation · schützt langfristig das Vertrauen",
     "dec.dataleak.c1.label": "Die Sache vertuschen",
     "dec.dataleak.c1.sub": "Gratis … sofern es nicht herauskommt (Risiko von Busse und Krise)",
     "dec.dataleak.text": "Ihr Ticketing-Dienstleister meldet ein mögliches Datenleck, das Ihre Kontakte betrifft. Sonst weiss noch niemand davon.",
     "dec.dataleak.title": "<i class=ic-lock></i> Sicherheitslücke entdeckt",
     "dec.derby.c0.label": "Grosse 360°-Aktion",
-    "dec.derby.c0.sub": "−4 000 CHF · Ticketing und Engagement beim nächsten Heimspiel im Hoch",
+    "dec.derby.c0.sub": "{{-4000}} · Ticketing und Engagement beim nächsten Heimspiel im Hoch",
     "dec.derby.c1.label": "Standardkommunikation",
     "dec.derby.c1.sub": "Gratis · der Vorstand hatte mehr erwartet",
     "dec.derby.text": "Das meisterwartete Spiel der Saison steht bevor. Der Vorstand verlangt von Ihnen einen eigenen Marketingplan fürs Derby.",
     "dec.derby.title": "<i class=ic-shield></i> Das Derby steht an",
     "dec.influencer.c0.label": "Partnerschaft annehmen",
-    "dec.influencer.c0.sub": "−6 000 CHF · gute Chancen auf mehr Fans und Engagement",
+    "dec.influencer.c0.sub": "{{-6000}} · gute Chancen auf mehr Fans und Engagement",
     "dec.influencer.c1.label": "Höflich absagen",
     "dec.influencer.c1.sub": "Kein Risiko, kein Ertrag",
-    "dec.influencer.text": "Ein regionaler Sport-Influencer (180k Follower) bietet Ihnen eine Partnerschaft an: 6 000 CHF für eine Content-Serie rund um Ihre Heimspiele.",
+    "dec.influencer.text": "Ein regionaler Sport-Influencer (180k Follower) bietet Ihnen eine Partnerschaft an: {{6000}} für eine Content-Serie rund um Ihre Heimspiele.",
     "dec.influencer.title": "<i class=ic-broadcast></i> Anfrage eines Influencers",
     "dec.presiPhoto.c0.label": "Mit einem Lächeln zustimmen",
     "dec.presiPhoto.c0.sub": "Vertrauen des Vorstands +7 · Engagement −5 (die Fans spotten)",
@@ -4904,10 +4925,10 @@ const TX = {
     "dec.sponsorControl.text": "Ihr Hauptpartner verlangt, jede Publikation vor der Veröffentlichung freizugeben. Sein Marketingleiter «hat da so ein paar Ideen».",
     "dec.sponsorControl.title": "<i class=ic-target></i> Der Sponsor will alles freigeben",
     "dec.starImage.c0.label": "Prämie zahlen",
-    "dec.starImage.c0.sub": "−5 000 CHF · seine Inhalte gehen durch die Decke (+Fans, +Engagement)",
+    "dec.starImage.c0.sub": "{{-5000}} · seine Inhalte gehen durch die Decke (+Fans, +Engagement)",
     "dec.starImage.c1.label": "Ablehnen",
     "dec.starImage.c1.sub": "Gratis · Risiko eines öffentlichen Eklats (50 %)",
-    "dec.starImage.text": "Ihr bester Spieler bzw. Ihre beste Spielerin verlangt eine Bildrechte-Prämie von 5 000 CHF, um weiterhin in Ihren Inhalten aufzutreten — die Agentur hat «gesehen, was anderswo bezahlt wird».",
+    "dec.starImage.text": "Ihr bester Spieler bzw. Ihre beste Spielerin verlangt eine Bildrechte-Prämie von {{5000}}, um weiterhin in Ihren Inhalten aufzutreten — die Agentur hat «gesehen, was anderswo bezahlt wird».",
     "dec.starImage.title": "<i class=ic-trophy></i> Der Star fordert",
     "demo.08c165": "<i class=ic-check></i> Drei Siege in Serie: +{v0} Fans in den sozialen Medien.",
     "demo.147800": "<i class=ic-mail></i> E-Mail-Kampagne an die gesamte Kontaktbasis versandt: 41 % Öffnungen, 96 Abmeldungen. Eine Segmentierung ist so nicht möglich.",
@@ -5066,12 +5087,12 @@ const TX = {
     "msg.3905e5": "<i class=ic-clipboard></i> Fan Equity Audit läuft — Ihr Partner Manager von C'mon Sports analysiert Ihre Säulen (Bericht in {v0} Wo.).",
     "msg.3fc3f8": "<i class=ic-trophy></i> {v0} {v1} · {v2}. in der Liga ({v3}).",
     "msg.509a84": "<i class=ic-arrow></i> Ungenügende Bilanz: Der Vorstand beendet Ihren Vertrag.",
-    "msg.582e73": "<i class=ic-glass></i> Der Präsident setzt seine Jugendfreunde in die VIP-Loge … auf die Plätze, die Ihren Sponsoren reserviert sind. −2 500 CHF und eine Entschuldigung, die Sie vorbringen dürfen.",
+    "msg.582e73": "<i class=ic-glass></i> Der Präsident setzt seine Jugendfreunde in die VIP-Loge … auf die Plätze, die Ihren Sponsoren reserviert sind. {{-2500}} und eine Entschuldigung, die Sie vorbringen dürfen.",
     "msg.5927d9": "<i class=ic-flag></i> Ende der Saison {v0}: {v1}. von {v2}, {v3}/{v4} Ziele erreicht.",
     "msg.5a00c1": "<i class=ic-launch></i> AUFSTIEG IN {v0}! +{v1} Fans, Sponsorenklauseln aufgewertet (+35 %). Aber Achtung: Kosten und Erwartungen werden explodieren.",
     "msg.5af7d9": "<i class=ic-alert></i> Shitstorm: Ein Spieler entgleist im Interview. Engagement und Vertrauen des Vorstands sinken.",
     "msg.609906": "<i class=ic-target></i> Ihre Inhalte laufen ab sofort über eine Freigaberunde. Die Sponsoren sind begeistert, Ihre Statistiken etwas weniger.",
-    "msg.62d2b5": "<i class=ic-broadcast></i> Die Influencer-Partnerschaft floppt. 6 000 CHF sind verpufft.",
+    "msg.62d2b5": "<i class=ic-broadcast></i> Die Influencer-Partnerschaft floppt. {{6000}} sind verpufft.",
     "msg.64b5bf": "<i class=ic-trophy></i> Der Star unterschreibt. Seine Stories lassen die Zähler explodieren: +{v0} Fans.",
     "msg.6ac85b": "<i class=ic-clipboard></i> Bericht zum Fan Equity Audit von C'mon Sports geliefert: Ihre exakten Scores liegen offen ({v0}/60) und die Roadmap steht. Der Vorstand schätzt es, endlich klar zu sehen (+8 Vertrauen). Geführte Schulungen: −20 %.",
     "msg.6ec2bf": "Content publiziert: +{v0} Fans",
@@ -5091,9 +5112,9 @@ const TX = {
     "msg.adf382": "<i class=ic-pulse></i> Ein Video aus den Katakomben geht viral! +{v0} Fans, Engagement steigt.",
     "msg.b0a94f": "Datensammlung: +{v0} qualifizierte Kontakte{v1}",
     "msg.b46eec": "<i class=ic-alert></i> {v0} beklagt sich über zu wenig Sichtbarkeit. Zufriedenheit sinkt — planen Sie eine Aktivierung.",
-    "msg.b8c732": "<i class=ic-scale></i> DSGVO-Kontrolle: fehlende Einwilligungen. Busse von {v0} CHF. Investieren Sie in die Compliance!",
+    "msg.b8c732": "<i class=ic-scale></i> DSGVO-Kontrolle: fehlende Einwilligungen. Busse von {v0}. Investieren Sie in die Compliance!",
     "msg.c41e55": "<i class=ic-trash></i> Schlecht gepflegte Datenbank: {v0} veraltete Kontakte (Hard Bounces). Datenqualität zahlt sich aus!",
-    "msg.cc59b0": "<i class=ic-lock></i> Die Presse deckt das Leck auf. Busse von 9 000 CHF und eine handfeste Vertrauenskrise.",
+    "msg.cc59b0": "<i class=ic-lock></i> Die Presse deckt das Leck auf. Busse von {{9000}} und eine handfeste Vertrauenskrise.",
     "msg.da086d": "<i class=ic-deal></i> Neuer Sponsor unterschrieben: {v0} ({v1}) für {v2}/Saison!",
     "msg.e1fb8f": "<i class=ic-globe></i> EUROPA-QUALIFIKATION! Nächste Saison spielt der Club im Europacup: TV-Einnahmen und Prestige, aber teure Auswärtsreisen und kompromisslose Fans.",
     "msg.e55549": "<i class=ic-shield></i> Sie fahren das Derby mit Standardkommunikation. Der Vorstand verzieht das Gesicht.",
@@ -5289,7 +5310,7 @@ const TX = {
     "ui.c73e34": "zu Hause ({v0} Zuschauer, Ticketing {v1}, Marketinganteil +{v2})",
     "ui.c78646": "auswärts",
     "ui.cc2671": "Die Saison mit positivem Budget abschliessen",
-    "ui.cc6e4f": "<i class=ic-globe></i> Niederlage im Europacup. TV-Rechte +{v0}, Auswärtsreise −3 000 CHF. Die Fans hatten mehr erwartet.",
+    "ui.cc6e4f": "<i class=ic-globe></i> Niederlage im Europacup. TV-Rechte +{v0}, Auswärtsreise {{-3000}}. Die Fans hatten mehr erwartet.",
     "ui.ce6636": "\n    <h2><i class=ic-lock></i> Wie Ihre Daten verarbeitet werden</h2>\n    <p><b style=\"color:var(--text)\">Ihr Spielstand bleibt auf diesem Gerät.</b> C'mon Sports Challenge funktioniert ohne Spielserver,\n    ohne Cookies, ohne Tracker (Schriften sind eingebettet): Spielstände und PIN-Code (gehasht) verlassen diesen Browser nie.</p>\n    <p><b style=\"color:var(--text)\">Wenn Sie ein Konto erstellen</b>, wird Ihre E-Mail-Adresse im CRM von\n    C'mon Corporations (Brevo, Hosting in der EU) gespeichert, um die C'mon-Sports-Challenge-Konten zu verwalten und deren Nutzung\n    nachzuvollziehen — Rechtsgrundlage: berechtigtes Interesse, dem Sie jederzeit widersprechen können.</p>\n    <p><b style=\"color:var(--text)\">News-E-Mails</b> erhalten Sie dagegen nur, wenn Sie das dafür vorgesehene Kästchen\n    ankreuzen (Einwilligung). Ohne dieses meldet C'mon Sports Challenge Sie für keinen Versand an: Eine für unser CRM neue Adresse\n    wird dort als von jedem Marketingversand ausgeschlossen markiert; waren Sie bereits erfasst, bleiben Ihre Einstellungen unverändert.</p>\n    <p>Sie können Ihre sämtlichen Daten jederzeit über die Fusszeile exportieren oder löschen\n    («Datenschutz & Daten»).</p>\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"consent-ok\">Verstanden — weiter</button>\n      <button id=\"consent-privacy\">Datenschutzerklärung lesen</button>\n    </div>",
     "ui.challenge.legacy": "<span style=\"color:var(--warn)\"><i class=ic-alert></i>\n        Challenge aus einer früheren Version: Die Punkteregeln haben sich geändert, die Ergebnisse sind nicht mehr vergleichbar.</span>\n        <button id=\"challenge-legacy-go\">Diese Saison trotzdem spielen</button>",
     "ui.cmon.intro": "\n          Ein Club kann alles selbst machen — nur eben im Blindflug. C'mon Sports deckt auf, was Sie nicht\n          sehen (exakte DMOS-Scores, Fan Equity Value, Zustand Ihrer Daten), und\n          strukturiert Ihr Wachstum. Jeder aktivierte Service verändert Ihr Dashboard nachhaltig.\n        ",
@@ -5326,15 +5347,15 @@ const TX = {
     "ui.fandom.t3": "Abonnenten / Mitglieder",
     "ui.fandom.t4": "Botschafter",
     "ui.fandom.title": "<span class=\"sig-cap\">I</span>HR FANDOM.",
-    "ui.fanlab.caption": "Fan Equity Value (CHF)",
-    "ui.fanlab.intro": "Ihre Fans sind ein Vermögenswert. Sein Wert hängt von vier Hebeln ab: den Fans, die Sie wirklich kennen, der Intensität ihrer Bindung an den Club, ihrer Treue über die Zeit und der Qualität Ihrer Daten. Ein anonymer Fan ist 0 CHF wert.",
+    "ui.fanlab.caption": "Fan Equity Value ({{cur}})",
+    "ui.fanlab.intro": "Ihre Fans sind ein Vermögenswert. Sein Wert hängt von vier Hebeln ab: den Fans, die Sie wirklich kennen, der Intensität ihrer Bindung an den Club, ihrer Treue über die Zeit und der Qualität Ihrer Daten. Ein anonymer Fan ist {{0}} wert.",
     "ui.fanlab.title": "<span class=\"sig-cap\">F</span>AN EQUITY VALUE — WAS IHR PUBLIKUM WERT IST.",
-    "ui.fe0f6b": "<i class=ic-globe></i> Europäischer Sieg! Prämie und TV-Rechte: +{v0} (Auswärtsreise −3 000 CHF). Die Stadt bebt.",
+    "ui.fe0f6b": "<i class=ic-globe></i> Europäischer Sieg! Prämie und TV-Rechte: +{v0} (Auswärtsreise {{-3000}}). Die Stadt bebt.",
     "ui.fei.legend": "Ein Punkt bei der Aktivierung, dann in den Wochen 7, 13, 20 und 26 jeder Saison.",
     "ui.fei.none": "Noch nicht gemessen: Der Index startet bei 100 an dem Tag, an dem Fan Lab Pro Ihre Fan Equity Value beziffert.",
     "ui.fei.now": "Fan Equity Index: <b style=\"color:var(--ink)\">{v0}</b> <span style=\"color:var(--ink-3)\">(Basis 100 bei Aktivierung von Fan Lab Pro)</span>",
     "ui.fei.title": "Fan Equity Index — der Beweis, dass Ihr Fan-Vermögen wächst",
-    "ui.fev.anon": "<span style=\"color:var(--ink-3)\">{v0} anonyme Fans · 0 CHF, solange sie unbekannt sind</span>",
+    "ui.fev.anon": "<span style=\"color:var(--ink-3)\">{v0} anonyme Fans · {v1}, solange sie unbekannt sind</span>",
     "ui.fev.l1": "Bekannte Fans",
     "ui.fev.l1d": "{v0} % Ihrer Fans sind erreichbar",
     "ui.fev.l2": "Intensität der Bindung",
@@ -5481,22 +5502,22 @@ const TX = {
     "club.vb.name": "Olympia Léman",
     "club.vb.sport": "Volleyball",
     "dec.dataleak.c0.label": "Full transparency: tell the fans",
-    "dec.dataleak.c0.sub": "−2 000 CHF in crisis management · protects trust for the long run",
+    "dec.dataleak.c0.sub": "{{-2000}} in crisis management · protects trust for the long run",
     "dec.dataleak.c1.label": "Bury the story",
     "dec.dataleak.c1.sub": "Free… unless it gets out (risk of a fine and a crisis)",
     "dec.dataleak.text": "Your ticketing provider has flagged a possible data leak affecting your contacts. Nobody else knows yet.",
     "dec.dataleak.title": "<i class=ic-lock></i> Security breach detected",
     "dec.derby.c0.label": "Full 360° operation",
-    "dec.derby.c0.sub": "−4 000 CHF · ticketing and engagement boosted at the next home match",
+    "dec.derby.c0.sub": "{{-4000}} · ticketing and engagement boosted at the next home match",
     "dec.derby.c1.label": "Standard communication",
     "dec.derby.c1.sub": "Free · the board was hoping for more",
     "dec.derby.text": "The most anticipated match of the season is almost here. The board wants a dedicated derby marketing plan.",
     "dec.derby.title": "<i class=ic-shield></i> The derby is coming",
     "dec.influencer.c0.label": "Accept the partnership",
-    "dec.influencer.c0.sub": "−6 000 CHF · strong chance of fan and engagement growth",
+    "dec.influencer.c0.sub": "{{-6000}} · strong chance of fan and engagement growth",
     "dec.influencer.c1.label": "Politely decline",
     "dec.influencer.c1.sub": "No risk, no reward",
-    "dec.influencer.text": "A regional sports influencer (180k followers) is offering a partnership: 6 000 CHF for a series of content pieces built around your home matches.",
+    "dec.influencer.text": "A regional sports influencer (180k followers) is offering a partnership: {{6000}} for a series of content pieces built around your home matches.",
     "dec.influencer.title": "<i class=ic-broadcast></i> An influencer comes calling",
     "dec.presiPhoto.c0.label": "Smile and agree",
     "dec.presiPhoto.c0.sub": "Board confidence +7 · engagement −5 (the fans have a field day)",
@@ -5511,10 +5532,10 @@ const TX = {
     "dec.sponsorControl.text": "Your main partner is demanding to approve every post before it goes live. Their marketing director “has ideas”.",
     "dec.sponsorControl.title": "<i class=ic-target></i> The sponsor wants sign-off on everything",
     "dec.starImage.c0.label": "Pay the bonus",
-    "dec.starImage.c0.sub": "−5 000 CHF · their content goes off (+fans, +engagement)",
+    "dec.starImage.c0.sub": "{{-5000}} · their content goes off (+fans, +engagement)",
     "dec.starImage.c1.label": "Refuse",
     "dec.starImage.c1.sub": "Free · risk of a public clash (50%)",
-    "dec.starImage.text": "Your best player is demanding a 5 000 CHF image-rights bonus to keep appearing in your content — the agent has “seen what other clubs are paying”.",
+    "dec.starImage.text": "Your best player is demanding a {{5000}} image-rights bonus to keep appearing in your content — the agent has “seen what other clubs are paying”.",
     "dec.starImage.title": "<i class=ic-trophy></i> The star wants a cut",
     "demo.08c165": "<i class=ic-check></i> Three wins in a row: +{v0} fans on social.",
     "demo.147800": "<i class=ic-mail></i> Email campaign sent to the entire base: 41% opens, 96 unsubscribes. Segmentation is impossible as things stand.",
@@ -5673,12 +5694,12 @@ const TX = {
     "msg.3905e5": "<i class=ic-clipboard></i> Fan Equity Audit under way — your C'mon Sports partner manager is analysing your pillars (report in {v0} wks).",
     "msg.3fc3f8": "<i class=ic-trophy></i> {v0} {v1} · position {v2} in the league ({v3}).",
     "msg.509a84": "<i class=ic-arrow></i> Results not good enough: the board terminates your contract.",
-    "msg.582e73": "<i class=ic-glass></i> The president parks his childhood friends in the VIP box… in the seats reserved for your sponsors. −2 500 CHF and apologies to make.",
+    "msg.582e73": "<i class=ic-glass></i> The president parks his childhood friends in the VIP box… in the seats reserved for your sponsors. {{-2500}} and apologies to make.",
     "msg.5927d9": "<i class=ic-flag></i> End of season {v0}: ranked {v1} of {v2}, {v3}/{v4} objectives met.",
     "msg.5a00c1": "<i class=ic-launch></i> PROMOTED TO {v0}! +{v1} fans, sponsor clauses revalued (+35%). But be warned: costs and expectations are about to explode.",
     "msg.5af7d9": "<i class=ic-alert></i> Bad press: a player goes off-script in an interview. Engagement and board confidence both drop.",
     "msg.609906": "<i class=ic-target></i> Your content now goes through an approval committee. The sponsors are delighted; your stats rather less so.",
-    "msg.62d2b5": "<i class=ic-broadcast></i> The influencer partnership flops. 6 000 CHF gone.",
+    "msg.62d2b5": "<i class=ic-broadcast></i> The influencer partnership flops. {{6000}} gone.",
     "msg.64b5bf": "<i class=ic-trophy></i> The star signs. Their stories send the numbers through the roof: +{v0} fans.",
     "msg.6ac85b": "<i class=ic-clipboard></i> Fan Equity Audit report delivered by C'mon Sports: your exact scores are out ({v0}/60) and the roadmap is in place. The board is glad to finally see clearly (+8 confidence). Roadmap-guided training: −20%.",
     "msg.6ec2bf": "Content published: +{v0} fans",
@@ -5698,9 +5719,9 @@ const TX = {
     "msg.adf382": "<i class=ic-pulse></i> A behind-the-scenes video goes viral! +{v0} fans, engagement climbing.",
     "msg.b0a94f": "Data capture: +{v0} qualified contacts{v1}",
     "msg.b46eec": "<i class=ic-alert></i> {v0} is complaining about a lack of visibility. Satisfaction is slipping — line up an activation.",
-    "msg.b8c732": "<i class=ic-scale></i> GDPR audit: missing consents. Fine of {v0} CHF. Invest in compliance!",
+    "msg.b8c732": "<i class=ic-scale></i> GDPR audit: missing consents. Fine of {v0}. Invest in compliance!",
     "msg.c41e55": "<i class=ic-trash></i> Neglected database: {v0} obsolete contacts (hard bounces). Data quality counts!",
-    "msg.cc59b0": "<i class=ic-lock></i> The press breaks the leak. A 9 000 CHF fine and a full-blown crisis of trust.",
+    "msg.cc59b0": "<i class=ic-lock></i> The press breaks the leak. A {{9000}} fine and a full-blown crisis of trust.",
     "msg.da086d": "<i class=ic-deal></i> New sponsor signed: {v0} ({v1}) for {v2}/season!",
     "msg.e1fb8f": "<i class=ic-globe></i> EUROPEAN QUALIFICATION! Next season the club plays in Europe: TV money and prestige, but costly away trips and fans who forgive nothing.",
     "msg.e55549": "<i class=ic-shield></i> You play the derby with standard comms. The board is unimpressed.",
@@ -5896,7 +5917,7 @@ const TX = {
     "ui.c73e34": "at home ({v0} spectators, ticketing {v1}, marketing share +{v2})",
     "ui.c78646": "away",
     "ui.cc2671": "Finish the season in the black",
-    "ui.cc6e4f": "<i class=ic-globe></i> Beaten in Europe. TV rights +{v0}, away trip −3 000 CHF. The fans expected better.",
+    "ui.cc6e4f": "<i class=ic-globe></i> Beaten in Europe. TV rights +{v0}, away trip {{-3000}}. The fans expected better.",
     "ui.ce6636": "\n    <h2><i class=ic-lock></i> How your data is handled</h2>\n    <p><b style=\"color:var(--text)\">Your progress stays on this device.</b> C'mon Sports Challenge runs with no game server,\n    no cookies and no trackers (fonts are embedded): saves and PIN code (hashed) never leave this browser.</p>\n    <p><b style=\"color:var(--text)\">If you create an account</b>, your email address is recorded in the CRM of\n    C'mon Corporations (Brevo, EU hosting) in order to manage C'mon Sports Challenge accounts and monitor their use —\n    legal basis: legitimate interest, which you may object to at any time.</p>\n    <p><b style=\"color:var(--text)\">News emails</b>, for their part, will only be sent to you if you tick the box\n    provided for that purpose (consent). Without it, C'mon Sports Challenge signs you up for nothing: an address new to our CRM\n    is flagged there as excluded from all marketing sends, and if you were already in it, your preferences stay unchanged.</p>\n    <p>You can export or erase all of your data at any time from the footer\n    (“Privacy & data”).</p>\n    <div class=\"choices\">\n      <button class=\"primary\" id=\"consent-ok\">Understood — continue</button>\n      <button id=\"consent-privacy\">Read the privacy policy</button>\n    </div>",
     "ui.challenge.legacy": "<span style=\"color:var(--warn)\"><i class=ic-alert></i>\n        Challenge from an earlier version: the scoring rules have changed, so results can no longer be compared.</span>\n        <button id=\"challenge-legacy-go\">Replay this season anyway</button>",
     "ui.cmon.intro": "\n          A club can do everything on its own — but it moves blind. C'mon Sports reveals what you do\n          not see (exact DMOS scores, your Fan Equity Value, the health of your data) and\n          gives your growth a structure. Every service you activate changes your dashboard for good.\n        ",
@@ -5933,15 +5954,15 @@ const TX = {
     "ui.fandom.t3": "Season ticket holders",
     "ui.fandom.t4": "Ambassadors",
     "ui.fandom.title": "<span class=\"sig-cap\">Y</span>OUR FANDOM.",
-    "ui.fanlab.caption": "Fan Equity Value (CHF)",
-    "ui.fanlab.intro": "Your fans are an asset. Its value rests on four levers: the fans you actually know, how strong their bond with the club is, how long they stay loyal and the quality of your data. An anonymous fan is worth CHF 0.",
+    "ui.fanlab.caption": "Fan Equity Value ({{cur}})",
+    "ui.fanlab.intro": "Your fans are an asset. Its value rests on four levers: the fans you actually know, how strong their bond with the club is, how long they stay loyal and the quality of your data. An anonymous fan is worth {{0}}.",
     "ui.fanlab.title": "<span class=\"sig-cap\">F</span>AN EQUITY VALUE — WHAT YOUR AUDIENCE IS WORTH.",
-    "ui.fe0f6b": "<i class=ic-globe></i> European win! Prize money and TV rights: +{v0} (away trip −3 000 CHF). The whole town is buzzing.",
+    "ui.fe0f6b": "<i class=ic-globe></i> European win! Prize money and TV rights: +{v0} (away trip {{-3000}}). The whole town is buzzing.",
     "ui.fei.legend": "One point at activation, then in weeks 7, 13, 20 and 26 of every season.",
     "ui.fei.none": "Not measured yet: the Index starts at 100 on the day Fan Lab Pro puts a number on your Fan Equity Value.",
     "ui.fei.now": "Fan Equity Index: <b style=\"color:var(--ink)\">{v0}</b> <span style=\"color:var(--ink-3)\">(base 100 when Fan Lab Pro was switched on)</span>",
     "ui.fei.title": "Fan Equity Index — proof that your fan asset is compounding",
-    "ui.fev.anon": "<span style=\"color:var(--ink-3)\">{v0} anonymous fans · CHF 0 until you know who they are</span>",
+    "ui.fev.anon": "<span style=\"color:var(--ink-3)\">{v0} anonymous fans · {v1} until you know who they are</span>",
     "ui.fev.l1": "Known fans",
     "ui.fev.l1d": "{v0}% of your fans can be reached",
     "ui.fev.l2": "Strength of the bond",
@@ -6014,6 +6035,7 @@ localizeContent();
 localizeDom();
 renderLangSwitch();
 renderCurrencySwitch();
+renderMoneyDom();
 if (!localStorage.getItem(CONSENT_KEY)) showConsent();
 else initAuth();
 // Un rafraîchissement en plein rendez-vous ne doit pas coûter la démo
