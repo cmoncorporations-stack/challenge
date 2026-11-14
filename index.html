@@ -94,6 +94,15 @@ nav.top .btn{padding:9px 18px;font-size:14px}
 .lang button[aria-pressed="true"]{background:var(--raised);color:var(--ink)}
 @media(max-width:900px){nav.top .links{display:none} nav.top .lang{margin-left:auto}}
 @media(max-width:520px){nav.top .btn-nav{display:none} nav.top .wrap{gap:10px} .wordmark img{height:28px}}
+/* Langues + devises côte à côte : sur un téléphone, logo et pastilles se
+   resserrent pour que la barre ne pousse plus la page hors de l'écran. */
+@media(max-width:440px){
+  nav.top .wrap{gap:6px}
+  .wordmark img{height:22px}
+  nav.top .lang{padding:2px;flex-shrink:0}
+  nav.top .lang button{padding:6px 7px;font-size:11px;min-width:26px}
+  nav.top .lang.cur{margin-left:0}
+}
 
 /* ── Héros ── */
 .hero{padding:76px 0 56px;position:relative}

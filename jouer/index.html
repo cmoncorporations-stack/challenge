@@ -253,6 +253,26 @@ header .meta button{padding:6px 11px;font-size:var(--t0)}
   header .meta > div{justify-content:flex-start}
   .card,.hero{padding:16px}
   #btn-advance{width:100%;margin:16px 0 0;bottom:12px}
+  /* Services : le bouton « Commander · montant » ne se plie pas ; à côté du
+     texte, il réduisait la description à une colonne d'un mot. Il passe
+     dessous, sur toute la largeur. */
+  .action{flex-wrap:wrap}
+  .action > .svc-cta{flex:1 1 100%!important;align-self:stretch!important}
+  .svc-cta button{width:100%;white-space:normal}
+  /* Sponsors : la colonne « Secteur » cède sa place, pour que la satisfaction
+     — celle que le guide fait regarder — reste à l'écran ; le tableau défile
+     dans sa carte plutôt que d'élargir la page si un nom est très long. */
+  #tab-sponsors th:nth-child(2),#tab-sponsors td:nth-child(2){display:none}
+  #tab-sponsors table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  #tab-sponsors th,#tab-sponsors td{padding:10px 5px}
+  #tab-sponsors th{font-size:10px;letter-spacing:.03em}
+  #tab-sponsors td:nth-child(4){white-space:nowrap}
+  /* iOS zoome sur tout champ écrit sous 16 px : on reste à 16 px. Préfixe
+     body : la règle de base des champs est déclarée plus bas dans la feuille. */
+  body input[type="text"],body input[type="password"],body input[type="email"],body select,body textarea{font-size:16px}
+  /* Pastilles langue / devise : cibles tactiles confortables. */
+  .lang-btn{min-height:34px;min-width:34px}
+  .card h3 .tag{white-space:nowrap}
 }
 .up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--ink-3)}
 
@@ -2842,7 +2862,7 @@ function renderServices() {
         <div class="desc" style="color:var(--accent)">→ ${svc.effect}</div>
         ${svc.module ? "" : `<div class="tuto-why" style="margin-top:9px"><b>${tr("ui.svc.real", null, "Hors du jeu")}</b><br>${svc.real}</div>`}
       </div>
-      <div style="flex-shrink:0; align-self:center">${btn && !affordable ? btn.replace("<button ", "<button disabled ") : btn}</div>
+      <div class="svc-cta" style="flex-shrink:0; align-self:center">${btn && !affordable ? btn.replace("<button ", "<button disabled ") : btn}</div>
     </div>`;
   };
   $("#services-list").innerHTML = SERVICES.filter(sv => !sv.module).map(card).join("") +
